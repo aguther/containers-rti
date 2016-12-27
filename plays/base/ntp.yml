@@ -1,0 +1,13 @@
+---
+- name: ntp
+  hosts: centos
+  tasks:
+    - name: install ntp
+      yum:
+        name: ntp
+        state: latest
+    - name: ensure ntp is enabled and running
+      service:
+        name: ntpd.service
+        state: running
+        enabled: yes

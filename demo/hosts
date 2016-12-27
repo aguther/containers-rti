@@ -1,0 +1,15 @@
+[master]
+192.168.198.101
+
+[nodes]
+192.168.198.102
+192.168.198.103
+
+[centos:children]
+master
+nodes
+
+[centos:vars]
+ansible_connection=ssh
+ansible_user=root
+ansible_ssh_pass=root

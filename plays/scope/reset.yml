@@ -1,0 +1,7 @@
+---
+- include: install.yml
+- name: scope-reset
+  hosts: centos
+  tasks:
+    - name: reset scope
+      command: scope reset --force

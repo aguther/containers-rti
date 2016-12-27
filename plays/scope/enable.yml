@@ -1,0 +1,11 @@
+---
+- include: ../base/disable-firewall.yml
+- include: ../docker/deploy.yml
+- include: install.yml
+- name: enable master
+  hosts: centos
+  tasks:
+    - name: reset scope
+      command: scope reset --force
+    - name: launch scope
+      command: scope launch
