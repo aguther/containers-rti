@@ -1,24 +1,29 @@
 # containers-rti
-Repository to test RTI DDS with container technologies (docker, kubernetes)
+Repository to test RTI DDS with container technologies (docker, kubernetes).
+
+# Environment
+This repository has the following setup in mind.
+
+3 Hosts with the latest CentOS 7:
+- centos-7-1 with IPv4 = 192.168.198.101
+- centos-7-2 with IPv4 = 192.168.198.102
+- centos-7-3 with IPv4 = 192.168.198.103
+
+Default-Gateway, DNS = 192.168.198.2
 
 # Preparations
-
-To prepare the blabla...
+There are some preparations that need to be done in order to get everything working.
 
 ## CentOS
+Disable strict host checking for SSH if you want to use passwords with ansible.
 
-- Disable the firewalld
-
-# Docker
-
-[...]
-weave connect 192.168.198.102
-weave connect 192.168.198.103
-[...]
+Therefore you need to create a file ~/.ssh/config with the following content:
+Host *
+    StrictHostKeyChecking no
 
 # Kubernetes
 
-YOU MUST USE "docker" instead of "docker-latest"!
+WARNING: kubernetes from extras repository on CentOS 7 is not compatible with package docker-latest.
 
 Master:
 1. see install.sh
