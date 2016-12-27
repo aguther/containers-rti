@@ -35,7 +35,8 @@ sudo firewall-cmd --reload
 systemctl enable --now ntpd
 
 # disable firewall
-systemctl disable --now firewalld
+systemctl stop firewalld
+systemctl disable firewalld
 
 # enable docker-latest daemon
 systemctl disable --now docker
