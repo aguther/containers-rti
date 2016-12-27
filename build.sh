@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 
 # build image
-docker build -t rti-perftest .
+docker build -t guther/rti-perftest .
