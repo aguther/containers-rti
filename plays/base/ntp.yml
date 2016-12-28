@@ -1,4 +1,5 @@
 ---
+# ------------------------------------------------------------------------------
 - name: ntp
   hosts: centos
   tasks:
@@ -11,3 +12,4 @@
         name: ntpd.service
         state: running
         enabled: yes
+...

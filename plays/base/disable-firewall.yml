@@ -1,9 +1,11 @@
 ---
-- name: disable-firewall
+# ------------------------------------------------------------------------------
+- name: disable firewall
   hosts: centos
   tasks:
-    - name: disable firewall
+    - name: stop and disable firewall
       service:
         name: firewalld.service
         state: stopped
         enabled: false
+...

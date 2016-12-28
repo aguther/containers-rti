@@ -1,7 +1,9 @@
 ---
+# ------------------------------------------------------------------------------
 - include: ../base/disable-firewall.yml
 - include: ../docker/deploy.yml
 - include: install.yml
+# ------------------------------------------------------------------------------
 - name: enable master
   hosts: master
   tasks:
@@ -9,6 +11,7 @@
       command: weave reset --force
     - name: launch weave
       command: weave launch
+# ------------------------------------------------------------------------------
 - name: enable nodes
   hosts: nodes
   tasks:
@@ -17,3 +20,4 @@
     - name: launch weave
       command: weave launch {{ item }}
       with_items: "{{ groups['master'][0] }}"
+...

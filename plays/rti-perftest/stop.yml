@@ -1,11 +1,14 @@
 ---
+# ------------------------------------------------------------------------------
 - name: stop publisher
   hosts: master
   tasks:
     - name: stop publisher
       command: docker rm -f rti-perftest-pub
+# ------------------------------------------------------------------------------
 - name: stop subscribers
   hosts: nodes
   tasks:
     - name: stop subscribers
       command: docker rm -f rti-perftest-sub
+...

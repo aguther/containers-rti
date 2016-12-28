@@ -1,7 +1,0 @@
----
-- include: install.yml
-- name: reset
-  hosts: centos
-  tasks:
-    - name: reset weave
-      command: weave reset --force
