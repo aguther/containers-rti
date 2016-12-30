@@ -1,0 +1,10 @@
+---
+# ------------------------------------------------------------------------------
+- name: stop publisher and subscriber
+  hosts: master
+  tasks:
+    - name: stop publisher
+      command: kubectl delete deployment rti-perftest-pub
+    - name: stop subscriber
+      command: kubectl delete deployment rti-perftest-sub
+...

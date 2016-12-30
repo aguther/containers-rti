@@ -9,6 +9,22 @@
   tasks:
     - name: reset weave
       command: weave reset --force
+    - name: create directory for CNI
+      file:
+        path: /opt/cni/bin
+        state: directory
+        owner: root
+        group: root
+        mode: 0775
+    - name: create directory for CNI
+      file:
+        path: /etc/cni/net.d
+        state: directory
+        owner: root
+        group: root
+        mode: 0775
+    - name: setup weave
+      command: weave setup
     - name: launch weave
       command: weave launch
 # ------------------------------------------------------------------------------
@@ -17,6 +33,22 @@
   tasks:
     - name: reset weave
       command: weave reset --force
+    - name: create directory for CNI
+      file:
+        path: /opt/cni/bin
+        state: directory
+        owner: root
+        group: root
+        mode: 0775
+    - name: create directory for CNI
+      file:
+        path: /etc/cni/net.d
+        state: directory
+        owner: root
+        group: root
+        mode: 0775
+    - name: setup weave
+      command: weave setup
     - name: launch weave
       command: weave launch {{ item }}
       with_items: "{{ groups['master'][0] }}"
