@@ -5,6 +5,6 @@
 - name: disable
   hosts: centos
   tasks:
-    - name: reset scope
-      command: scope reset --force
+    - name: stop scope
+      command: scope stop
 ...

@@ -7,8 +7,6 @@
 - name: enable master
   hosts: centos
   tasks:
-    - name: reset scope
-      command: scope reset --force
     - name: launch scope
       command: scope launch
 ...
