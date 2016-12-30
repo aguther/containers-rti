@@ -18,13 +18,6 @@ There are some preparations that need to be done in order to get everything work
 Ansible is used to deploy the necessary environment and services to run this example. Therefore it must be installed on the deploying node. This can be achieved on CentOS by executing:
 sudo yum install -y ansible
 
-## Strict Host Checking
-Disable strict host checking for SSH if you want to use passwords with ansible.
-
-Therefore you need to create a file ~/.ssh/config with the following content:
-Host *
-    StrictHostKeyChecking no
-
 # Docker
 The example with rti-perftest can be executed by entering the following command:
 ansible-playbook -i demo plays/rti-perftest/start.yml
