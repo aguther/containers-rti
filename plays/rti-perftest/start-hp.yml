@@ -7,12 +7,12 @@
   hosts: master
   tasks:
     - name: start publisher
-      command: "docker run --detach=true --net=weave --name rti-perftest-pub guther/rti-perftest -pub -numSubscribers {{ groups['nodes'] | length }} -sleep 1000"
+      command: "docker run --detach=true --net=weave --name rti-perftest-pub guther/rti-perftest -pub -numSubscribers {{ groups['nodes'] | length }} -dataLen 1024 -numIter 10000000 -latencyCount 1000 -noPrintIntervals -enableTurboMode"
 
 # ------------------------------------------------------------------------------
 - name: run subscribers
   hosts: nodes
   tasks:
     - name: start subscriber
-      command: docker run --detach=true --net=weave --name rti-perftest-sub guther/rti-perftest -sub
+      command: docker run --detach=true --net=weave --name rti-perftest-sub guther/rti-perftest -sub -noPrintIntervals
 ...

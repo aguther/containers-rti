@@ -10,6 +10,6 @@
 - name: stop subscribers
   hosts: nodes
   tasks:
-    - name: stop subscribers
+    - name: stop subscriber
       command: docker rm -f rti-perftest-sub
 ...

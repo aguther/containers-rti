@@ -1,0 +1,21 @@
+---
+# ------------------------------------------------------------------------------
+- name: log of publisher
+  hosts: master
+  tasks:
+    - name: log of publisher
+      command: docker logs --tail 5 rti-perftest-pub
+      register: docker_log_publisher
+
+    - debug: msg="{{ docker_log_publisher.stdout }}"
+
+# ------------------------------------------------------------------------------
+- name: log of subscribers
+  hosts: nodes
+  tasks:
+    - name: log of subscriber
+      command: docker logs --tail 5 rti-perftest-sub
+      register: docker_log_subscriber
+
+    - debug: msg="{{ docker_log_subscriber.stdout }}"
+...

@@ -12,6 +12,10 @@
       register: docker_command
       failed_when: docker_command.rc != 0
 
+    - name: weave status
+      command: weave status
+      register: weave_status
+
     - name: create directory for CNI
       file:
         path: /opt/cni/bin
@@ -19,6 +23,7 @@
         owner: root
         group: root
         mode: 0775
+      when: weave_status.rc != 0
 
     - name: create directory for CNI
       file:
@@ -30,9 +35,11 @@
 
     - name: setup weave
       command: weave setup
+      when: weave_status.rc != 0
 
     - name: launch weave
       command: weave launch
+      when: weave_status.rc != 0
 
 # ------------------------------------------------------------------------------
 - name: enable nodes
@@ -43,6 +50,10 @@
       register: docker_command
       failed_when: docker_command.rc != 0
 
+    - name: weave status
+      command: weave status
+      register: weave_status
+
     - name: create directory for CNI
       file:
         path: /opt/cni/bin
@@ -50,6 +61,7 @@
         owner: root
         group: root
         mode: 0775
+      when: weave_status.rc != 0
 
     - name: create directory for CNI
       file:
@@ -58,11 +70,14 @@
         owner: root
         group: root
         mode: 0775
+      when: weave_status.rc != 0
 
     - name: setup weave
       command: weave setup
+      when: weave_status.rc != 0
 
     - name: launch weave
       command: weave launch {{ item }}
       with_items: "{{ groups['master'][0] }}"
+      when: weave_status.rc != 0
 ...
