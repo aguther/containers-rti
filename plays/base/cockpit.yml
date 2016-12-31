@@ -3,19 +3,24 @@
 - name: cockpit
   hosts: centos
   tasks:
+    # --------------------------------------------------------------------------
     - name: install cockpit
       yum:
         name: cockpit
         state: latest
+
     - name: ensure cockpit is enabled and running
       service:
         name: cockpit.socket
         state: running
         enabled: yes
+
+    # --------------------------------------------------------------------------
     - name: check firewalld status
       command: systemctl status firewalld
       register: service_firewalld_status
       failed_when: "service_firewalld_status.rc > 3"
+
     - name: add cockpit to firewall rules
       firewalld:
         service: cockpit

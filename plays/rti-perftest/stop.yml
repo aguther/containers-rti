@@ -5,6 +5,7 @@
   tasks:
     - name: stop publisher
       command: docker rm -f rti-perftest-pub
+
 # ------------------------------------------------------------------------------
 - name: stop subscribers
   hosts: nodes

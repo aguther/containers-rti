@@ -5,6 +5,7 @@
   tasks:
     - name: start publisher
       command: kubectl run rti-perftest-pub --image=guther/rti-perftest -- -pub -sleep 1000
+
     - name: start subscriber
       command: kubectl run rti-perftest-sub --image=guther/rti-perftest -- -sub
 ...

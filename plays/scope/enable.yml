@@ -3,6 +3,7 @@
 - include: ../base/disable-firewall.yml
 - include: ../docker/deploy.yml
 - include: install.yml
+
 # ------------------------------------------------------------------------------
 - name: enable master
   hosts: centos

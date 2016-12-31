@@ -1,14 +1,17 @@
 ---
 # ------------------------------------------------------------------------------
 - include: ../base/disable-firewall.yml
-- include: ../docker/deploy.yml
 - include: install.yml
+
 # ------------------------------------------------------------------------------
 - name: enable master
   hosts: master
   tasks:
-    - name: reset weave
-      command: weave reset --force
+    - name: ensure docker is available
+      command: which docker
+      register: docker_command
+      failed_when: docker_command.rc != 0
+
     - name: create directory for CNI
       file:
         path: /opt/cni/bin
@@ -16,6 +19,7 @@
         owner: root
         group: root
         mode: 0775
+
     - name: create directory for CNI
       file:
         path: /etc/cni/net.d
@@ -23,16 +27,22 @@
         owner: root
         group: root
         mode: 0775
+
     - name: setup weave
       command: weave setup
+
     - name: launch weave
       command: weave launch
+
 # ------------------------------------------------------------------------------
 - name: enable nodes
   hosts: nodes
   tasks:
-    - name: reset weave
-      command: weave reset --force
+    - name: ensure docker is available
+      command: which docker
+      register: docker_command
+      failed_when: docker_command.rc != 0
+
     - name: create directory for CNI
       file:
         path: /opt/cni/bin
@@ -40,6 +50,7 @@
         owner: root
         group: root
         mode: 0775
+
     - name: create directory for CNI
       file:
         path: /etc/cni/net.d
@@ -47,8 +58,10 @@
         owner: root
         group: root
         mode: 0775
+
     - name: setup weave
       command: weave setup
+
     - name: launch weave
       command: weave launch {{ item }}
       with_items: "{{ groups['master'][0] }}"

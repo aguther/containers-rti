@@ -5,6 +5,7 @@
   tasks:
     - name: download weave
       command: curl -L git.io/weave -o /usr/local/bin/weave creates=/usr/local/bin/weave
+
     - name: allow execution of weave
       file:
         path: /usr/local/bin/weave

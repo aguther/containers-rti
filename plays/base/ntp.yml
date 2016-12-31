@@ -7,6 +7,7 @@
       yum:
         name: ntp
         state: latest
+
     - name: ensure ntp is enabled and running
       service:
         name: ntpd.service
