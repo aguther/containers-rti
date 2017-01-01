@@ -1,0 +1,8 @@
+---
+# ------------------------------------------------------------------------------
+- name: disable SELinux
+  hosts: centos
+  tasks:
+    - name: disable
+      command: setenforce 0
+...

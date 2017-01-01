@@ -2,19 +2,21 @@
 # ------------------------------------------------------------------------------
 - include: ../base/ntp.yml
 - include: ../base/disable-firewall.yml
-- include: ../weave/enable.yml
+- include: ../base/disable-selinux.yml
+#- include: ../weave/enable.yml
 
 # ------------------------------------------------------------------------------
 - name: deploy master
   hosts: master
   tasks:
     # --------------------------------------------------------------------------
-    - name: install etcd
+    - name: install packages
       yum:
         name: "{{ item }}"
         state: latest
       with_items:
         - etcd
+        - flannel
         - kubernetes
 
     # --------------------------------------------------------------------------
@@ -22,9 +24,24 @@
       command: "sed -i 's/\\(ETCD_LISTEN_CLIENT_URLS=\"\\).*\\(\"\\)/\\1{{ item }}\\2/g' /etc/etcd/etcd.conf"
       with_items: "http:\\/\\/0.0.0.0:2379"
 
+    - name: set ETCD_ADVERTISE_CLIENT_URLS
+      command: "sed -i 's/\\(ETCD_ADVERTISE_CLIENT_URLS=\"\\).*\\(\"\\)/\\1{{ item }}\\2/g' /etc/etcd/etcd.conf"
+      with_items: "http:\\/\\/0.0.0.0:2379"
+
+    # --------------------------------------------------------------------------
+    - name: set FLANNEL_ETCD_ENDPOINTS
+      command: "sed -i 's/\\(FLANNEL_ETCD_ENDPOINTS=\"\\).*\\(\"\\)/\\1{{ item }}\\2/g' /etc/sysconfig/flanneld"
+      with_items: "http:\\/\\/{{ groups['master'][0] }}:2379"
+
+    # --------------------------------------------------------------------------
     - name: set KUBE_API_ADDRESS
       command: "sed -i 's/\\(KUBE_API_ADDRESS=\"--insecure-bind-address=\\).*\\(\"\\)/\\1{{ item }}\\2/g' /etc/kubernetes/apiserver"
       with_items: "0.0.0.0"
+
+    # --------------------------------------------------------------------------
+    - name: set KUBE_MASTER
+      command: "sed -i 's/\\(KUBE_MASTER=\"--master=\\).*\\(\"\\)/\\1{{ item }}\\2/g' /etc/kubernetes/config"
+      with_items: "http:\\/\\/{{ groups['master'][0] }}:8080"
 
     # --------------------------------------------------------------------------
     - name: ensure services are enabled and running
@@ -37,6 +54,7 @@
         - kube-apiserver.service
         - kube-controller-manager.service
         - kube-scheduler.service
+        - flanneld.service
 
     # --------------------------------------------------------------------------
     - name: check for network definition
@@ -45,7 +63,7 @@
       ignore_errors: yes
 
     - name: setup network in etcd
-      command: etcdctl mk /atomic.io/network/config '{"Network":"172.17.0.0/16"}'
+      command: etcdctl mk /atomic.io/network/config '{ "Network" : "172.17.0.0/16" }'
       when: etcd_network_config.stderr.find('Key not found') != -1
 
     # --------------------------------------------------------------------------
@@ -72,7 +90,7 @@
   hosts: nodes
   tasks:
     # --------------------------------------------------------------------------
-    - name: install flannel
+    - name: install packages
       yum:
         name: "{{ item }}"
         state: latest
@@ -85,10 +103,12 @@
       command: "sed -i 's/\\(FLANNEL_ETCD_ENDPOINTS=\"\\).*\\(\"\\)/\\1{{ item }}\\2/g' /etc/sysconfig/flanneld"
       with_items: "http:\\/\\/{{ groups['master'][0] }}:2379"
 
+    # --------------------------------------------------------------------------
     - name: set KUBE_MASTER
       command: "sed -i 's/\\(KUBE_MASTER=\"--master=\\).*\\(\"\\)/\\1{{ item }}\\2/g' /etc/kubernetes/config"
       with_items: "http:\\/\\/{{ groups['master'][0] }}:8080"
 
+    # --------------------------------------------------------------------------
     - name: set KUBELET_ADDRESS
       command: "sed -i 's/\\(KUBELET_ADDRESS=\"--address=\\).*\\(\"\\)/\\1{{ item }}\\2/g' /etc/kubernetes/kubelet"
       with_items: "0.0.0.0"
@@ -101,9 +121,9 @@
       command: "sed -i 's/\\(KUBELET_API_SERVER=\"--api-servers=\\).*\\(\"\\)/\\1{{ item }}\\2/g' /etc/kubernetes/kubelet"
       with_items: "http:\\/\\/{{ groups['master'][0] }}:8080"
 
-    - name: set KUBELET_ARGS
-      command: "sed -i 's/\\(KUBELET_ARGS=\"\\).*\\(\"\\)/\\1{{ item }}\\2/g' /etc/kubernetes/kubelet"
-      with_items: " --network-plugin=cni --network-plugin-dir=\\/etc\\/cni\\/net.d"
+    #- name: set KUBELET_ARGS
+    #  command: "sed -i 's/\\(KUBELET_ARGS=\"\\).*\\(\"\\)/\\1{{ item }}\\2/g' /etc/kubernetes/kubelet"
+    #  with_items: " --network-plugin=cni --network-plugin-dir=\\/etc\\/cni\\/net.d"
 
     # --------------------------------------------------------------------------
     - name: ensure services are enabled and running
