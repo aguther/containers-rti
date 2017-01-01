@@ -15,6 +15,7 @@
     - name: weave status
       command: weave status
       register: weave_status
+      ignore_errors: yes
 
     - name: create directory for CNI
       file:
@@ -53,6 +54,7 @@
     - name: weave status
       command: weave status
       register: weave_status
+      ignore_errors: yes
 
     - name: create directory for CNI
       file:

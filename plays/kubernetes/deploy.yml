@@ -3,7 +3,6 @@
 - include: ../base/ntp.yml
 - include: ../base/disable-firewall.yml
 - include: ../base/disable-selinux.yml
-- include: ../weave/enable.yml
 
 # ------------------------------------------------------------------------------
 - name: deploy master
@@ -132,10 +131,6 @@
       command: "sed -i 's/\\(KUBELET_API_SERVER=\"--api-servers=\\).*\\(\"\\)/\\1{{ item }}\\2/g' /etc/kubernetes/kubelet"
       with_items: "http:\\/\\/{{ groups['master'][0] }}:8080"
 
-    - name: set KUBELET_ARGS
-      command: "sed -i 's/\\(KUBELET_ARGS=\"\\).*\\(\"\\)/\\1{{ item }}\\2/g' /etc/kubernetes/kubelet"
-      with_items: " --network-plugin=cni --network-plugin-dir=\\/etc\\/cni\\/net.d"
-
     # --------------------------------------------------------------------------
     - name: ensure services are enabled and running
       service:
@@ -152,4 +147,25 @@
       service:
         name: docker.service
         state: restarted
+
+# ------------------------------------------------------------------------------
+- include: ../weave/enable.yml
+
+# ------------------------------------------------------------------------------
+- name: deploy nodes
+  hosts: nodes
+  tasks:
+    # --------------------------------------------------------------------------
+    - name: set KUBELET_ARGS
+      command: "sed -i 's/\\(KUBELET_ARGS=\"\\).*\\(\"\\)/\\1{{ item }}\\2/g' /etc/kubernetes/kubelet"
+      with_items: " --network-plugin=cni --network-plugin-dir=\\/etc\\/cni\\/net.d"
+
+    # --------------------------------------------------------------------------
+    - name: restart kubelet service
+      service:
+        name: "{{ item }}"
+        state: restarted
+        enabled: yes
+      with_items:
+        - kubelet.service
 ...
