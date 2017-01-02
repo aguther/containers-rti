@@ -3,40 +3,38 @@
 - name: run publisher and subscriber
   hosts: master
   tasks:
-    - name: check for namespace
+    - name: "namespace: check status"
       command: kubectl get namespace rti-perftest
       register: check_namespace_rti_perftest
       failed_when: check_namespace_rti_perftest.rc > 1
 
-    - name: create namespace
+    - name: "namespace: create"
       command: kubectl create namespace rti-perftest
       when: check_namespace_rti_perftest.rc == 1
 
-    - name: create pod definitions for publishers
+    - name: "publishers: create definition file"
       template:
         src: rti-perftest-pub.yml.j2
-        dest: "/tmp/rti-perftest-pub-{{ item | to_uuid }}.yml"
-      with_items: "{{ groups['master'] }}"
+        dest: "/tmp/rti-perftest-pub.yml"
 
-    - name: start publishers
-      command: "kubectl apply -f /tmp/rti-perftest-pub-{{ item | to_uuid }}.yml --namespace rti-perftest"
-      with_items: "{{ groups['master'] }}"
+    - name: "publishers: apply definition file"
+      command: "kubectl apply -f /tmp/rti-perftest-pub.yml --namespace rti-perftest"
 
-    - name: delete pod definitions
-      command: "rm -f /tmp/rti-perftest-pub-{{ item | to_uuid }}.yml"
-      with_items: "{{ groups['master'] }}"
+    - name: "publishers: delete definition file"
+      file:
+        path: /tmp/rti-perftest-pub.yml
+        state: absent
 
-    - name: create pod definitions for subscribers
+    - name: "subscribers: create definition file"
       template:
         src: rti-perftest-sub.yml.j2
-        dest: "/tmp/rti-perftest-sub-{{ item | to_uuid }}.yml"
-      with_items: "{{ groups['nodes'] }}"
+        dest: "/tmp/rti-perftest-sub.yml"
 
-    - name: start subscribers
-      command: "kubectl apply -f /tmp/rti-perftest-sub-{{ item | to_uuid }}.yml --namespace rti-perftest"
-      with_items: "{{ groups['nodes'] }}"
+    - name: "subscribers: apply definition file"
+      command: "kubectl apply -f /tmp/rti-perftest-sub.yml --namespace rti-perftest"
 
-    - name: delete pod definitions
-      command: "rm -f /tmp/rti-perftest-sub-{{ item | to_uuid }}.yml"
-      with_items: "{{ groups['nodes'] }}"
+    - name: "subscribers: delete definition file"
+      file:
+        path: /tmp/rti-perftest-sub.yml
+        state: absent
 ...

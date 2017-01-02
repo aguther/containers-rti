@@ -3,20 +3,18 @@
 - name: stop publisher and subscriber
   hosts: master
   tasks:
-    - name: stop publishers
-      command: "kubectl delete pod rti-perftest-pub-{{ item | to_uuid }} --namespace rti-perftest"
-      with_items: "{{ groups['master'] }}"
+    - name: "publishers: delete deployment"
+      command: "kubectl delete deployment rti-perftest-pub --namespace rti-perftest"
 
-    - name: stop subscribers
-      command: "kubectl delete pod rti-perftest-sub-{{ item | to_uuid }} --namespace rti-perftest"
-      with_items: "{{ groups['nodes'] }}"
+    - name: "subscribers: delete deployment"
+      command: "kubectl delete deployment rti-perftest-sub --namespace rti-perftest"
 
-    - name: check for namespace
+    - name: "namespace: check status"
       command: kubectl get namespace rti-perftest
       register: check_namespace_rti_perftest
       failed_when: check_namespace_rti_perftest.rc > 1
 
-    - name: delete namespace
+    - name: "namespace: delete"
       command: kubectl delete namespace rti-perftest
       when: check_namespace_rti_perftest.rc == 0
 ...
