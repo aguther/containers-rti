@@ -4,11 +4,11 @@
   hosts: master
   tasks:
     - name: stop publishers
-      command: "kubectl delete pod rti-perftest-pub-{{ item | to_uuid }}"
+      command: "kubectl delete pod rti-perftest-pub-{{ item | to_uuid }} --namespace rti-perftest"
       with_items: "{{ groups['master'] }}"
 
     - name: stop subscribers
-      command: "kubectl delete pod rti-perftest-sub-{{ item | to_uuid }}.yml"
+      command: "kubectl delete pod rti-perftest-sub-{{ item | to_uuid }} --namespace rti-perftest"
       with_items: "{{ groups['nodes'] }}"
 
     - name: check for namespace

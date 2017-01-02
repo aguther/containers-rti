@@ -19,7 +19,7 @@
       with_items: "{{ groups['master'] }}"
 
     - name: start publishers
-      command: "kubectl apply -f /tmp/rti-perftest-pub-{{ item | to_uuid }}.yml"
+      command: "kubectl apply -f /tmp/rti-perftest-pub-{{ item | to_uuid }}.yml --namespace rti-perftest"
       with_items: "{{ groups['master'] }}"
 
     - name: delete pod definitions
@@ -33,7 +33,7 @@
       with_items: "{{ groups['nodes'] }}"
 
     - name: start subscribers
-      command: "kubectl apply -f /tmp/rti-perftest-sub-{{ item | to_uuid }}.yml"
+      command: "kubectl apply -f /tmp/rti-perftest-sub-{{ item | to_uuid }}.yml --namespace rti-perftest"
       with_items: "{{ groups['nodes'] }}"
 
     - name: delete pod definitions
