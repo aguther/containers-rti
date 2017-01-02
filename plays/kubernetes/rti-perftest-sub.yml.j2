@@ -2,24 +2,24 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: rti-perftest-sub
+  name: rti-perftest-sub-{{ item | to_uuid }}
 spec:
   containers:
-    - name: rti-perftest-sub
+    - name: rti-perftest-sub-{{ item | to_uuid }}
       image: guther/rti-perftest
       args:
         - "-sub"
       ports:
         - containerPort: 7400
           protocol: "udp"
-          name: "rtps2-disc-m"
+          name: "rtps2-disc-mult"
         - containerPort: 7401
           protocol: "udp"
-          name: "rtps2-disc-u"
+          name: "rtps2-disc-uni"
         - containerPort: 7410
           protocol: "udp"
-          name: "rtps2-data-m"
+          name: "rtps2-data-mult"
         - containerPort: 7411
           protocol: "udp"
-          name: "rtps2-data-u"
+          name: "rtps2-data-uni"
 ...

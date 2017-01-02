@@ -12,9 +12,31 @@
       command: kubectl create namespace rti-perftest
       when: check_namespace_rti_perftest.rc == 1
 
-    - name: start publisher
-      command: "kubectl run rti-perftest-pub --namespace rti-perftest --image=guther/rti-perftest -- -pub -dataLen 1024 -sleep 1 -enableTurboMode -numSubscribers {{ groups['nodes'] | length }}"
+    - name: create pod definitions for publishers
+      template:
+        src: rti-perftest-pub.yml.j2
+        dest: "/tmp/rti-perftest-pub-{{ item | to_uuid }}.yml"
+      with_items: "{{ groups['master'] }}"
 
-    - name: start subscriber
-      command: "kubectl run rti-perftest-sub --namespace rti-perftest --image=guther/rti-perftest --replicas={{ groups['nodes'] | length }} -- -sub"
+    - name: start publishers
+      command: "kubectl apply -f /tmp/rti-perftest-pub-{{ item | to_uuid }}.yml"
+      with_items: "{{ groups['master'] }}"
+
+    - name: delete pod definitions
+      command: "rm -f /tmp/rti-perftest-pub-{{ item | to_uuid }}.yml"
+      with_items: "{{ groups['master'] }}"
+
+    - name: create pod definitions for subscribers
+      template:
+        src: rti-perftest-sub.yml.j2
+        dest: "/tmp/rti-perftest-sub-{{ item | to_uuid }}.yml"
+      with_items: "{{ groups['nodes'] }}"
+
+    - name: start subscribers
+      command: "kubectl apply -f /tmp/rti-perftest-sub-{{ item | to_uuid }}.yml"
+      with_items: "{{ groups['nodes'] }}"
+
+    - name: delete pod definitions
+      command: "rm -f /tmp/rti-perftest-sub-{{ item | to_uuid }}.yml"
+      with_items: "{{ groups['nodes'] }}"
 ...

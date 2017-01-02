@@ -2,31 +2,31 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: rti-perftest-pub
+  name: rti-perftest-pub-{{ item | to_uuid }}
 spec:
   containers:
-    - name: rti-perftest-pub
+    - name: rti-perftest-pub-{{ item | to_uuid }}
       image: guther/rti-perftest
       args:
         - "-pub"
+        - "-enableTurboMode"
         - "-dataLen"
         - "1024"
         - "-sleep"
         - "1"
-        - "-enableTurboMode"
-        #- "-numSubscribers"
-        #- "{{ groups['nodes'] | length }}"
+        - "-numSubscribers"
+        - "{{ groups['nodes'] | length }}"
       ports:
         - containerPort: 7400
           protocol: "udp"
-          name: "rtps2-disc-m"
+          name: "rtps2-disc-mult"
         - containerPort: 7401
           protocol: "udp"
-          name: "rtps2-disc-u"
+          name: "rtps2-disc-uni"
         - containerPort: 7410
           protocol: "udp"
-          name: "rtps2-data-m"
+          name: "rtps2-data-mult"
         - containerPort: 7411
           protocol: "udp"
-          name: "rtps2-data-u"
+          name: "rtps2-data-uni"
 ...
