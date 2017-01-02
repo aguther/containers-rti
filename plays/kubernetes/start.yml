@@ -3,9 +3,18 @@
 - name: run publisher and subscriber
   hosts: master
   tasks:
+    - name: check for namespace
+      command: kubectl get namespace rti-perftest
+      register: check_namespace_rti_perftest
+      failed_when: check_namespace_rti_perftest.rc > 1
+
+    - name: create namespace
+      command: kubectl create namespace rti-perftest
+      when: check_namespace_rti_perftest.rc == 1
+
     - name: start publisher
-      command: kubectl run rti-perftest-pub --image=guther/rti-perftest -- -pub -sleep 1000
+      command: "kubectl run rti-perftest-pub --namespace rti-perftest --image=guther/rti-perftest -- -pub -dataLen 1024 -sleep 1 -enableTurboMode -numSubscribers {{ groups['nodes'] | length }}"
 
     - name: start subscriber
-      command: kubectl run rti-perftest-sub --image=guther/rti-perftest -- -sub
+      command: "kubectl run rti-perftest-sub --namespace rti-perftest --image=guther/rti-perftest --replicas={{ groups['nodes'] | length }} -- -sub"
 ...

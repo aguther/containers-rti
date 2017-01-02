@@ -4,8 +4,17 @@
   hosts: master
   tasks:
     - name: stop publisher
-      command: kubectl delete deployment rti-perftest-pub
+      command: kubectl delete deployment rti-perftest-pub --namespace rti-perftest
 
     - name: stop subscriber
-      command: kubectl delete deployment rti-perftest-sub
+      command: kubectl delete deployment rti-perftest-sub --namespace rti-perftest
+
+    - name: check for namespace
+      command: kubectl get namespace rti-perftest
+      register: check_namespace_rti_perftest
+      failed_when: check_namespace_rti_perftest.rc > 1
+
+    - name: delete namespace
+      command: kubectl delete namespace rti-perftest
+      when: check_namespace_rti_perftest.rc == 0
 ...
