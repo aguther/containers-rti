@@ -1,6 +1,5 @@
 ---
 # ------------------------------------------------------------------------------
-- hosts: master
-  roles:
-    - rti-perftest-kubernetes/stop
+- name: stop
+  command: docker rm -f rti-perftest-pub
 ...

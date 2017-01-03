@@ -1,0 +1,37 @@
+---
+# ------------------------------------------------------------------------------
+- name: "namespace : check status"
+  command: kubectl get namespace rti-perftest
+  register: check_namespace_rti_perftest
+  failed_when: check_namespace_rti_perftest.rc > 1
+
+- name: "namespace : create"
+  command: kubectl create namespace rti-perftest
+  when: check_namespace_rti_perftest.rc == 1
+
+- name: "publishers : create definition file"
+  template:
+    src: rti-perftest-pub.yml.j2
+    dest: "/tmp/rti-perftest-pub.yml"
+
+- name: "publishers : apply definition file"
+  command: "kubectl apply -f /tmp/rti-perftest-pub.yml --namespace rti-perftest"
+
+- name: "publishers : delete definition file"
+  file:
+    path: /tmp/rti-perftest-pub.yml
+    state: absent
+
+- name: "subscribers : create definition file"
+  template:
+    src: rti-perftest-sub.yml.j2
+    dest: "/tmp/rti-perftest-sub.yml"
+
+- name: "subscribers : apply definition file"
+  command: "kubectl apply -f /tmp/rti-perftest-sub.yml --namespace rti-perftest"
+
+- name: "subscribers : delete definition file"
+  file:
+    path: /tmp/rti-perftest-sub.yml
+    state: absent
+...

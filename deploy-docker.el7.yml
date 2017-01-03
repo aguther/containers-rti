@@ -6,6 +6,6 @@
     - disable-firewall
     - ntp
     - docker.el7
-    - cockpit
     - weave-docker
+    - cockpit
 ...
