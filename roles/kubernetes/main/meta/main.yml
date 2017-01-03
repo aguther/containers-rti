@@ -1,7 +1,7 @@
 ---
 dependencies:
-  - { role: weave/docker/remove }
   - { role: kubernetes/el7/remove }
   - { role: etcd/remove }
   - { role: docker/main }
+  - { role: weave/docker }
 ...

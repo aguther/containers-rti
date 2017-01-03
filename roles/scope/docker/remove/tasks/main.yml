@@ -1,16 +1,17 @@
 ---
 # ------------------------------------------------------------------------------
+- name: check for binary
+  stat:
+    path: /usr/local/bin/scope
+  register: scope_binary
+
+# ------------------------------------------------------------------------------
 - name: check for docker
   command: which docker
   register: docker_command
   failed_when: docker_command.rc != 0
   changed_when: false
-
-# ------------------------------------------------------------------------------
-- name: check for binary
-  stat:
-    path: /usr/local/bin/scope
-  register: scope_binary
+  when: scope_binary.stat.exists == true
 
 # ------------------------------------------------------------------------------
 - name: stop scope
