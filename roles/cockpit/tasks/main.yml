@@ -2,8 +2,11 @@
 # ------------------------------------------------------------------------------
 - name: install
   yum:
-    name: cockpit
+    name: "{{ item }}"
     state: latest
+  with_items:
+    - cockpit
+    - cockpit-kubernetes
 
 - name: enable and start
   service:

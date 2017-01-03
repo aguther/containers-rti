@@ -1,0 +1,6 @@
+---
+#dependencies:
+#  - { role: common, some_parameter: 3 }
+#  - { role: apache, apache_port: 80 }
+#  - { role: postgres, dbname: blarg, other_parameter: 12 }
+...

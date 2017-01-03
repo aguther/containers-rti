@@ -1,0 +1,36 @@
+---
+# ------------------------------------------------------------------------------
+- name: install packages
+  yum:
+    name: kubernetes
+    state: latest
+
+# ------------------------------------------------------------------------------
+- name: set KUBE_MASTER
+  command: "sed -i 's/\\(KUBE_MASTER=\"--master=\\).*\\(\"\\)/\\1{{ item }}\\2/g' /etc/kubernetes/config"
+  with_items: "http:\\/\\/{{ groups['master'][0] }}:8080"
+
+# ------------------------------------------------------------------------------
+- name: set KUBELET_ADDRESS
+  command: "sed -i 's/\\(KUBELET_ADDRESS=\"--address=\\).*\\(\"\\)/\\1{{ item }}\\2/g' /etc/kubernetes/kubelet"
+  with_items: "0.0.0.0"
+
+- name: set KUBELET_HOSTNAME
+  command: "sed -i 's/\\(KUBELET_HOSTNAME=\"--hostname-override=\\).*\\(\"\\)/\\1{{ item }}\\2/g' /etc/kubernetes/kubelet"
+  with_items: "{{ inventory_hostname }}"
+
+- name: set KUBELET_API_SERVER
+  command: "sed -i 's/\\(KUBELET_API_SERVER=\"--api-servers=\\).*\\(\"\\)/\\1{{ item }}\\2/g' /etc/kubernetes/kubelet"
+  with_items: "http:\\/\\/{{ groups['master'][0] }}:8080"
+
+# ------------------------------------------------------------------------------
+- name: enable and start services
+  service:
+    name: "{{ item }}"
+    state: running
+    enabled: yes
+  with_items:
+    - docker.service
+    - kube-proxy.service
+    - kubelet.service
+...

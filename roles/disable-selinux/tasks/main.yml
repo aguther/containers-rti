@@ -1,5 +1,12 @@
 ---
 # ------------------------------------------------------------------------------
+- name: status
+  command: getenforce
+  register: status
+  failed_when: false
+  changed_when: false
+
 - name: disable
   command: setenforce 0
+  when: status.stdout.find('Permissive') == -1
 ...
