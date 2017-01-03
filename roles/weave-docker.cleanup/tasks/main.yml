@@ -1,0 +1,25 @@
+---
+# ------------------------------------------------------------------------------
+- name: check for docker
+  command: which docker
+  register: docker_command
+  failed_when: docker_command.rc != 0
+
+# ------------------------------------------------------------------------------
+- name: check for binary
+  stat:
+    path: /usr/local/bin/weave
+  register: weave_binary
+
+# ------------------------------------------------------------------------------
+- name: reset
+  command: weave reset --force
+  when: weave_binary.stat is defined
+
+# ------------------------------------------------------------------------------
+- name: delete binary
+  file:
+    path: /usr/local/bin/weave
+    state: absent
+  when: weave_binary.stat is defined
+...

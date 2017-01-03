@@ -1,0 +1,166 @@
+---
+# ------------------------------------------------------------------------------
+- name: deploy master
+  hosts: master
+  tasks:
+    # --------------------------------------------------------------------------
+    - name: install packages
+      yum:
+        name: "{{ item }}"
+        state: latest
+      with_items:
+        - etcd
+        - flannel
+        - kubernetes
+
+    # --------------------------------------------------------------------------
+    - name: set ETCD_LISTEN_CLIENT_URLS
+      command: "sed -i 's/\\(ETCD_LISTEN_CLIENT_URLS=\"\\).*\\(\"\\)/\\1{{ item }}\\2/g' /etc/etcd/etcd.conf"
+      with_items: "http:\\/\\/0.0.0.0:2379"
+
+    - name: set ETCD_ADVERTISE_CLIENT_URLS
+      command: "sed -i 's/\\(ETCD_ADVERTISE_CLIENT_URLS=\"\\).*\\(\"\\)/\\1{{ item }}\\2/g' /etc/etcd/etcd.conf"
+      with_items: "http:\\/\\/0.0.0.0:2379"
+
+    # --------------------------------------------------------------------------
+    - name: set FLANNEL_ETCD_ENDPOINTS
+      command: "sed -i 's/\\(FLANNEL_ETCD_ENDPOINTS=\"\\).*\\(\"\\)/\\1{{ item }}\\2/g' /etc/sysconfig/flanneld"
+      with_items: "http:\\/\\/{{ groups['master'][0] }}:2379"
+
+    # --------------------------------------------------------------------------
+    - name: set KUBE_API_ADDRESS
+      command: "sed -i 's/\\(KUBE_API_ADDRESS=\"--insecure-bind-address=\\).*\\(\"\\)/\\1{{ item }}\\2/g' /etc/kubernetes/apiserver"
+      with_items: "0.0.0.0"
+
+    - name: comment out KUBE_ADMISSION_CONTROL
+      command: "sed -i 's/\\(KUBE_ADMISSION_CONTROL=\"\\)\\(.*\\)\\(\"\\)/#\\1\\2\\3/g' /etc/kubernetes/apiserver"
+
+    # --------------------------------------------------------------------------
+    - name: set KUBE_MASTER
+      command: "sed -i 's/\\(KUBE_MASTER=\"--master=\\).*\\(\"\\)/\\1{{ item }}\\2/g' /etc/kubernetes/config"
+      with_items: "http:\\/\\/{{ groups['master'][0] }}:8080"
+
+    # --------------------------------------------------------------------------
+    - name: ensure etcd is enabled and running
+      service:
+        name: "{{ item }}"
+        state: restarted
+        enabled: yes
+      with_items:
+        - etcd.service
+
+    # --------------------------------------------------------------------------
+    - name: check for network definition
+      command: etcdctl get /atomic.io/network/config
+      register: etcd_network_config
+      ignore_errors: yes
+
+    - name: setup network in etcd
+      command: etcdctl mk /atomic.io/network/config '{ "Network":"172.17.0.0/16" }'
+      when: etcd_network_config.stderr.find('Key not found') != -1
+
+    # --------------------------------------------------------------------------
+    - name: ensure services are enabled and running
+      service:
+        name: "{{ item }}"
+        state: restarted
+        enabled: yes
+      with_items:
+        - kube-apiserver.service
+        - kube-controller-manager.service
+        - kube-scheduler.service
+        - flanneld.service
+
+    # --------------------------------------------------------------------------
+    - name: check if cockpit is installed
+      command: rpm -q cockpit
+      register: cockpit_present
+      ignore_errors: yes
+
+    - name: install kubernetes extension for cockpit
+      yum:
+        name: cockpit-kubernetes
+        state: latest
+      when: cockpit_present.rc == 0
+
+    - name: restart cockpit to enable extension
+      service:
+        name: cockpit.socket
+        state: restarted
+        enabled: yes
+      when: cockpit_present.rc == 0
+
+# ------------------------------------------------------------------------------
+- name: deploy nodes
+  hosts: nodes
+  tasks:
+    # --------------------------------------------------------------------------
+    - name: install packages
+      yum:
+        name: "{{ item }}"
+        state: latest
+      with_items:
+        - flannel
+        - kubernetes
+
+    # --------------------------------------------------------------------------
+    - name: set FLANNEL_ETCD_ENDPOINTS
+      command: "sed -i 's/\\(FLANNEL_ETCD_ENDPOINTS=\"\\).*\\(\"\\)/\\1{{ item }}\\2/g' /etc/sysconfig/flanneld"
+      with_items: "http:\\/\\/{{ groups['master'][0] }}:2379"
+
+    # --------------------------------------------------------------------------
+    - name: set KUBE_MASTER
+      command: "sed -i 's/\\(KUBE_MASTER=\"--master=\\).*\\(\"\\)/\\1{{ item }}\\2/g' /etc/kubernetes/config"
+      with_items: "http:\\/\\/{{ groups['master'][0] }}:8080"
+
+    # --------------------------------------------------------------------------
+    - name: set KUBELET_ADDRESS
+      command: "sed -i 's/\\(KUBELET_ADDRESS=\"--address=\\).*\\(\"\\)/\\1{{ item }}\\2/g' /etc/kubernetes/kubelet"
+      with_items: "0.0.0.0"
+
+    - name: set KUBELET_HOSTNAME
+      command: "sed -i 's/\\(KUBELET_HOSTNAME=\"--hostname-override=\\).*\\(\"\\)/\\1{{ item }}\\2/g' /etc/kubernetes/kubelet"
+      with_items: "{{ inventory_hostname }}"
+
+    - name: set KUBELET_API_SERVER
+      command: "sed -i 's/\\(KUBELET_API_SERVER=\"--api-servers=\\).*\\(\"\\)/\\1{{ item }}\\2/g' /etc/kubernetes/kubelet"
+      with_items: "http:\\/\\/{{ groups['master'][0] }}:8080"
+
+    # --------------------------------------------------------------------------
+    - name: ensure services are enabled and running
+      service:
+        name: "{{ item }}"
+        state: restarted
+        enabled: yes
+      with_items:
+        - kube-proxy.service
+        - kubelet.service
+        - flanneld.service
+
+    # --------------------------------------------------------------------------
+    - name: restart docker daemon
+      service:
+        name: docker.service
+        state: restarted
+
+# ------------------------------------------------------------------------------
+- include: ../weave/enable.yml
+
+# ------------------------------------------------------------------------------
+- name: deploy nodes
+  hosts: nodes
+  tasks:
+    # --------------------------------------------------------------------------
+    - name: set KUBELET_ARGS
+      command: "sed -i 's/\\(KUBELET_ARGS=\"\\).*\\(\"\\)/\\1{{ item }}\\2/g' /etc/kubernetes/kubelet"
+      with_items: " --network-plugin=cni --network-plugin-dir=\\/etc\\/cni\\/net.d"
+
+    # --------------------------------------------------------------------------
+    - name: restart kubelet service
+      service:
+        name: "{{ item }}"
+        state: restarted
+        enabled: yes
+      with_items:
+        - kubelet.service
+...
