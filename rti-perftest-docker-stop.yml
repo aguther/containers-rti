@@ -2,9 +2,9 @@
 # ------------------------------------------------------------------------------
 - hosts: master
   roles:
-    - rti-perftest-docker/stop-publisher
+    - rti-perftest/docker/stop/publisher
 # ------------------------------------------------------------------------------
 - hosts: nodes
   roles:
-    - rti-perftest-docker/stop-subscriber
+    - rti-perftest/docker/stop/subscriber
 ...

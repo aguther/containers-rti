@@ -9,13 +9,13 @@
 # ------------------------------------------------------------------------------
 - hosts: master
   roles:
-    - kubernetes.el7.master
+    - kubernetes/el7/master
 
 # ------------------------------------------------------------------------------
 - hosts: nodes
   roles:
-    - kubernetes.el7.node
-    - weave-kubernetes.el7
+    - kubernetes/el7/node
+    - weave/kubernetes/el7
 
 # ------------------------------------------------------------------------------
 - hosts: centos

@@ -5,7 +5,7 @@
     - disable-selinux
     - disable-firewall
     - ntp
-    - docker.el7
-    - weave-docker
+    - docker/el7
+    - weave/docker
     - cockpit
 ...

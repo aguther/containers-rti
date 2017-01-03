@@ -1,0 +1,7 @@
+---
+dependencies:
+  - { role: docker/el7 }
+  - { role: etcd }
+  - { role: etcd-network-config }
+  - { role: flannel }
+...

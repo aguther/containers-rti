@@ -1,4 +1,0 @@
----
-dependencies:
-  - { role: etcd.el7.network }
-...

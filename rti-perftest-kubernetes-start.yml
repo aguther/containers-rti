@@ -2,5 +2,5 @@
 # ------------------------------------------------------------------------------
 - hosts: master
   roles:
-    - rti-perftest-kubernetes/start
+    - rti-perftest/kubernetes/start
 ...
