@@ -14,13 +14,13 @@
 
 - name: download binary
   command: curl -L git.io/weave -o /usr/local/bin/weave creates=/usr/local/bin/weave
-  when: weave_binary.stat is not defined
+  when: weave_binary.stat.exists == false
 
 - name: allow execution of binary
   file:
     path: /usr/local/bin/weave
     mode: "a+x"
-  when: weave_binary.stat is not defined
+  when: weave_binary.stat.exists == false
 
 # ------------------------------------------------------------------------------
 - name: status

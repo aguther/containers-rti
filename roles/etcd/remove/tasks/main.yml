@@ -1,0 +1,16 @@
+---
+# ------------------------------------------------------------------------------
+- name: remove packages
+  yum:
+    name: "{{ item }}"
+    state: removed
+  with_items:
+    - etcd
+
+- name: remove directories
+  file:
+    path: "{{ item }}"
+    state: absent
+  with_items:
+    - /var/lib/etcd
+...

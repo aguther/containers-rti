@@ -14,12 +14,12 @@
 # ------------------------------------------------------------------------------
 - name: reset
   command: weave reset --force
-  when: weave_binary.stat is defined
+  when: weave_binary.stat.exists == true
 
 # ------------------------------------------------------------------------------
 - name: delete binary
   file:
     path: /usr/local/bin/weave
     state: absent
-  when: weave_binary.stat is defined
+  when: weave_binary.stat.exists == true
 ...

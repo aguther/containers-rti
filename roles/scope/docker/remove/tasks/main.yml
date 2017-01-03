@@ -15,12 +15,12 @@
 # ------------------------------------------------------------------------------
 - name: stop scope
   command: scope stop
-  when: scope_binary.stat is defined
+  when: scope_binary.stat.exists == true
 
 # ------------------------------------------------------------------------------
 - name: delete binary
   file:
     path: /usr/local/bin/scope
     state: absent
-  when: scope_binary.stat is defined
+  when: scope_binary.stat.exists == true
 ...

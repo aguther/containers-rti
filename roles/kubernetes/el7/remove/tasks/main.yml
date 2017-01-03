@@ -1,0 +1,9 @@
+---
+- name: remove packages
+  yum:
+    name:
+      - kubernetes
+      - kubernetes-master
+      - kubernetes-client
+    state: removed
+...
