@@ -1,10 +1,10 @@
 ---
 # ------------------------------------------------------------------------------
 - name: "publishers : delete"
-  command: "kubectl delete replicationcontroller rti-perftest-pub --namespace rti-perftest"
+  command: "kubectl delete deployment rti-perftest-pub --namespace rti-perftest"
 
 - name: "subscribers : delete"
-  command: "kubectl delete replicationcontroller rti-perftest-sub --namespace rti-perftest"
+  command: "kubectl delete deployment rti-perftest-sub --namespace rti-perftest"
 
 - name: "namespace : check status"
   command: kubectl get namespace rti-perftest
