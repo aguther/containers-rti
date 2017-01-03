@@ -4,6 +4,8 @@
   roles:
     - disable-selinux
     - disable-firewall
+    - ntp
+    - docker.el7
     - cockpit
     - weave-docker
 ...

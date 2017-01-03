@@ -15,7 +15,8 @@
 - name: check firewalld status
   command: systemctl status firewalld
   register: service_firewalld_status
-  failed_when: "service_firewalld_status.rc > 3"
+  failed_when: false
+  changed_when: false
 
 - name: add firewall rules
   firewalld:

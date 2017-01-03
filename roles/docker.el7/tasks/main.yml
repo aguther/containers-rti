@@ -2,12 +2,16 @@
 # ------------------------------------------------------------------------------
 - name: install
   yum:
-    name: ntp
+    name: docker
     state: latest
+
+- group:
+    name: docker
+    state: present
 
 - name: enable and start
   service:
-    name: ntpd.service
+    name: docker.service
     state: running
     enabled: yes
 ...
