@@ -1,0 +1,11 @@
+---
+# ------------------------------------------------------------------------------
+- hosts: centos
+  roles:
+    - disable-selinux
+    - disable-firewall
+    - ntp
+    - docker/el7
+    - weave/docker
+    - cockpit
+...

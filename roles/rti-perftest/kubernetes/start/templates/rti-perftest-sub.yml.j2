@@ -1,0 +1,31 @@
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: rti-perftest-sub
+spec:
+  replicas: {{ groups['nodes'] | length }}
+  template:
+    metadata:
+      labels:
+        app: rti-perftest-sub
+    spec:
+      containers:
+        - name: rti-perftest-sub
+          image: guther/rti-perftest
+          args:
+            - "-sub"
+          ports:
+            - containerPort: 7400
+              protocol: "UDP"
+              name: "rtps2-disc-mult"
+            - containerPort: 7401
+              protocol: "UDP"
+              name: "rtps2-disc-uni"
+            - containerPort: 7410
+              protocol: "UDP"
+              name: "rtps2-data-mult"
+            - containerPort: 7411
+              protocol: "UDP"
+              name: "rtps2-data-uni"
+...

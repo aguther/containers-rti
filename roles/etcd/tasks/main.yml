@@ -1,0 +1,23 @@
+---
+# ------------------------------------------------------------------------------
+- name: install
+  yum:
+    name: etcd
+    state: latest
+
+# ------------------------------------------------------------------------------
+- name: set ETCD_LISTEN_CLIENT_URLS
+  command: "sed -i 's/\\(ETCD_LISTEN_CLIENT_URLS=\"\\).*\\(\"\\)/\\1{{ item }}\\2/g' /etc/etcd/etcd.conf"
+  with_items: "http:\\/\\/0.0.0.0:2379"
+
+- name: set ETCD_ADVERTISE_CLIENT_URLS
+  command: "sed -i 's/\\(ETCD_ADVERTISE_CLIENT_URLS=\"\\).*\\(\"\\)/\\1{{ item }}\\2/g' /etc/etcd/etcd.conf"
+  with_items: "http:\\/\\/0.0.0.0:2379"
+
+# ------------------------------------------------------------------------------
+- name: enable and start etcd
+  service:
+    name: etcd.service
+    state: running
+    enabled: yes
+...

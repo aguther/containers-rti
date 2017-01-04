@@ -1,0 +1,15 @@
+---
+# ------------------------------------------------------------------------------
+- hosts: centos
+  roles:
+    - ntp
+    - disable-selinux
+    - disable-firewall
+    - kubernetes/main
+
+# ------------------------------------------------------------------------------
+- hosts: master
+  roles:
+    - weave/kubernetes/main
+    - scope/kubernetes/main
+...

@@ -1,0 +1,19 @@
+---
+# ------------------------------------------------------------------------------
+- name: install
+  yum:
+    name: flannel
+    state: latest
+
+# ------------------------------------------------------------------------------
+- name: set FLANNEL_ETCD_ENDPOINTS
+  command: "sed -i 's/\\(FLANNEL_ETCD_ENDPOINTS=\"\\).*\\(\"\\)/\\1{{ item }}\\2/g' /etc/sysconfig/flanneld"
+  with_items: "http:\\/\\/{{ groups['master'][0] }}:2379"
+
+# ------------------------------------------------------------------------------
+- name: enable and start
+  service:
+    name: flanneld.service
+    state: running
+    enabled: yes
+...

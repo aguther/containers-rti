@@ -1,0 +1,17 @@
+---
+# ------------------------------------------------------------------------------
+- name: install
+  yum:
+    name: docker
+    state: latest
+
+- group:
+    name: docker
+    state: present
+
+- name: enable and start
+  service:
+    name: docker.service
+    state: running
+    enabled: yes
+...

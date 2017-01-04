@@ -1,0 +1,13 @@
+---
+# ------------------------------------------------------------------------------
+- name: set KUBELET_ARGS
+  command: "sed -i 's/\\(KUBELET_ARGS=\"\\).*\\(\"\\)/\\1{{ item }}\\2/g' /etc/kubernetes/kubelet"
+  with_items: " --network-plugin=cni --network-plugin-dir=\\/etc\\/cni\\/net.d"
+
+# ------------------------------------------------------------------------------
+- name: restart kubelet service
+  service:
+    name: kubelet.service
+    state: restarted
+    enabled: yes
+...

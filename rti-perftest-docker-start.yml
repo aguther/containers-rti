@@ -1,0 +1,10 @@
+---
+# ------------------------------------------------------------------------------
+- hosts: master
+  roles:
+    - rti-perftest/docker/start/publisher
+# ------------------------------------------------------------------------------
+- hosts: nodes
+  roles:
+    - rti-perftest/docker/start/subscriber
+...

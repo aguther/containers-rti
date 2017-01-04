@@ -1,0 +1,12 @@
+---
+# ------------------------------------------------------------------------------
+- name: remove
+  yum:
+    name: "{{ item }}"
+    state: removed
+  with_items:
+    - docker
+    - docker-common
+    - docker-selinux
+    - container-selinux
+...

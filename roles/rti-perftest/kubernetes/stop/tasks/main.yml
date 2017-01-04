@@ -1,0 +1,17 @@
+---
+# ------------------------------------------------------------------------------
+- name: "publishers : delete"
+  command: "kubectl delete deployment rti-perftest-pub --namespace rti-perftest"
+
+- name: "subscribers : delete"
+  command: "kubectl delete deployment rti-perftest-sub --namespace rti-perftest"
+
+- name: "namespace : check status"
+  command: kubectl get namespace rti-perftest
+  register: check_namespace_rti_perftest
+  failed_when: check_namespace_rti_perftest.rc > 1
+
+- name: "namespace : delete"
+  command: kubectl delete namespace rti-perftest
+  when: check_namespace_rti_perftest.rc == 0
+...

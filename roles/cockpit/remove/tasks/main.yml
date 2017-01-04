@@ -1,0 +1,13 @@
+---
+# ------------------------------------------------------------------------------
+- name: remove packages
+  yum:
+    name:
+      - cockpit
+      - cockpit-networkmanager
+      - cockpit-storaged
+      - cockpit-ws
+      - cockpit-shell
+      - cockpit-bridge
+    state: removed
+...

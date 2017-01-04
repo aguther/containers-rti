@@ -1,0 +1,25 @@
+---
+# ------------------------------------------------------------------------------
+- name: add repository
+  yum_repository:
+    file: docker
+    name: dockerrepo
+    description: Docker Repository
+    baseurl: https://yum.dockerproject.org/repo/testing/centos/7/
+    gpgkey: https://yum.dockerproject.org/gpg
+    gpgcheck: no
+    state: present
+
+- name: install
+  yum:
+    name:
+      - docker-engine
+    state: latest
+    update_cache: yes
+
+- name: enable and start
+  service:
+    name: docker.service
+    state: running
+    enabled: yes
+...

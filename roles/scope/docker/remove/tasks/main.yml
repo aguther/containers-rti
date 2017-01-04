@@ -1,0 +1,27 @@
+---
+# ------------------------------------------------------------------------------
+- name: check for binary
+  stat:
+    path: /usr/local/bin/scope
+  register: scope_binary
+
+# ------------------------------------------------------------------------------
+- name: check for docker
+  command: which docker
+  register: docker_command
+  failed_when: docker_command.rc != 0
+  changed_when: false
+  when: scope_binary.stat.exists == true
+
+# ------------------------------------------------------------------------------
+- name: stop scope
+  command: scope stop
+  when: scope_binary.stat.exists == true
+
+# ------------------------------------------------------------------------------
+- name: delete binary
+  file:
+    path: /usr/local/bin/scope
+    state: absent
+  when: scope_binary.stat.exists == true
+...
