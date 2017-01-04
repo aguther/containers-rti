@@ -40,7 +40,11 @@
   when: inventory_hostname in groups['master']
 
 - name: ensure node /etc/kubernetes is empty
-  shell: "rm -rf /etc/kubernetes/*"
+  file:
+    path: "{{ item }}"
+    state: absent
+  with_fileglob:
+    - /etc/Kubernetes/*
   when: inventory_hostname in groups['nodes']
 
 - name: init node
