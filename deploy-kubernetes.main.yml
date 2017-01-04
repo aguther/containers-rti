@@ -10,6 +10,5 @@
 # ------------------------------------------------------------------------------
 - hosts: master
   roles:
-    - weave/kubernetes/main
     - scope/kubernetes/main
 ...
