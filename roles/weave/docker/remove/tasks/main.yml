@@ -9,14 +9,16 @@
 - name: check for docker
   command: which docker
   register: docker_command
-  failed_when: docker_command.rc != 0
+  failed_when: false
   changed_when: false
   when: weave_binary.stat.exists == true
 
 # ------------------------------------------------------------------------------
 - name: reset
   command: weave reset --force
-  when: weave_binary.stat.exists == true
+  when:
+    - weave_binary.stat.exists == true
+    - docker_command.rc == 0
 
 # ------------------------------------------------------------------------------
 - name: remove CNI plugin
