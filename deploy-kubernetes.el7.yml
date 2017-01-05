@@ -15,7 +15,7 @@
 - hosts: nodes
   roles:
     - kubernetes/el7
-    - weave/kubernetes/el7
+    - weave/kube/el7
 
 # ------------------------------------------------------------------------------
 - hosts: centos

@@ -1,4 +1,0 @@
----
-- name: install weave
-  shell: "kubectl apply -f https://git.io/weave-kube"
-...

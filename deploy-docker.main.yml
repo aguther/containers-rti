@@ -6,5 +6,5 @@
     - disable-firewall
     - ntp
     - docker/main
-    - weave/docker
+    - weave/net
 ...

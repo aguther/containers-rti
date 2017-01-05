@@ -1,4 +1,0 @@
----
-dependencies:
-  - { role: weave/docker/remove }
-...

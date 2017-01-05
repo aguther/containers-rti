@@ -5,11 +5,11 @@
     - ntp
     - disable-selinux
     - disable-firewall
+    - weave/kube/main
     - kubernetes/main
 
 # ------------------------------------------------------------------------------
 - hosts: master
   roles:
-    - weave/kubernetes/main
     - scope/kubernetes/main
 ...
