@@ -18,18 +18,41 @@ There are some preparations that need to be done in order to get everything work
 Ansible is used to deploy the necessary environment and services to run this example. Therefore it must be installed on the deploying node. This can be achieved on CentOS by executing:
 sudo yum install -y ansible
 
-# Docker
-The example with rti-perftest can be executed by entering the following command:
-ansible-playbook -i demo plays/rti-perftest/start.yml
+# Docker - CentOS
+The example with rti-perftest can be executed on docker (version 1.10) by entering the following command:
+ansible-playbook -i demo deploy-docker.el7.yml
+ansible-playbook -i demo rti-perftest-docker-start.yml
 
-To stop the example execute:
-ansible-playbook -i demo plays/rti-perftest/stop.yml
+To stop the example enter the following command:
+ansible-playbook -i demo rti-perftest-docker-stop.yml
 
-# Kubernetes
-WARNING: kubernetes from extras repository on CentOS 7 is not compatible with package docker-latest.
+Monitoring can be done using the tool cockpit which can be reached on the address 'http://<IP>:9090'.
 
-The kubernetes cluster can be deployed using the following command:
-ansible-playbook -i demo plays/kubernetes/deploy.yml
+# Kubernetes - CentOS
+The kubernetes cluster (version 1.3) can be deployed with the example using the following command:
+ansible-playbook -i demo deploy-kubernetes.el7.yml
+ansible-playbook -i demo rti-perftest-kubernetes-start.yml
+
+To stop the example enter the following command:
+ansible-playbook -i demo rti-perftest-docker-stop.yml
+
+Monitoring can be done using the tool cockpit which can be reached on the address 'http://<IP>:9090'.
+
+# Docker - docker.io
+The example with rti-perftest can be executed on docker (1.12) by entering the following command:
+ansible-playbook -i demo deploy-docker.main.yml
+ansible-playbook -i demo rti-perftest-docker-start.yml
+
+To stop the example enter the following command:
+ansible-playbook -i demo rti-perftest-docker-stop.yml
+
+# Kubernetes - kubernetes.io
+The kubernetes cluster (version 1.5.1) can be deployed with the example using the following command:
+ansible-playbook -i demo deploy-kubernetes.main.yml
+ansible-playbook -i demo rti-perftest-kubernetes-start.yml
+
+To stop the example enter the following command:
+ansible-playbook -i demo rti-perftest-docker-stop.yml
 
 # Links
 https://access.redhat.com/articles/2317361
