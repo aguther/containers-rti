@@ -5,6 +5,7 @@
     - ntp
     - disable-selinux
     - disable-firewall
+    - weave/kube/main
     - kubernetes/main
 
 # ------------------------------------------------------------------------------

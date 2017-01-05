@@ -39,6 +39,10 @@
   register: kubeadm_token
   when: inventory_hostname in groups['master']
 
+- name: install bash completion for kubectl
+  shell: "kubectl completion bash > /etc/bash_completion.d/kubectl.bash"
+  when: inventory_hostname in groups['master']
+
 - name: ensure node /etc/kubernetes is empty
   file:
     path: "{{ item }}"
