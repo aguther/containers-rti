@@ -1,0 +1,29 @@
+---
+- name: create directory for consul
+  file:
+    path: /var/lib/consul
+    state: directory
+
+- name: start consul
+  shell: "docker run -d --name consul -h consul -v /var/lib/consul:/data -p 192.168.198.101:8300:8300 -p 192.168.198.101:8301:8301 -p 192.168.198.101:8301:8301/udp -p 192.168.198.101:8302:8302 -p 192.168.198.101:8302:8302/udp -p 192.168.198.101:8400:8400 -p 192.168.198.101:8500:8500 -p 192.168.198.101:53:53/udp progrium/consul -server -advertise 192.168.198.101 -client 0.0.0.0 -bootstrap -ui-dir /ui"
+
+- name: start registrar
+  shell: "docker run -d --name registrar -h registrar -v /var/run/docker.sock:/tmp/docker.sock gliderlabs/registrator consul://192.168.198.101:8500"
+
+- name: start swarm agent master
+  shell: "docker run -d --name sagent -h sagent swarm join -dvertise=192.168.198.101:2375 consul://192.168.198.101:8500"
+
+- name: start swarm agent node
+  shell: "docker run -d --name sagent -h sagent swarm join -advertise=192.168.198.102:2375 consul://192.168.198.101:8500"
+
+- name: start swarm manager
+  shell: "docker run -d --name smanager -h smanager -p 2400:2375 swarm manage consul://192.168.198.101:8500"
+
+- name: print swarm info
+  shell: "docker -H tcp://192.168.198.101:2400 info"
+
+- name: list swarm nodes
+  shell: "docker run --rm swarm list consul://192.168.198.101:8500"
+
+  # Example how to start image: docker -H tcp://192.168.198.101:2400 run -d -name web nginx
+...
