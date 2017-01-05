@@ -1,0 +1,11 @@
+---
+- name: Copy RPM package
+  copy:
+    src: "{{ cntlm_package_file }}"
+    dest: "/tmp/{{ cntlm_package_file }}"
+
+- name: Install CNTLM for enterprise proxy
+  tags: cntlm
+  yum: >
+    name=/tmp/{{ cntlm_package_file }}
+    state=present

@@ -1,0 +1,6 @@
+---
+
+- name: service restart {{ cntlm_service_name }}
+  service:
+    state=restarted
+    name={{ cntlm_service_name }}

@@ -1,0 +1,4 @@
+---
+
+cntlm_config_file: /etc/cntlm.conf
+cntlm_service_name: cntlmd

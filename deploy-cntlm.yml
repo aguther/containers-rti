@@ -1,0 +1,12 @@
+---
+- hosts: centos
+  vars:
+    cntlm_username: USER
+    cntlm_domain: DOMAIN
+    cntlm_pass_ntlm: YOURPASSWORDHASHYOURPASSWORDHASH
+    cntlm_proxies:
+      - { ip: PROXY_HOSTNAME, port: 8080 }
+    cntlm_no_proxy: "localhost, 127.0.0.*, 10.*, 192.168.*"
+  roles:
+    - { role: cntlm }
+...

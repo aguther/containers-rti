@@ -1,0 +1,22 @@
+---
+
+- include: install-redhat.yml
+  when: ansible_os_family == 'RedHat'
+
+- include: install-debian.yml
+  when: ansible_os_family == 'Debian'  
+
+- name: Setting up CNTLM configuration
+  template: >
+    src={{ cntlm_config_template }}
+    dest={{ cntlm_config_file }}
+    owner=0
+    group=0
+    mode=0644
+  notify: service restart {{ cntlm_service_name }}
+
+- name: Ensure {{ cntlm_service_name }} service is running
+  service: >
+    name={{ cntlm_service_name }} 
+    state=started 
+    enabled=yes
