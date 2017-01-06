@@ -1,5 +1,5 @@
 ---
 # ------------------------------------------------------------------------------
 - name: start
-  command: "docker -H tcp://{{ groups['master'][0] }}:2400 run --detach=true --net=weave --name rti-perftest-pub-{{ inventory_hostname | checksum }} guther/rti-perftest -pub -enableTurboMode -dataLen 1024 -sleep 1 -numSubscribers {{ play_hosts | length }}"
+  command: "docker -H tcp://{{ groups['master'][0] }}:2400 run --detach=true --net=weave --env='reschedule:on-node-failure' --name rti-perftest-pub-{{ inventory_hostname | checksum }} guther/rti-perftest -pub -enableTurboMode -dataLen 1024 -sleep 1 -numSubscribers {{ play_hosts | length }}"
 ...
