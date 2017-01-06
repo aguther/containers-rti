@@ -1,0 +1,5 @@
+---
+# ------------------------------------------------------------------------------
+- name: start
+  command: "docker -H tcp://{{ groups['master'][0] }}:2400 run --detach=true --net=weave --name rti-perftest-sub-{{ inventory_hostname | checksum }} guther/rti-perftest -sub"
+...

@@ -1,0 +1,10 @@
+---
+# ------------------------------------------------------------------------------
+- hosts: master
+  roles:
+    - rti-perftest/docker/swarm/log/publisher
+# ------------------------------------------------------------------------------
+- hosts: nodes
+  roles:
+    - rti-perftest/docker/swarm/log/subscriber
+...

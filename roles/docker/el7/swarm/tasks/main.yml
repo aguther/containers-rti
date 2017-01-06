@@ -1,4 +1,20 @@
 ---
+- name: "ansible : install docker-py"
+  yum:
+    name: python-docker-py
+    state: latest
+
+- name: "docker : add options"
+  replace:
+    dest: /etc/sysconfig/docker
+    regexp: "(^OPTIONS=').*(')$"
+    replace: "\\1--selinux-enabled --log-driver=journald -H tcp://0.0.0.0:2375 -H unix:///var/run/docker.sock\\2"
+
+- name: "docker : restart service"
+  service:
+    name: docker.service
+    state: restarted
+
 - name: pull images
   docker_image:
     name: "{{ item }}"
@@ -6,8 +22,6 @@
     - swarm
     - progrium/consul
     - gliderlabs/registrator
-    - rethinkdb
-    - shipyard/shipyard
 
 - name: "consul : create data directory"
   file:
@@ -20,9 +34,10 @@
     image: progrium/consul
     hostname: consul
     command: "-server -advertise {{ inventory_hostname }} -client 0.0.0.0 -bootstrap -ui-dir /ui"
-    state: present
+    state: started
+    restart_policy: always
     recreate: yes
-    exposed_ports:
+    ports:
       - "{{ inventory_hostname }}:8300:8300"
       - "{{ inventory_hostname }}:8301:8301"
       - "{{ inventory_hostname }}:8301:8301/udp"
@@ -41,7 +56,8 @@
     image: gliderlabs/registrator
     hostname: registrar
     command: "consul://{{ inventory_hostname }}:8500"
-    state: present
+    state: started
+    restart_policy: always
     recreate: yes
     volumes:
       - "/var/run/docker.sock:/tmp/docker.sock"
@@ -53,8 +69,16 @@
     image: swarm
     hostname: sagent
     command: "join -advertise={{ inventory_hostname }}:2375 consul://{{ groups['master'][0] }}:8500"
-    state: present
+    state: started
+    restart_policy: always
     recreate: yes
+
+- name: "swarm : ensure manager only on master"
+  docker_container:
+    name: smanager
+    image: swarm
+    state: absent
+  when: inventory_hostname in groups['nodes']
 
 - name: "swarm : run manager"
   docker_container:
@@ -62,20 +86,10 @@
     image: swarm
     hostname: smanager
     command: "manage consul://{{ inventory_hostname }}:8500"
-    state: present
+    state: started
+    restart_policy: always
     recreate: yes
-    exposed_ports:
+    ports:
       - "2400:2375"
-
-#- name: print swarm info
-#  shell: "docker -H tcp://{{ groups['master'][0] }}:2400 info"
-#
-#- name: list swarm nodes
-#  shell: "docker run --rm swarm list consul://{{ groups['master'][0] }}:8500"
-#
-#- name: list containers in swarm
-#  shell: "docker -H tcp://{{ groups['master'][0] }}:2400 ps"
-
-# List containers in swarm:   docker -H tcp://{{ groups['master'][0] }}:2400 ps
-# Example how to start image: docker -H tcp://{{ groups['master'][0] }}:2400 run -d -name web nginx
+  when: inventory_hostname in groups['master']
 ...

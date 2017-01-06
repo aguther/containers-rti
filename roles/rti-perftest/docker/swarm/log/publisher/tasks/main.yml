@@ -1,7 +1,7 @@
 ---
 # ------------------------------------------------------------------------------
 - name: log
-  command: "docker logs --tail 5 rti-perftest-sub"
+  command: "docker -H tcp://{{ groups['master'][0] }}:2400 logs --tail 5 rti-perftest-pub-{{ inventory_hostname | checksum }}"
   register: docker_log
 
 - debug: msg="{{ docker_log.stdout }}"
