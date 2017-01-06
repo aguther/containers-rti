@@ -1,32 +1,67 @@
-Vagrant.configure("2") do |config|
+# -*- mode: ruby -*-
+# # vi: set ft=ruby :
+
+$num_instances = 2
+$instance_name_prefix = "centos-7"
+$vm_gui = false
+$vm_cpus = 1
+$vm_memory = 1024
+
+VAGRANTFILE_API_VERSION = "2"
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # ssh configuration
   config.ssh.insert_key = false
   config.ssh.username = 'vagrant'
 
-  # define machines
-  machines = ["1", "2", "3"]
-  count = machines.size
+  # create virtual machines
+  (1..$num_instances).each do |id|
+    config.vm.define hostname = "%s-%01d" % [$instance_name_prefix, id] do |config|
+      # define image to be used
+      config.vm.box = "centos/7"
 
-  # disable synced folder (causes problems on windows due to missing rsync)
-  config.vm.synced_folder ".", "/vagrant", disabled: true
+      # set hostname
+      config.vm.hostname = hostname
 
-  # customize virtual machine
-  config.vm.provider "virtualbox" do |vbox, override|
-    vbox.cpus = 2
-    vbox.memory = 4096
-  end
-  # customize virtual machine
-  config.vm.provider "vmware_workstation" do |vmware, override|
-    vmware.vmx["numvcpus"] = "2"
-    vmware.vmx["memsize"] = "4096"
-  end
+      # disable synced folder (causes problems on windows due to missing rsync)
+      config.vm.synced_folder "../", "/vagrant"#, disabled: true
 
-  # provision of virtual machines
-  machines.each do |machine_id|
-    config.vm.define "centos-7-#{machine_id}" do |machine|
-      machine.vm.hostname = "centos-7-#{machine_id}"
-      machine.vm.box = "centos/7"
+      # virtual box settings
+      config.vm.provider :virtualbox do |vbox, override|
+        vbox.gui = $vm_gui
+        vbox.cpus = $vm_cpus
+        vbox.memory = $vm_memory
+      end
+
+      # vmware settings
+      [:vmware_fusion, :vmware_workstation].each do |provider|
+        config.vm.provider provider do |vmware, override|
+          vmware.gui = $vm_gui
+          vmware.vmx["numvcpus"] = $vm_cpus
+          vmware.vmx["memsize"] = $vm_memory
+        end
+      end
+
+      # provision using ansible
+      if id == $num_instances
+        config.vm.provision :ansible_local do |ansible|
+          ansible.install = true
+          ansible.limit = "all"
+          ansible.playbook = "/vagrant/deploy-cntlm.yml"
+          ansible.host_vars = {
+            "host1" =>  { "http_port" => 80,
+                          "maxRequestsPerChild" => 808},
+            "host2" =>  { "http_port" => 303,
+                          "maxRequestsPerChild" => 909}
+          }
+          ansible.groups = {
+            "group1" => ["machine1"],
+            "group2" => ["machine2"],
+            "group3" => ["machine[1:2]"],
+            "all_groups:children" => ["group1", "group2"],
+            "group1:vars" => {"variable1" => 9, "variable2" => "example"}
+          }
+        end
+      end
     end
   end
-
 end
