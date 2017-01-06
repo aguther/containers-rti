@@ -3,8 +3,5 @@
 - hosts: master
   roles:
     - rti-perftest/docker/swarm/stop/publisher
-# ------------------------------------------------------------------------------
-- hosts: nodes
-  roles:
     - rti-perftest/docker/swarm/stop/subscriber
 ...
