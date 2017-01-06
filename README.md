@@ -64,7 +64,7 @@ Monitoring can be done using the tool cockpit which can be reached on the addres
 
 If you want to monitor using Weave-Scope you can enter the following command to deploy it:
 ```bash
-ansible centos -i demo -a "scope launch"
+ansible -i demo centos -a "scope launch"
 ```
 
 ### Remark
