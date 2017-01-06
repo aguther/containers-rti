@@ -1,16 +1,10 @@
 ---
 # ------------------------------------------------------------------------------
-- hosts: centos
-  roles:
-    - hosts
-    - ntp
-    - disable-selinux
-    - disable-firewall
-    - weave/kube/main
-    - kubernetes/main
-
-# ------------------------------------------------------------------------------
 - hosts: master
   roles:
-    - scope/kubernetes/main
+    - rti-perftest/docker/swarm/stop/publisher
+# ------------------------------------------------------------------------------
+- hosts: nodes
+  roles:
+    - rti-perftest/docker/swarm/stop/subscriber
 ...

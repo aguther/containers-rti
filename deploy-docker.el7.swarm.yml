@@ -6,6 +6,6 @@
     - disable-selinux
     - disable-firewall
     - ntp
-    - docker/main
+    - docker/el7/swarm
     - weave/net
 ...

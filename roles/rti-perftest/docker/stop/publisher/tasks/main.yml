@@ -1,5 +1,5 @@
 ---
 # ------------------------------------------------------------------------------
 - name: stop
-  command: docker rm -f rti-perftest-pub
+  command: "docker rm -f rti-perftest-pub"
 ...

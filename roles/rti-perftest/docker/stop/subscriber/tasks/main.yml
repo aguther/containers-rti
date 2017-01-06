@@ -1,5 +1,5 @@
 ---
 # ------------------------------------------------------------------------------
 - name: stop
-  command: docker rm -f rti-perftest-sub
+  command: "docker rm -f rti-perftest-sub"
 ...
