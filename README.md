@@ -35,7 +35,7 @@ ansible-playbook -i demo rti-perftest-docker-start.yml
 
 ### Stop
 ```bash
-    ansible-playbook -i demo rti-perftest-docker-stop.yml
+ansible-playbook -i demo rti-perftest-docker-stop.yml
 ```
 
 ### Monitoring
