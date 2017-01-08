@@ -2,6 +2,8 @@
 Repository to test RTI DDS with container technologies (docker, kubernetes).
 
 ## Environment
+
+### Manual Deployment
 The following describes the environment that was in mind for this example.
 
 3 Hosts with the latest CentOS 7:
@@ -12,6 +14,31 @@ The following describes the environment that was in mind for this example.
 | centos-7-2 | 192.168.198.101 | 192.168.198.2   | 192.168.198.2   |
 | centos-7-3 | 192.168.198.101 | 192.168.198.2   | 192.168.198.2   |
 
+### Vagrant Deployment
+Vagrant can be used to deploy the necessary machines.
+
+3 Host with NAT network interface are deployed by default.
+
+#### Initialization
+Within the file `Vagrantfile` configure the deployment playbook you want to test via variable `$ansible_playbook`. Then bring the virtual machines up:
+```bash
+export instance_count=3
+export ansible_playbook=deploy-docker.el7.swarm.yml
+vagrant up
+```
+
+#### Execution of additional playbooks after provisioning
+```bash
+vagrant ssh centos-7-1
+cd /vagrant
+ansible-playbook -i /tmp/vagrant-ansible/inventory/vagrant_ansible_local_inventory <playbook>
+exit
+```
+
+#### Destroy
+```bash
+vagrant destroy -f
+```
 
 ## Preparations
 There are some preparations that need to be done in order to get everything working.
@@ -118,38 +145,6 @@ kubectl port-forward $(kubectl get pod --selector=weave-scope-component=app -o j
 ```
 Weave-Scope can then be reached on the address `http://<master>:4040`.
 
-## Vagrant
-
-Vagrant can be used to deploy the necessary machines.
-
-### Initialization
-Within the file `Vagrantfile` configure the deployment playbook you want to test via variable `$ansible_playbook`. Then bring the virtual machines up:
-```bash
-export instance_count=3
-export ansible_playbook=deploy-docker.el7.swarm.yml
-vagrant up
-```
-
-### Start
-```bash
-vagrant ssh centos-7-1
-cd /vagrant
-ansible-playbook -i /tmp/vagrant-ansible/inventory/vagrant_ansible_local_inventory rti-perftest-docker-swarm-start.yml
-exit
-```
-
-### Stop
-```bash
-vagrant ssh centos-7-1
-cd /vagrant
-ansible-playbook -i /tmp/vagrant-ansible/inventory/vagrant_ansible_local_inventory rti-perftest-docker-swarm-stop.yml
-exit
-```
-
-### Destroy
-```bash
-vagrant destroy -f
-```
 
 ## Links
 -   [Docker](http://www.docker.io)
