@@ -43,6 +43,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     config.hostmanager.enabled = true
     config.hostmanager.manage_host = false
     config.hostmanager.manage_guest = true
+    config.hostmanager.ignore_private_ip = false
     config.hostmanager.include_offline = true
   else
     raise "Please run 'vagrant plugin install vagrant-hostmanager' to use this vagrantfile."
@@ -76,6 +77,13 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         vbox.gui = $vm_gui
         vbox.cpus = $vm_cpus
         vbox.memory = $vm_memory
+        # configure additional private network
+        # (because virtualbox assigns all nat networks the same ip)
+        override.vm.network :private_network,
+          ip: "172.20.0.%d" % (100 + id),
+          netmask: "255.255.255.0"
+        override.vm.provision :shell,
+          inline: "sudo ifup enp0s8"
       end
 
       # vmware settings
