@@ -2,17 +2,23 @@
 Repository to test RTI DDS with container technologies (docker, kubernetes).
 
 ## Environment
+Vagrant can be used to deploy the necessary virtual machines.
 
-### Vagrant Deployment
-Vagrant can be used to deploy the necessary machines.
+In the default configuration you will get 3 VMs where the first is in the master group and the other two in the nodes group:
 
-3 Host with NAT network interface are deployed by default.
+| Host         | Groups           | Private IP      |
+|:------------:|:----------------:|:---------------:|
+| centos-7-1   | centos<br>master | 172.20.0.101/24 |
+| centos-7-2   | centos<br>nodes  | 172.20.0.102/24 |
+| centos-7-3   | centos<br>nodes  | 172.20.0.103/24 |
 
 #### Initialization
-Within the file `Vagrantfile` configure the deployment playbook you want to test via variable `$ansible_playbook`. Then bring the virtual machines up:
+Thanks to vagrant the deployment of the virtual machines is really easy. The configuration can be found in the file `Vagrantfile`. It's possible to change the number of virtual machines and the playbook used during provisioning via environment variables (see below).
+
+The virtual machines can be deploying with the following commands:
 ```bash
 # optional, default = 3
-export instance_count=5
+export instance_count=4
 # optional, default = deploy-docker.el7.swarm.yml
 export ansible_playbook=deploy-kubernetes.el7.yml
 vagrant up
@@ -26,35 +32,14 @@ ansible-playbook -i /tmp/vagrant-ansible/inventory/vagrant_ansible_local_invento
 exit
 ```
 
+#### Shutdown
+```bash
+vagrant halt
+```
+
 #### Destroy
 ```bash
 vagrant destroy -f
-```
-
-### Manual Deployment
-The following describes the environment that was in mind for this example.
-
-3 Hosts with the latest CentOS 7:
-
-| Host       | IPv4            | DNS             | Default-Gateway |
-|:----------:|:---------------:|:---------------:|:---------------:|
-| centos-7-1 | 192.168.198.101 | 192.168.198.2   | 192.168.198.2   |
-| centos-7-2 | 192.168.198.101 | 192.168.198.2   | 192.168.198.2   |
-| centos-7-3 | 192.168.198.101 | 192.168.198.2   | 192.168.198.2   |
-
-### Preparations
-There are some preparations that need to be done in order to get everything working.
-
-#### Ansible
-Ansible is used to deploy the necessary environment and services to run this example. Therefore it must be installed on the deploying node. This can be achieved on CentOS by executing when EPEL-Repository is enabled:
-```bash
-sudo yum install -y ansible
-```
-
-#### Execution of playbooks
-In the manual deployment playbook can be executed in the following way:
-```bash
-ansible-playbook -i demo <playbook>
 ```
 
 ## Docker - CentOS
@@ -62,16 +47,22 @@ In this scenario the rti-perftest example will be executed on single hosts with 
 Weave-Net is used to connect the containers on the different hosts.
 
 ### Start
-The following playbooks need to be used:
 ```bash
-deploy-docker.el7.yml
-rti-perftest-docker-start.yml
+export ansible_playbook=deploy-docker.el7.yml
+vagrant destroy -f
+vagrant up
+vagrant ssh centos-7-1
+cd /vagrant
+ansible-playbook -i /tmp/vagrant-ansible/inventory/vagrant_ansible_local_inventory rti-perftest-docker-start.yml
+exit
 ```
 
 ### Stop
-The following playbooks need to be used:
 ```bash
-rti-perftest-docker-stop.yml
+vagrant ssh centos-7-1
+cd /vagrant
+ansible-playbook -i /tmp/vagrant-ansible/inventory/vagrant_ansible_local_inventory rti-perftest-docker-stop.yml
+exit
 ```
 
 ### Monitoring
@@ -85,16 +76,22 @@ Weave-Net is used to connect the containers on the different hosts.
 The difference to the former scenario is that it's not predefined on which host the containers are executed, just the number.
 
 ### Start
-The following playbooks need to be used:
 ```bash
-deploy-docker.el7.swarm.yml
-rti-perftest-docker-swarm-start.yml
+export ansible_playbook=deploy-docker.el7.swarm.yml
+vagrant destroy -f
+vagrant up
+vagrant ssh centos-7-1
+cd /vagrant
+ansible-playbook -i /tmp/vagrant-ansible/inventory/vagrant_ansible_local_inventory rti-perftest-docker-swarm-start.yml
+exit
 ```
 
 ### Stop
-The following playbooks need to be used:
 ```bash
-rti-perftest-docker-swarm-stop.yml
+vagrant ssh centos-7-1
+cd /vagrant
+ansible-playbook -i /tmp/vagrant-ansible/inventory/vagrant_ansible_local_inventory rti-perftest-docker-swarm-stop.yml
+exit
 ```
 
 ### Monitoring
@@ -102,7 +99,10 @@ Monitoring can be done using the tool cockpit which can be reached on the addres
 
 If you want to monitor using Weave-Scope you can enter the following command to deploy it:
 ```bash
-ansible -i demo centos -a "scope launch"
+vagrant ssh centos-7-1
+cd /vagrant
+ansible -i /tmp/vagrant-ansible/inventory/vagrant_ansible_local_inventory centos -a "scope launch"
+exit
 ```
 
 ### Remark
@@ -110,8 +110,10 @@ When operating with Docker Swarm before 1.12 the commands need to be prefixed wi
 
 Example(s):
 ```bash
-docker -H tcp://192.168.198.101:2400 info
-docker -H tcp://192.168.198.101:2400 ps
+vagrant ssh centos-7-1
+docker -H tcp://localhost:2400 info
+docker -H tcp://localhost:2400 ps
+exit
 ```
 
 
@@ -120,16 +122,22 @@ In this scenario the rti-perftest example will be executed on a kubernetes clust
 Weave-Net is used to connect the containers on the different hosts.
 
 ### Start
-The following playbooks need to be used:
 ```bash
-deploy-kubernetes.el7.yml
-rti-perftest-kubernetes-start.yml
+export ansible_playbook=deploy-kubernetes.el7.yml
+vagrant destroy -f
+vagrant up
+vagrant ssh centos-7-1
+cd /vagrant
+ansible-playbook -i /tmp/vagrant-ansible/inventory/vagrant_ansible_local_inventory rti-perftest-kubernetes-start.yml
+exit
 ```
 
 ### Stop
-The following playbooks need to be used:
 ```bash
-rti-perftest-docker-stop.yml
+vagrant ssh centos-7-1
+cd /vagrant
+ansible-playbook -i /tmp/vagrant-ansible/inventory/vagrant_ansible_local_inventory rti-perftest-kubernetes-stop.yml
+exit
 ```
 
 ### Monitoring
@@ -141,27 +149,36 @@ In this scenario the rti-perftest example will be executed on a Kubernetes Clust
 Weave-Net is used to connect the containers on the different hosts.
 
 ### Start
-The following playbooks need to be used:
 ```bash
-deploy-kubernetes.main.yml
-rti-perftest-kubernetes-start.yml
+export ansible_playbook=deploy-kubernetes.main.yml
+vagrant destroy -f
+vagrant up
+vagrant ssh centos-7-1
+cd /vagrant
+ansible-playbook -i /tmp/vagrant-ansible/inventory/vagrant_ansible_local_inventory rti-perftest-kubernetes-start.yml
+exit
 ```
 
 ### Stop
-The following playbooks need to be used:
 ```bash
-rti-perftest-docker-stop.yml
+vagrant ssh centos-7-1
+cd /vagrant
+ansible-playbook -i /tmp/vagrant-ansible/inventory/vagrant_ansible_local_inventory rti-perftest-kubernetes-stop.yml
+exit
 ```
 
 ### Monitoring
 Monitoring can be done using Weave-Scope. To reach Weave-Scope from the host the following command needs to be executed on the master:
 ```bash
+vagrant ssh centos-7-1
 kubectl port-forward $(kubectl get pod --selector=weave-scope-component=app -o jsonpath='{.items..metadata.name}') 4040
+exit
 ```
 Weave-Scope can then be reached on the address `http://<master>:4040`.
 
 
 ## Links
+-   [Vagrant](http://www.vagrantup.com)
 -   [Docker](http://www.docker.io)
 -   [Kubernetes](http://www.kubernetes.io)
 -   [Weave-Net](https://www.weave.works/products/weave-net/)

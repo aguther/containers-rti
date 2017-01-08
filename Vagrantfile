@@ -77,11 +77,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         vbox.gui = $vm_gui
         vbox.cpus = $vm_cpus
         vbox.memory = $vm_memory
-        # configure additional private network
-        # (because virtualbox assigns all nat networks the same ip)
+        # private network for connection between virtual machines
         override.vm.network :private_network,
           ip: "172.20.0.%d" % (100 + id),
           netmask: "255.255.255.0"
+        # bugfix for #8166 (private network is not up after vagrant up)
         override.vm.provision :shell,
           inline: "sudo ifup enp0s8"
       end

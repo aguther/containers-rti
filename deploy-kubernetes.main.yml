@@ -2,7 +2,6 @@
 # ------------------------------------------------------------------------------
 - hosts: centos
   roles:
-    - hosts
     - ntp
     - disable-selinux
     - disable-firewall
