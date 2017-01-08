@@ -125,12 +125,14 @@ Vagrant can be used to deploy the necessary machines.
 ### Initialization
 Within the file `Vagrantfile` configure the deployment playbook you want to test via variable `$ansible_playbook`. Then bring the virtual machines up:
 ```bash
+export instance_count=3
+export ansible_playbook=deploy-docker.el7.swarm.yml
 vagrant up
 ```
 
 ### Start
 ```bash
-vagrant ssh centos-7-3
+vagrant ssh centos-7-1
 cd /vagrant
 ansible-playbook -i /tmp/vagrant-ansible/inventory/vagrant_ansible_local_inventory rti-perftest-docker-swarm-start.yml
 exit
@@ -138,7 +140,7 @@ exit
 
 ### Stop
 ```bash
-vagrant ssh centos-7-3
+vagrant ssh centos-7-1
 cd /vagrant
 ansible-playbook -i /tmp/vagrant-ansible/inventory/vagrant_ansible_local_inventory rti-perftest-docker-swarm-stop.yml
 exit
