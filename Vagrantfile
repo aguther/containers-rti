@@ -16,10 +16,10 @@ if $instance_count < 2
   raise "This vagrantfile needs at least 2 instances to function properly. Please increase the value of 'instance_count'."
 end
 
-# define vm hardware / mode
-$vm_gui = false
+# define virtual machine hardware / mode
 $vm_cpus = 1
 $vm_memory = 1024
+$vm_gui = false
 $vm_proxy_enabled = false
 
 # define default playbook
@@ -57,11 +57,14 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   # create virtual machines
   ($instance_count).downto(1) do |id|
-    config.vm.define hostname = "%s%d" % [$instance_name_prefix, id] do |instance_config|
+    # create hostname
+    hostname = "%s%d" % [$instance_name_prefix, id]
+    # define the virtual machine
+    config.vm.define hostname, primary: (id == 1) ? true : false do |instance_config|
+      # hostname within virtual machine
+      instance_config.vm.hostname = hostname
       # define image to be used
       instance_config.vm.box = "bento/centos-7.3"
-      # set hostname
-      instance_config.vm.hostname = hostname
       # enable synced folder
       instance_config.vm.synced_folder ".", "/vagrant"
 
@@ -123,10 +126,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
               "nodes",
             ],
             "centos:vars" => {
-              "ansible_become" => "true",
-              "ansible_connection" => "ssh",
-              "ansible_ssh_pass" => config.ssh.username,
-              "ansible_user" => config.ssh.username,
+              #"ansible_become" => "true",
+              #"ansible_connection" => "ssh",
+              #"ansible_user" => config.ssh.username,
+              #"ansible_ssh_pass" => config.ssh.username,
             },
           }
         end

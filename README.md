@@ -3,6 +3,34 @@ Repository to test RTI DDS with container technologies (docker, kubernetes).
 
 ## Environment
 
+### Vagrant Deployment
+Vagrant can be used to deploy the necessary machines.
+
+3 Host with NAT network interface are deployed by default.
+
+#### Initialization
+Within the file `Vagrantfile` configure the deployment playbook you want to test via variable `$ansible_playbook`. Then bring the virtual machines up:
+```bash
+# optional, default = 3
+export instance_count=5
+# optional, default = deploy-docker.el7.swarm.yml
+export ansible_playbook=deploy-kubernetes.el7.yml
+vagrant up
+```
+
+#### Execution of additional playbooks after provisioning
+```bash
+vagrant ssh centos-7-1
+cd /vagrant
+ansible-playbook -i /tmp/vagrant-ansible/inventory/vagrant_ansible_local_inventory <playbook>
+exit
+```
+
+#### Destroy
+```bash
+vagrant destroy -f
+```
+
 ### Manual Deployment
 The following describes the environment that was in mind for this example.
 
@@ -23,46 +51,27 @@ Ansible is used to deploy the necessary environment and services to run this exa
 sudo yum install -y ansible
 ```
 
-### Vagrant Deployment
-Vagrant can be used to deploy the necessary machines.
-
-3 Host with NAT network interface are deployed by default.
-
-#### Initialization
-Within the file `Vagrantfile` configure the deployment playbook you want to test via variable `$ansible_playbook`. Then bring the virtual machines up:
+#### Execution of playbooks
+In the manual deployment playbook can be executed in the following way:
 ```bash
-export instance_count=3
-export ansible_playbook=deploy-docker.el7.swarm.yml
-vagrant up
+ansible-playbook -i demo <playbook>
 ```
-
-#### Execution of additional playbooks after provisioning
-```bash
-vagrant ssh centos-7-1
-cd /vagrant
-ansible-playbook -i /tmp/vagrant-ansible/inventory/vagrant_ansible_local_inventory <playbook>
-exit
-```
-
-#### Destroy
-```bash
-vagrant destroy -f
-```
-
 
 ## Docker - CentOS
 In this scenario the rti-perftest example will be executed on single hosts with Docker 1.10 installed which is available in the extras-repository.
 Weave-Net is used to connect the containers on the different hosts.
 
 ### Start
+The following playbooks need to be used:
 ```bash
-ansible-playbook -i demo deploy-docker.el7.yml
-ansible-playbook -i demo rti-perftest-docker-start.yml
+deploy-docker.el7.yml
+rti-perftest-docker-start.yml
 ```
 
 ### Stop
+The following playbooks need to be used:
 ```bash
-ansible-playbook -i demo rti-perftest-docker-stop.yml
+rti-perftest-docker-stop.yml
 ```
 
 ### Monitoring
@@ -76,14 +85,16 @@ Weave-Net is used to connect the containers on the different hosts.
 The difference to the former scenario is that it's not predefined on which host the containers are executed, just the number.
 
 ### Start
+The following playbooks need to be used:
 ```bash
-ansible-playbook -i demo deploy-docker.el7.swarm.yml
-ansible-playbook -i demo rti-perftest-docker-swarm-start.yml
+deploy-docker.el7.swarm.yml
+rti-perftest-docker-swarm-start.yml
 ```
 
 ### Stop
+The following playbooks need to be used:
 ```bash
-ansible-playbook -i demo rti-perftest-docker-swarm-stop.yml
+rti-perftest-docker-swarm-stop.yml
 ```
 
 ### Monitoring
@@ -109,14 +120,16 @@ In this scenario the rti-perftest example will be executed on a kubernetes clust
 Weave-Net is used to connect the containers on the different hosts.
 
 ### Start
+The following playbooks need to be used:
 ```bash
-ansible-playbook -i demo deploy-kubernetes.el7.yml
-ansible-playbook -i demo rti-perftest-kubernetes-start.yml
+deploy-kubernetes.el7.yml
+rti-perftest-kubernetes-start.yml
 ```
 
 ### Stop
+The following playbooks need to be used:
 ```bash
-ansible-playbook -i demo rti-perftest-docker-stop.yml
+rti-perftest-docker-stop.yml
 ```
 
 ### Monitoring
@@ -128,14 +141,16 @@ In this scenario the rti-perftest example will be executed on a Kubernetes Clust
 Weave-Net is used to connect the containers on the different hosts.
 
 ### Start
+The following playbooks need to be used:
 ```bash
-ansible-playbook -i demo deploy-kubernetes.main.yml
-ansible-playbook -i demo rti-perftest-kubernetes-start.yml
+deploy-kubernetes.main.yml
+rti-perftest-kubernetes-start.yml
 ```
 
 ### Stop
+The following playbooks need to be used:
 ```bash
-ansible-playbook -i demo rti-perftest-docker-stop.yml
+rti-perftest-docker-stop.yml
 ```
 
 ### Monitoring
