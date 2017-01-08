@@ -22,12 +22,8 @@ $vm_cpus = 1
 $vm_memory = 1024
 $vm_proxy_enabled = false
 
-# define playbook
-#$ansible_playbook = "deploy-docker.el7.yml"
+# define default playbook
 $ansible_playbook = "deploy-docker.el7.swarm.yml"
-#$ansible_playbook = "deploy-kubernetes.el7.yml"
-#$ansible_playbook = "deploy-kubernetes.main.yml"
-
 # load ansible_playbook also from environment when defined
 if ENV['ansible_playbook']
   $ansible_playbook = ENV['ansible_playbook'].to_s
