@@ -14,6 +14,15 @@ The following describes the environment that was in mind for this example.
 | centos-7-2 | 192.168.198.101 | 192.168.198.2   | 192.168.198.2   |
 | centos-7-3 | 192.168.198.101 | 192.168.198.2   | 192.168.198.2   |
 
+### Preparations
+There are some preparations that need to be done in order to get everything working.
+
+#### Ansible
+Ansible is used to deploy the necessary environment and services to run this example. Therefore it must be installed on the deploying node. This can be achieved on CentOS by executing when EPEL-Repository is enabled:
+```bash
+sudo yum install -y ansible
+```
+
 ### Vagrant Deployment
 Vagrant can be used to deploy the necessary machines.
 
@@ -38,15 +47,6 @@ exit
 #### Destroy
 ```bash
 vagrant destroy -f
-```
-
-## Preparations
-There are some preparations that need to be done in order to get everything working.
-
-### Ansible
-Ansible is used to deploy the necessary environment and services to run this example. Therefore it must be installed on the deploying node. This can be achieved on CentOS by executing when EPEL-Repository is enabled:
-```bash
-sudo yum install -y ansible
 ```
 
 
