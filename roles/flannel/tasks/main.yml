@@ -11,12 +11,6 @@
   with_items: "http:\\/\\/{{ groups['master'][0] }}:2379"
 
 # ------------------------------------------------------------------------------
-- name: restart etcd
-  service:
-    name: etcd.service
-    state: restarted
-
-# ------------------------------------------------------------------------------
 - name: enable and start
   service:
     name: flanneld.service
