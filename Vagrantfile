@@ -55,7 +55,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   end
 
   # create virtual machines
-  (1..$instance_count).each do |id|
+  ($instance_count).downto(1) do |id|
     config.vm.define hostname = "%s%d" % [$instance_name_prefix, id] do |instance_config|
       # define image to be used
       instance_config.vm.box = "bento/centos-7.3"
@@ -101,7 +101,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         inline: "sudo usermod -a -G wheel %s" % config.ssh.username
 
       # provision using ansible, but only once and not for every instance
-      if id == $instance_count
+      if id == 1
         instance_config.vm.provision :ansible_local do |ansible|
           # ensure ansible is installed
           ansible.install = true
