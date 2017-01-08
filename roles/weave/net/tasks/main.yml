@@ -7,20 +7,13 @@
   changed_when: false
 
 # ------------------------------------------------------------------------------
-- name: check for binary
-  stat:
-    path: /usr/local/bin/weave
-  register: weave_binary
-
 - name: download binary
-  command: curl -L git.io/weave -o /usr/local/bin/weave creates=/usr/local/bin/weave
-  when: weave_binary.stat.exists == false
-
-- name: allow execution of binary
-  file:
-    path: /usr/local/bin/weave
-    mode: "a+x"
-  when: weave_binary.stat.exists == false
+  get_url:
+    url: http://git.io/weave
+    dest: /usr/local/bin/weave
+    owner: root
+    group: root
+    mode: 0755
 
 # ------------------------------------------------------------------------------
 - name: status
