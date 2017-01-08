@@ -1,32 +1,57 @@
 # -*- mode: ruby -*-
 # # vi: set ft=ruby :
 
-$num_instances = 2
-$instance_name_prefix = "centos-7"
+# api version to be used
+VAGRANTFILE_API_VERSION = "2"
+
+# define instances
+$instance_count = 3 # => at least 2!!
+$instance_name_prefix = "centos-7-"
+
+# define vm hardware / mode
 $vm_gui = false
 $vm_cpus = 1
 $vm_memory = 1024
+$vm_proxy_enabled = false
 
-VAGRANTFILE_API_VERSION = "2"
+# configure instances
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # ssh configuration
   config.ssh.insert_key = false
   config.ssh.username = 'vagrant'
 
+  # update /etc/hosts to get working name resolution
+  if Vagrant.has_plugin?("vagrant-hostmanager")
+    config.hostmanager.enabled = true
+    config.hostmanager.manage_host = false
+    config.hostmanager.manage_guest = true
+    config.hostmanager.include_offline = true
+  else
+    raise "Please run 'vagrant plugin install vagrant-hostmanager' to use this vagrantfile."
+  end
+
+  # when plugin proxyconf is installed, use it
+  if $vm_proxy_enabled == true
+    if Vagrant.has_plugin?("vagrant-proxyconf")
+      config.proxy.enabled = true
+      config.proxy.http = "http://127.0.0.1:3128/"
+      config.proxy.https = "http://127.0.0.1:3128/"
+      config.proxy.no_proxy = "localhost,127.0.0.1"
+    end
+  end
+
   # create virtual machines
-  (1..$num_instances).each do |id|
-    config.vm.define hostname = "%s-%01d" % [$instance_name_prefix, id] do |config|
+  (1..$instance_count).each do |id|
+    config.vm.define hostname = "%s%d" % [$instance_name_prefix, id] do |instance_config|
       # define image to be used
-      config.vm.box = "centos/7"
-
+      instance_config.vm.box = "bento/centos-7.3"
       # set hostname
-      config.vm.hostname = hostname
-
-      # disable synced folder (causes problems on windows due to missing rsync)
-      config.vm.synced_folder "../", "/vagrant"#, disabled: true
+      instance_config.vm.hostname = hostname
+      # enable synced folder
+      instance_config.vm.synced_folder "../", "/vagrant"
 
       # virtual box settings
-      config.vm.provider :virtualbox do |vbox, override|
+      instance_config.vm.provider :virtualbox do |vbox, override|
         vbox.gui = $vm_gui
         vbox.cpus = $vm_cpus
         vbox.memory = $vm_memory
@@ -34,31 +59,61 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
       # vmware settings
       [:vmware_fusion, :vmware_workstation].each do |provider|
-        config.vm.provider provider do |vmware, override|
+        instance_config.vm.provider provider do |vmware, override|
           vmware.gui = $vm_gui
           vmware.vmx["numvcpus"] = $vm_cpus
           vmware.vmx["memsize"] = $vm_memory
         end
       end
 
-      # provision using ansible
-      if id == $num_instances
-        config.vm.provision :ansible_local do |ansible|
+      # provision cntlm if proxy shall be used
+      if $vm_proxy_enabled == true
+        instance_config.vm.provision :ansible_local do |ansible|
+          # ensure ansible is installed
           ansible.install = true
-          ansible.limit = "all"
+          # define playbook to execute
           ansible.playbook = "/vagrant/deploy-cntlm.yml"
-          ansible.host_vars = {
-            "host1" =>  { "http_port" => 80,
-                          "maxRequestsPerChild" => 808},
-            "host2" =>  { "http_port" => 303,
-                          "maxRequestsPerChild" => 909}
-          }
+          # allow to connect to all instances
+          ansible.limit = "localhost"
+          # run as sudo
+          ansible.sudo = true
+          # logging verbosity
+          ansible.verbose = false
+        end
+      end
+
+      # add vagrant user to group wheel
+      instance_config.vm.provision :shell,
+        inline: "sudo usermod -a -G wheel %s" % config.ssh.username
+
+      # provision using ansible, but only once and not for every instance
+      if id == $instance_count
+        instance_config.vm.provision :ansible_local do |ansible|
+          # ensure ansible is installed
+          ansible.install = true
+          # define playbook to execute
+          #ansible.playbook = "/vagrant/deploy-docker.el7.swarm.yml"
+          ansible.playbook = "/vagrant/deploy-kubernetes.el7.yml"
+          # allow to connect to all instances
+          ansible.limit = "centos"
+          # run as sudo
+          ansible.sudo = true
+          # logging verbosity
+          ansible.verbose = false
+          # groups
           ansible.groups = {
-            "group1" => ["machine1"],
-            "group2" => ["machine2"],
-            "group3" => ["machine[1:2]"],
-            "all_groups:children" => ["group1", "group2"],
-            "group1:vars" => {"variable1" => 9, "variable2" => "example"}
+            "master" => "%s1" % $instance_name_prefix,
+            "nodes" => "%s[2:%d]" % [$instance_name_prefix, $instance_count],
+            "centos:children" => [
+              "master",
+              "nodes",
+            ],
+            "centos:vars" => {
+              "ansible_become" => "true",
+              "ansible_connection" => "ssh",
+              "ansible_ssh_pass" => config.ssh.username,
+              "ansible_user" => config.ssh.username,
+            },
           }
         end
       end

@@ -8,4 +8,5 @@
     - ntp
     - docker/el7/swarm
     - weave/net
+    - cockpit
 ...

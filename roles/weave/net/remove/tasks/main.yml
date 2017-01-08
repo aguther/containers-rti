@@ -15,7 +15,7 @@
 
 # ------------------------------------------------------------------------------
 - name: reset
-  command: weave reset --force
+  command: "/usr/local/bin/weave reset --force"
   when:
     - weave_binary.stat.exists == true
     - docker_command.rc == 0

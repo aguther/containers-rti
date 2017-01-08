@@ -24,13 +24,13 @@
 
 # ------------------------------------------------------------------------------
 - name: status
-  command: scope status
+  command: "/usr/local/bin/scope status"
   register: scope_status
   failed_when: false
   changed_when: false
 
 # ------------------------------------------------------------------------------
 - name: launch
-  command: "scope launch"
+  command: "/usr/local/bin/scope launch"
   when: scope_status.rc != 0
 ...

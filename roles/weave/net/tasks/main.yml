@@ -24,7 +24,7 @@
 
 # ------------------------------------------------------------------------------
 - name: status
-  command: weave status
+  command: "/usr/local/bin/weave status"
   register: weave_status
   failed_when: false
   changed_when: false
@@ -43,11 +43,11 @@
     - /etc/cni/net.d
 
 - name: setup
-  command: weave setup
+  command: "/usr/local/bin/weave setup"
   when: weave_status.rc != 0
 
 # ------------------------------------------------------------------------------
 - name: launch
-  command: "weave launch {% for host in groups['centos'] if host != ansible_host %} {{ host }} {% endfor %}"
+  command: "/usr/local/bin/weave launch {% for host in groups['centos'] if host != ansible_host %} {{ host }} {% endfor %}"
   when: weave_status.rc != 0
 ...

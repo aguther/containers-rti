@@ -9,6 +9,11 @@
     name: docker
     state: present
 
+- user:
+    name: "{{ ansible_ssh_user }}"
+    groups: docker
+    append: yes
+
 - name: enable and start
   service:
     name: docker.service

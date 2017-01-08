@@ -15,7 +15,7 @@
 
 # ------------------------------------------------------------------------------
 - name: stop scope
-  command: scope stop
+  command: "/usr/local/bin/scope stop"
   when: scope_binary.stat.exists == true
 
 # ------------------------------------------------------------------------------
