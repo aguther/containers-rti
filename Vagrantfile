@@ -23,10 +23,15 @@ $vm_memory = 1024
 $vm_proxy_enabled = false
 
 # define playbook
-#$ansible_playbook = "/vagrant/deploy-docker.el7.yml"
-$ansible_playbook = "/vagrant/deploy-docker.el7.swarm.yml"
-#$ansible_playbook = "/vagrant/deploy-kubernetes.el7.yml"
-#$ansible_playbook = "/vagrant/deploy-kubernetes.main.yml"
+#$ansible_playbook = "deploy-docker.el7.yml"
+$ansible_playbook = "deploy-docker.el7.swarm.yml"
+#$ansible_playbook = "deploy-kubernetes.el7.yml"
+#$ansible_playbook = "deploy-kubernetes.main.yml"
+
+# load ansible_playbook also from environment when defined
+if ENV['ansible_playbook']
+  $ansible_playbook = ENV['ansible_playbook'].to_s
+end
 
 # configure instances
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
@@ -106,7 +111,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
           # ensure ansible is installed
           ansible.install = true
           # define playbook to execute
-          ansible.playbook = $ansible_playbook
+          ansible.playbook = "/vagrant/%s" % $ansible_playbook
           # allow to connect to all instances
           ansible.limit = "centos"
           # run as sudo
