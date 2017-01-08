@@ -14,6 +14,12 @@ $vm_cpus = 1
 $vm_memory = 1024
 $vm_proxy_enabled = false
 
+# define playbook
+#$ansible_playbook = "/vagrant/deploy-docker.el7.yml"
+$ansible_playbook = "/vagrant/deploy-docker.el7.swarm.yml"
+#$ansible_playbook = "/vagrant/deploy-kubernetes.el7.yml"
+#$ansible_playbook = "/vagrant/deploy-kubernetes.main.yml"
+
 # configure instances
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # ssh configuration
@@ -48,7 +54,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       # set hostname
       instance_config.vm.hostname = hostname
       # enable synced folder
-      instance_config.vm.synced_folder "../", "/vagrant"
+      instance_config.vm.synced_folder ".", "/vagrant"
 
       # virtual box settings
       instance_config.vm.provider :virtualbox do |vbox, override|
@@ -92,8 +98,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
           # ensure ansible is installed
           ansible.install = true
           # define playbook to execute
-          #ansible.playbook = "/vagrant/deploy-docker.el7.swarm.yml"
-          ansible.playbook = "/vagrant/deploy-kubernetes.el7.yml"
+          ansible.playbook = $ansible_playbook
           # allow to connect to all instances
           ansible.limit = "centos"
           # run as sudo

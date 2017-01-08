@@ -8,6 +8,5 @@
 
 - name: setup network config in etcd
   shell: etcdctl mk /atomic.io/network/config '{ "Network":"172.1.0.0/16" }'
-  failed_when: false
-  #when: etcd_network_config.stderr.find('Key not found') != -1
+  when: etcd_network_config.stderr.find('Key not found') != -1
 ...
