@@ -5,8 +5,16 @@
 VAGRANTFILE_API_VERSION = "2"
 
 # define instances
-$instance_count = 3 # => at least 2!!
 $instance_name_prefix = "centos-7-"
+$instance_count = 3
+# load instance_count also from environment when defined
+if ENV['instance_count']
+  $instance_count = ENV['instance_count'].to_i
+end
+# ensure we have at least two instances
+if $instance_count < 2
+  raise "This vagrantfile needs at least 2 instances to function properly. Please increase the value of 'instance_count'."
+end
 
 # define vm hardware / mode
 $vm_gui = false
