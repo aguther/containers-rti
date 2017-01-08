@@ -10,7 +10,7 @@
     state: present
 
 - user:
-    name: "{{ ansible_ssh_user }}"
+    name: "{{ ansible_user_id }}"
     groups: docker
     append: yes
 

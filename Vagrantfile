@@ -129,10 +129,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
               "nodes",
             ],
             "centos:vars" => {
-              #"ansible_become" => "true",
-              #"ansible_connection" => "ssh",
-              #"ansible_user" => config.ssh.username,
-              #"ansible_ssh_pass" => config.ssh.username,
+              "ansible_ssh_pass" => config.ssh.username,
             },
           }
         end
