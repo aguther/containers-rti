@@ -1,8 +1,10 @@
 # -*- mode: ruby -*-
 # # vi: set ft=ruby :
 
-# minimum vagrant version
+# required vagrant version
 Vagrant.require_version ">= 1.9.0"
+Vagrant.require_version "< 1.9.1"
+
 # api version to be used
 VAGRANTFILE_API_VERSION = "2"
 
@@ -83,9 +85,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         # Use faster paravirtualized networking
         vbox.customize ["modifyvm", :id, "--nictype1", "virtio"]
         vbox.customize ["modifyvm", :id, "--nictype2", "virtio"]
-        # bugfix for #8166 (private network is not up after vagrant up)
-        override.vm.provision :shell,
-          inline: "sudo ifup enp0s8"
       end
 
       # vmware settings
@@ -94,9 +93,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
           vmware.gui = $vm_gui
           vmware.vmx["numvcpus"] = $vm_cpus
           vmware.vmx["memsize"] = $vm_memory
-          # bugfix for #8166 (private network is not up after vagrant up)
-          override.vm.provision :shell,
-            inline: "sudo ifup ens33"
         end
       end
 
