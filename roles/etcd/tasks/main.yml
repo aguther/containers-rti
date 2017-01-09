@@ -8,11 +8,11 @@
 # ------------------------------------------------------------------------------
 - name: set ETCD_LISTEN_CLIENT_URLS
   command: "sed -i 's/\\(ETCD_LISTEN_CLIENT_URLS=\"\\).*\\(\"\\)/\\1{{ item }}\\2/g' /etc/etcd/etcd.conf"
-  with_items: "http:\\/\\/0.0.0.0:2379"
+  with_items: "{{ etcd_listen_client_urls }}"
 
 - name: set ETCD_ADVERTISE_CLIENT_URLS
   command: "sed -i 's/\\(ETCD_ADVERTISE_CLIENT_URLS=\"\\).*\\(\"\\)/\\1{{ item }}\\2/g' /etc/etcd/etcd.conf"
-  with_items: "http:\\/\\/localhost:2379"
+  with_items: "{{ etcd_advertise_client_urls }}"
 
 # ------------------------------------------------------------------------------
 - name: enable and start etcd

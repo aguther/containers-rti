@@ -145,6 +145,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
             docker_group_users: "vagrant",
             docker_swarm_interface: "ens33",
             etcd_interface: "ens33",
+            flannel_interface: "ens33",
           }
         end
       end
