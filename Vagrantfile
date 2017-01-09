@@ -123,8 +123,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
           ansible.install = true
           # define playbook to execute
           ansible.playbook = "/vagrant/%s" % $ansible_playbook
-          # allow to connect to all instances
-          ansible.limit = "centos"
           # run as sudo
           ansible.sudo = true
           # logging verbosity
