@@ -1,11 +1,9 @@
 ---
-# ------------------------------------------------------------------------------
 - hosts: centos
   roles:
-    - disable-selinux
-    - disable-firewall
-    - ntp
-    - docker/el7/swarm
-    - weave/net
-    - cockpit
-...
+    - { role: disable-selinux }
+    - { role: disable-firewall }
+    - { role: ntp }
+    - { role: docker/el7/swarm }
+    - { role: weave/net, weave_group: "centos" }
+    - { role: cockpit }
