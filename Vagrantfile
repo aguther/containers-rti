@@ -145,6 +145,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
               "ansible_ssh_pass" => config.ssh.username,
             },
           }
+          ansible.extra_vars = {
+            docker_group_users: "vagrant",
+            etcd_interface: "ens33",
+          }
         end
       end
     end

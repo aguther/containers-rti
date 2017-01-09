@@ -41,6 +41,5 @@
 
 # ------------------------------------------------------------------------------
 - name: launch
-  command: "/usr/local/bin/weave launch {% for host in groups['centos'] if host != ansible_host %} {{ host }} {% endfor %}"
+  command: "/usr/local/bin/weave launch {% for host in groups[weave_group] if host != ansible_host %} {{ host }} {% endfor %}"
   when: weave_status.rc != 0
-...

@@ -10,9 +10,10 @@
     state: present
 
 - user:
-    name: "{{ ansible_user_id }}"
+    name: "{{ item }}"
     groups: docker
     append: yes
+  with_items: "{{ docker_group_users }}"
 
 - name: enable and start
   service:
