@@ -1,0 +1,4 @@
+---
+swarm_interface: "{{ ansible_default_ipv4.interface }}"
+swarm_host_ipv4_address: "{{ hostvars[inventory_hostname]['ansible_' + swarm_interface].ipv4.address }}"
+swarm_master_ipv4_address: "{{ hostvars[groups['master'][0]]['ansible_' + swarm_interface].ipv4.address }}"
