@@ -7,15 +7,25 @@
 
 # ------------------------------------------------------------------------------
 - name: check network config in etcd
-  command: "etcdctl --endpoints \"{{ flannel_etcd_url }}\" get \"/atomic.io/network/config\""
+  command: "/usr/bin/etcdctl --endpoints '{{ flannel_etcd_url }}' get '{{ flannel_network_config_key }}'"
   register: etcd_network_config
-  failed_when: etcd_network_config.stderr.find('Key not found') != -1
+  failed_when: false
   changed_when: false
+
+- debug: msg="stdout={{ etcd_network_config.stdout }}"
+- debug: msg="stderr={{ etcd_network_config.stderr }}"
+
+- name: setup network config in etcd
+  command: "/usr/bin/etcdctl --endpoints '{{ flannel_etcd_url }}' put '{{ flannel_network_config_key }}' '{{ flannel_network_config_value }}'"
 
 # ------------------------------------------------------------------------------
 - name: set FLANNEL_ETCD_ENDPOINTS
   command: "sed -i 's/\\(FLANNEL_ETCD_ENDPOINTS=\"\\).*\\(\"\\)/\\1{{ item }}\\2/g' /etc/sysconfig/flanneld"
   with_items: "{{ flannel_etcd_url }}"
+
+- name: set FLANNEL_OPTS
+  command: "sed -i 's/[#]{0,1}\\(FLANNEL_OPTS=\"\\).*\\(\"\\)/\\1{{ item }}\\2/g' /etc/sysconfig/flanneld"
+  with_items: "--iface={{ flannel_interface }} {{ flannel_opts }}"
 
 # ------------------------------------------------------------------------------
 - name: enable and start

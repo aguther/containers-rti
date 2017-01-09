@@ -6,3 +6,8 @@ flannel_master_ipv4_address: "{{ hostvars[groups['master'][0]]['ansible_' + flan
 flannel_etcd_client_port: "2379"
 flannel_etcd_url_scheme: "http"
 flannel_etcd_url: "{{ flannel_etcd_url_scheme }}:\\/\\/{{ flannel_master_ipv4_address }}:{{ flannel_etcd_client_port }}"
+
+flannel_network_config_key: "/atomic.io/network/config"
+flannel_network_config_value: { "Network":"172.1.0.0/16" }
+
+flannel_opts: ""
