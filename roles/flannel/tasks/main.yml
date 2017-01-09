@@ -6,6 +6,13 @@
     state: latest
 
 # ------------------------------------------------------------------------------
+- name: check network config in etcd
+  command: "etcdctl --endpoints \"{{ groups['master'][0] }}:2379\" get \"/atomic.io/network/config\""
+  register: etcd_network_config
+  failed_when: etcd_network_config.stderr.find('Key not found') != -1
+  changed_when: false
+
+# ------------------------------------------------------------------------------
 - name: set FLANNEL_ETCD_ENDPOINTS
   command: "sed -i 's/\\(FLANNEL_ETCD_ENDPOINTS=\"\\).*\\(\"\\)/\\1{{ item }}\\2/g' /etc/sysconfig/flanneld"
   with_items: "http:\\/\\/{{ groups['master'][0] }}:2379"

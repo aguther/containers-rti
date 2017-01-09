@@ -3,51 +3,50 @@
 
 # minimum vagrant version
 Vagrant.require_version ">= 1.9.0"
-
 # api version to be used
 VAGRANTFILE_API_VERSION = "2"
 
+# required plugins
+require 'vagrant-hostmanager'
+
 # define instances
-$instance_name_prefix = "centos-7-"
-$instance_count = 3
-# load instance_count also from environment when defined
-if ENV['instance_count']
-  $instance_count = ENV['instance_count'].to_i
-end
+$instance_name_prefix = (ENV['INSTANCE_NAME_PREFIX'] || "centos-7-").to_sym
+$instance_count = (ENV['INSTANCE_COUNT'] || 3).to_i
 # ensure we have at least two instances
 if $instance_count < 2
   raise "This vagrantfile needs at least 2 instances to function properly. Please increase the value of 'instance_count'."
 end
 
 # define virtual machine hardware / mode
-$vm_cpus = 1
-$vm_memory = 1024
-$vm_gui = false
+$vm_cpus = (ENV['VM_CPUS'] || 1).to_i
+$vm_memory = (ENV['VM_MEMORY'] || 1024).to_i
+$vm_ip_template = (ENV['VM_IP_TEMPLATE'] || "172.16.0.%d").to_s
+$vm_netmask = (ENV['VM_NETMASK'] || "255.255.255.0").to_s
 $vm_proxy_enabled = false
+$vm_gui = false
 
-# define default playbook
-$ansible_playbook = "deploy-docker.el7.swarm.yml"
-# load ansible_playbook also from environment when defined
-if ENV['ansible_playbook']
-  $ansible_playbook = ENV['ansible_playbook'].to_s
-end
+# define playbook
+$ansible_playbook = (ENV['ANSIBLE_PLAYBOOK'] || "deploy-docker.el7.swarm.yml").to_sym
 
 # configure instances
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # ssh configuration
+  #config.ssh.pty = true
   config.ssh.insert_key = false
   config.ssh.username = 'vagrant'
 
+  # define order for providers
+  config.vm.provider "vmware_workstation"
+  config.vm.provider "vmware_fusion"
+  config.vm.provider "virtualbox"
+  config.vm.provider "libvirt"
+
   # update /etc/hosts to get working name resolution
-  if Vagrant.has_plugin?("vagrant-hostmanager")
-    config.hostmanager.enabled = true
-    config.hostmanager.manage_host = false
-    config.hostmanager.manage_guest = true
-    config.hostmanager.ignore_private_ip = false
-    config.hostmanager.include_offline = true
-  else
-    raise "Please run 'vagrant plugin install vagrant-hostmanager' to use this vagrantfile."
-  end
+  config.hostmanager.enabled = true
+  config.hostmanager.manage_host = false
+  config.hostmanager.manage_guest = true
+  config.hostmanager.ignore_private_ip = false
+  config.hostmanager.include_offline = true
 
   # when plugin proxyconf is installed, use it
   if $vm_proxy_enabled == true
@@ -71,16 +70,19 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       instance_config.vm.box = "bento/centos-7.3"
       # enable synced folder
       instance_config.vm.synced_folder ".", "/vagrant"
+      # private network for connection between virtual machines
+      instance_config.vm.network :private_network,
+        ip: $vm_ip_template % (100 + id),
+        netmask: $vm_netmask
 
       # virtual box settings
       instance_config.vm.provider :virtualbox do |vbox, override|
         vbox.gui = $vm_gui
         vbox.cpus = $vm_cpus
         vbox.memory = $vm_memory
-        # private network for connection between virtual machines
-        override.vm.network :private_network,
-          ip: "172.20.0.%d" % (100 + id),
-          netmask: "255.255.255.0"
+        # Use faster paravirtualized networking
+        vbox.customize ["modifyvm", :id, "--nictype1", "virtio"]
+        vbox.customize ["modifyvm", :id, "--nictype2", "virtio"]
         # bugfix for #8166 (private network is not up after vagrant up)
         override.vm.provision :shell,
           inline: "sudo ifup enp0s8"
@@ -92,6 +94,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
           vmware.gui = $vm_gui
           vmware.vmx["numvcpus"] = $vm_cpus
           vmware.vmx["memsize"] = $vm_memory
+          # bugfix for #8166 (private network is not up after vagrant up)
+          override.vm.provision :shell,
+            inline: "sudo ifup ens33"
         end
       end
 
