@@ -143,8 +143,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
           }
           ansible.extra_vars = {
             docker_group_users: "vagrant",
+            docker_swarm_interface: "ens33",
             etcd_interface: "ens33",
-            swarm_interface: "ens33",
           }
         end
       end

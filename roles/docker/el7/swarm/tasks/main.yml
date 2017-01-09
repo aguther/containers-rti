@@ -38,19 +38,19 @@
     name: consul
     image: progrium/consul
     hostname: consul
-    command: "-server -advertise {{ swarm_host_ipv4_address }} -client 0.0.0.0 -bootstrap -ui-dir /ui"
+    command: "-server -advertise {{ docker_swarm_host_ipv4_address }} -client 0.0.0.0 -bootstrap -ui-dir /ui"
     state: started
     restart_policy: always
     recreate: yes
     ports:
-      - "{{ swarm_host_ipv4_address }}:8300:8300"
-      - "{{ swarm_host_ipv4_address }}:8301:8301"
-      - "{{ swarm_host_ipv4_address }}:8301:8301/udp"
-      - "{{ swarm_host_ipv4_address }}:8302:8302"
-      - "{{ swarm_host_ipv4_address }}:8302:8302/udp"
-      - "{{ swarm_host_ipv4_address }}:8400:8400"
-      - "{{ swarm_host_ipv4_address }}:8500:8500"
-      - "{{ swarm_host_ipv4_address }}:53:53/udp"
+      - "{{ docker_swarm_host_ipv4_address }}:8300:8300"
+      - "{{ docker_swarm_host_ipv4_address }}:8301:8301"
+      - "{{ docker_swarm_host_ipv4_address }}:8301:8301/udp"
+      - "{{ docker_swarm_host_ipv4_address }}:8302:8302"
+      - "{{ docker_swarm_host_ipv4_address }}:8302:8302/udp"
+      - "{{ docker_swarm_host_ipv4_address }}:8400:8400"
+      - "{{ docker_swarm_host_ipv4_address }}:8500:8500"
+      - "{{ docker_swarm_host_ipv4_address }}:53:53/udp"
     volumes:
       - "/var/lib/consul:/data"
   when: inventory_hostname in groups['master']
@@ -60,7 +60,7 @@
     name: registrar
     image: gliderlabs/registrator
     hostname: registrar
-    command: "consul://{{ swarm_host_ipv4_address }}:8500"
+    command: "consul://{{ docker_swarm_host_ipv4_address }}:8500"
     state: started
     restart_policy: always
     recreate: yes
@@ -73,7 +73,7 @@
     name: sagent
     image: swarm
     hostname: sagent
-    command: "join -advertise={{ swarm_host_ipv4_address }}:2375 consul://{{ swarm_master_ipv4_address }}:8500"
+    command: "join -advertise={{ docker_swarm_host_ipv4_address }}:2375 consul://{{ docker_swarm_master_ipv4_address }}:8500"
     state: started
     restart_policy: always
     recreate: yes
@@ -90,7 +90,7 @@
     name: smanager
     image: swarm
     hostname: smanager
-    command: "manage consul://{{ swarm_host_ipv4_address }}:8500"
+    command: "manage consul://{{ docker_swarm_host_ipv4_address }}:8500"
     state: started
     restart_policy: always
     recreate: yes
