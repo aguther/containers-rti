@@ -6,4 +6,3 @@
   with_sequence: start=1 end={{ groups['nodes'] | length }}
 
 - debug: msg="{{ docker_log.stdout }}"
-...

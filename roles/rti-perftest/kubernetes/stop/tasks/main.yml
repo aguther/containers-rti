@@ -14,4 +14,3 @@
 - name: "namespace : delete"
   command: kubectl delete namespace rti-perftest
   when: check_namespace_rti_perftest.rc == 0
-...

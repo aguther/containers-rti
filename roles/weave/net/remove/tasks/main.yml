@@ -36,4 +36,3 @@
     path: /usr/local/bin/weave
     state: absent
   when: weave_binary.stat.exists == true
-...

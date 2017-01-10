@@ -27,4 +27,3 @@
 - name: launch
   command: "/usr/local/bin/scope launch"
   when: scope_status.rc != 0
-...

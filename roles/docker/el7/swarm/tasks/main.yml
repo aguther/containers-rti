@@ -97,4 +97,3 @@
     ports:
       - "2400:2375"
   when: inventory_hostname in groups['master']
-...

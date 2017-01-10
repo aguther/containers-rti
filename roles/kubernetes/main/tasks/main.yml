@@ -54,4 +54,3 @@
 - name: init node
   shell: "kubeadm join {{ hostvars[groups['master'][0]].kubeadm_token.stdout }} {{ groups['master'][0] }}"
   when: inventory_hostname in groups['nodes']
-...

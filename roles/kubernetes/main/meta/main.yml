@@ -4,4 +4,3 @@ dependencies:
   #- { role: weave/net/remove }
   - { role: etcd/remove }
   - { role: docker/main }
-...

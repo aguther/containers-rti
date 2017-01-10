@@ -12,4 +12,3 @@
 - hosts: master
   roles:
     - { role: scope/kubernetes/main }
-...

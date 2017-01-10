@@ -3,4 +3,3 @@
 - name: start
   command: "docker -H tcp://{{ groups['master'][0] }}:2400 run --detach=true --net=weave --env='reschedule:on-node-failure' --name rti-perftest-sub-{{ item }} guther/rti-perftest -sub"
   with_sequence: start=1 end={{ groups['nodes'] | length }}
-...

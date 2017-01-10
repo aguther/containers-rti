@@ -3,4 +3,3 @@ dependencies:
   - { role: docker/el7 }
   - { role: etcd }
   - { role: flannel }
-...

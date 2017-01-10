@@ -13,4 +13,3 @@
     state: absent
   with_items:
     - /var/lib/etcd
-...

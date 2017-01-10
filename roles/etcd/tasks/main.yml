@@ -20,4 +20,3 @@
     name: etcd.service
     state: restarted
     enabled: yes
-...

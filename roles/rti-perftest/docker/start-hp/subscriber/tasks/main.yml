@@ -2,4 +2,3 @@
 # ------------------------------------------------------------------------------
 - name: start
   command: "docker run --detach=true --net=weave --name rti-perftest-sub guther/rti-perftest -sub"
-...
