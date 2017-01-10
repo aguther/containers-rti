@@ -24,11 +24,24 @@ $vm_cpus = (ENV['VM_CPUS'] || 1).to_i
 $vm_memory = (ENV['VM_MEMORY'] || 1024).to_i
 $vm_ip_template = (ENV['VM_IP_TEMPLATE'] || "172.16.0.%d").to_s
 $vm_netmask = (ENV['VM_NETMASK'] || "255.255.255.0").to_s
-$vm_proxy_enabled = false
-$vm_gui = false
+$vm_proxy_enabled = (ENV['VM_PROXY_ENABLED']).to_s == "true" ? true : false
+$vm_gui = (ENV['VM_GUI']).to_s == "true" ? true : false
+
+# proxy settings if applicable
+if $vm_proxy_enabled == true
+  require 'vagrant-proxyconf'
+
+  $cntlm_rpm = (ENV['CNTLM_RPM'] || "cntlm/cntlm-0.92.3-1.x86_64.rpm").to_s
+  $cntlm_username = (ENV['CNTLM_USERNAME'] || "USER").to_s
+  $cntlm_domain = (ENV['CNTLM_DOMAIN'] || "DOMAIN").to_s
+  $cntlm_pass_auth = (ENV['CNTLM_PASS_AUTH'] || "NTLMv2").to_s
+  $cntlm_pass_hash = (ENV['CNTLM_PASS_HASH'] || "PASSHASH").to_s
+  $cntlm_proxy_address = (ENV['CNTLM_PROXY_ADDRESS'] || "http://proxy:8080").to_s
+  $cntlm_no_proxy = (ENV['CNTLM_NO_PROXY'] || "127.0.0.1, 192.168.*").to_s
+end
 
 # define playbook
-$ansible_playbook = (ENV['ANSIBLE_PLAYBOOK'] || "deploy-docker.el7.swarm.yml").to_sym
+$ansible_playbook = (ENV['ANSIBLE_PLAYBOOK'] || "deploy-docker-swarm.yml").to_sym
 
 # configure instances
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
@@ -52,12 +65,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   # when plugin proxyconf is installed, use it
   if $vm_proxy_enabled == true
-    if Vagrant.has_plugin?("vagrant-proxyconf")
       config.proxy.enabled = true
       config.proxy.http = "http://127.0.0.1:3128/"
-      config.proxy.https = "http://127.0.0.1:3128/"
-      config.proxy.no_proxy = "localhost,127.0.0.1"
-    end
+      config.proxy.https = "https://127.0.0.1:3128/"
+      config.proxy.no_proxy = $cntlm_no_proxy
   end
 
   # create virtual machines
@@ -98,17 +109,23 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
       # provision cntlm if proxy shall be used
       if $vm_proxy_enabled == true
-        instance_config.vm.provision :ansible_local do |ansible|
-          # ensure ansible is installed
-          ansible.install = true
-          # define playbook to execute
-          ansible.playbook = "/vagrant/deploy-cntlm.yml"
-          # allow to connect to all instances
-          ansible.limit = "localhost"
-          # run as sudo
-          ansible.sudo = true
-          # logging verbosity
-          ansible.verbose = false
+        # copy cntlm rpm
+        instance_config.vm.provision :file do |file|
+          file.source = $cntlm_rpm
+          file.destination = "/tmp/cntlm.rpm"
+        end
+
+        # deploy cntlm including configuration
+        instance_config.vm.provision :shell do |shell|
+          shell.path = "cntlm/deploy-cntlm.sh"
+          shell.args = [
+            $cntlm_proxy_address,
+            "3128",
+            $cntlm_domain,
+            $cntlm_username,
+            $cntlm_pass_auth,
+            $cntlm_pass_hash,
+          ]
         end
       end
 
@@ -123,6 +140,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
           ansible.install = true
           # define playbook to execute
           ansible.playbook = "/vagrant/%s" % $ansible_playbook
+          # target group
+          ansible.limit = "centos"
           # run as sudo
           ansible.sudo = true
           # logging verbosity
@@ -139,6 +158,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
               "ansible_ssh_pass" => config.ssh.username,
             },
           }
+          # extra variables to configure roles
           ansible.extra_vars = {
             docker_group_users: "vagrant",
             docker_swarm_interface: "ens33",

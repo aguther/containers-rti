@@ -9,8 +9,9 @@
 # ------------------------------------------------------------------------------
 - name: download binary
   get_url:
-    url: http://git.io/weave
+    url: https://git.io/weave
     dest: /usr/local/bin/weave
+    validate_certs: False
     owner: root
     group: root
     mode: 0755
