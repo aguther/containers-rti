@@ -20,19 +20,22 @@ if $instance_count < 2
   raise "This vagrantfile needs at least 2 instances to function properly. Please increase the value of 'instance_count'."
 end
 
-# define virtual machine hardware / mode
+# define virtual machine hardware
 $vm_cpus = (ENV['VM_CPUS'] || 1).to_i
 $vm_memory = (ENV['VM_MEMORY'] || 1024).to_i
-$vm_ip_template = (ENV['VM_IP_TEMPLATE'] || "172.16.0.%d").to_s
-$vm_netmask = (ENV['VM_NETMASK'] || "255.255.255.0").to_s
-$vm_netmask_cidr = IPAddr.new($vm_netmask).to_i.to_s(2).count("1")
-#$vm_netmask_cidr = IPAddr.new('255.255.255.255').mask(cidr).to_s
-$vm_ip_template_network = $vm_ip_template % 0
-$vm_ip_template_network_cidr = "%s/%d" % [$vm_ip_template_network, $vm_netmask_cidr]
-$vm_proxy_enabled = (ENV['VM_PROXY_ENABLED']).to_s == "true" ? true : false
+
+# define virtual machine mode
 $vm_gui = (ENV['VM_GUI']).to_s == "true" ? true : false
 
-# proxy settings if applicable
+# define ip configuration
+$vm_ip_template = (ENV['VM_IP_TEMPLATE'] || "172.16.0.%d").to_s
+$vm_ip_netmask = (ENV['VM_IP_NETMASK'] || "255.255.255.0").to_s
+$vm_ip_netmask_cidr = IPAddr.new($vm_ip_netmask).to_i.to_s(2).count("1")
+$vm_ip_template_network = $vm_ip_template % 0
+$vm_ip_template_network_cidr = "%s/%d" % [$vm_ip_template_network, $vm_ip_netmask_cidr]
+
+# should the vm use a proxy?
+$vm_proxy_enabled = (ENV['VM_PROXY_ENABLED']).to_s == "true" ? true : false
 if $vm_proxy_enabled == true
   require 'vagrant-proxyconf'
 
@@ -41,10 +44,19 @@ if $vm_proxy_enabled == true
   $cntlm_domain = (ENV['CNTLM_DOMAIN'] || "DOMAIN").to_s
   $cntlm_pass_auth = (ENV['CNTLM_PASS_AUTH'] || "NTLMv2").to_s
   $cntlm_pass_hash = (ENV['CNTLM_PASS_HASH'] || "PASSHASH").to_s
-  $cntlm_proxy_address = (ENV['CNTLM_PROXY_ADDRESS'] || "http://proxy:8080").to_s
-  $cntlm_no_proxy = (ENV['CNTLM_NO_PROXY'] || "127.0.0.1,192.168.*").to_s
-  $cntlm_no_proxy += ",%s" % $vm_ip_template_network_cidr
+  $cntlm_proxy_address = (ENV['CNTLM_PROXY_ADDRESS'] || "http://proxy.company.domain:8080").to_s
+
+  $cntlm_listening_port = 3128
+  $cntlm_address = "http://127.0.0.1:%d/" % $cntlm_listening_port
+  
+  $cntlm_no_proxy = "localhost,127.0.0.1"
+  $cntlm_no_proxy += ",10.*"
+  (16..31).each do |ip_part|
+    $cntlm_no_proxy += ",172.%d.*" % ip_part
+  end
+  $cntlm_no_proxy += ",192.168.*"
   $cntlm_no_proxy += ",%s*" % $instance_name_prefix
+  $cntlm_no_proxy += ENV['CNTLM_NO_PROXY'].to_s
 end
 
 # define playbook
@@ -73,9 +85,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # when plugin proxyconf is installed, use it
   if $vm_proxy_enabled == true
       config.proxy.enabled = true
-      config.proxy.http = "http://127.0.0.1:3128/"
-      config.proxy.https = "https://127.0.0.1:3128/"
-      config.proxy.no_proxy = $cntlm_no_proxy
+      config.proxy.http = $cntlm_address
+      config.proxy.https = $cntlm_address
   end
 
   # create virtual machines
@@ -93,7 +104,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       # private network for connection between virtual machines
       instance_config.vm.network :private_network,
         ip: $vm_ip_template % (100 + id),
-        netmask: $vm_netmask
+        netmask: $vm_ip_netmask
 
       # virtual box settings
       instance_config.vm.provider :virtualbox do |vbox, override|
@@ -127,14 +138,13 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
           shell.path = "cntlm/deploy-cntlm.sh"
           shell.args = [
             $cntlm_proxy_address,
-            "3128",
+            $cntlm_listening_port,
             $cntlm_domain,
             $cntlm_username,
             $cntlm_pass_auth,
             $cntlm_pass_hash,
-            "http://127.0.0.1:3128/",
-            "http://127.0.0.1:3128/",
             $cntlm_no_proxy,
+            $cntlm_address,
           ]
         end
       end
