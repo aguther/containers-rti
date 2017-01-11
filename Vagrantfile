@@ -13,7 +13,7 @@ require 'ipaddr'
 require 'vagrant-hostmanager'
 
 # define instances
-$instance_name_prefix = (ENV['INSTANCE_NAME_PREFIX'] || "centos-7-").to_sym
+$instance_name_prefix = (ENV['INSTANCE_NAME_PREFIX'] || "centos-").to_sym
 $instance_count = (ENV['INSTANCE_COUNT'] || 3).to_i
 # ensure we have at least two instances
 if $instance_count < 2
