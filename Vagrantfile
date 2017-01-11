@@ -104,7 +104,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       instance_config.vm.synced_folder ".", "/vagrant"
       # private network for connection between virtual machines
       instance_config.vm.network :private_network,
-        ip: $vm_ip_template % (100 + id),
+        ip: $vm_ip_template % (10 + id),
         netmask: $vm_ip_netmask
 
       # virtual box settings
