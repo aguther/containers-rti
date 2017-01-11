@@ -33,6 +33,7 @@ $vm_ip_netmask = (ENV['VM_IP_NETMASK'] || "255.255.255.0").to_s
 $vm_ip_netmask_cidr = IPAddr.new($vm_ip_netmask).to_i.to_s(2).count("1")
 $vm_ip_template_network = $vm_ip_template % 0
 $vm_ip_template_network_cidr = "%s/%d" % [$vm_ip_template_network, $vm_ip_netmask_cidr]
+$vm_ip_interface_name = "ens33"
 
 # should the vm use a proxy?
 $vm_proxy_enabled = (ENV['VM_PROXY_ENABLED']).to_s == "true" ? true : false
@@ -181,9 +182,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
           # extra variables to configure roles
           ansible.extra_vars = {
             docker_group_users: "vagrant",
-            docker_swarm_interface: "ens33",
-            etcd_interface: "ens33",
-            flannel_interface: "ens33",
+            docker_swarm_interface: $vm_ip_interface_name,
+            etcd_interface: $vm_ip_interface_name,
+            flannel_interface: $vm_ip_interface_name,
           }
         end
       end
