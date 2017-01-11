@@ -119,40 +119,12 @@ exit
 
 ### Stop
 ```bash
-vagrant ssh -c "cd /vagrant; ansible-playbook -i /tmp/vagrant-ansible/inventory/vagrant_ansible_local_inventory rti-perftest-kubernetes-stop.yml
-exit
-```
-
-### Monitoring
-Monitoring can be done using the tool cockpit which can be reached on the address `http://<host>:9090`. It also supports Kubernetes and can be reached with the tab 'Cluster'.
-
-
-## Kubernetes - kubernetes.io
-In this scenario the rti-perftest example will be executed on a Kubernetes Cluster 1.5.1 with Docker 1.12 as container engine.
-Weave-Net is used to connect the containers on the different hosts.
-
-### Start
-```bash
-export ansible_playbook=deploy-kubernetes.main.yml
-vagrant destroy -f
-vagrant up
-vagrant ssh -c "cd /vagrant; ansible-playbook -i /tmp/vagrant-ansible/inventory/vagrant_ansible_local_inventory rti-perftest-kubernetes-start.yml"
-exit
-```
-
-### Stop
-```bash
 vagrant ssh -c "cd /vagrant; ansible-playbook -i /tmp/vagrant-ansible/inventory/vagrant_ansible_local_inventory rti-perftest-kubernetes-stop.yml"
 exit
 ```
 
 ### Monitoring
-Monitoring can be done using Weave-Scope. To reach Weave-Scope from the host the following command needs to be executed on the master:
-```bash
-vagrant ssh -c "kubectl port-forward $(kubectl get pod --selector=weave-scope-component=app -o jsonpath='{.items..metadata.name}') 4040"
-exit
-```
-Weave-Scope can then be reached on the address `http://<master>:4040`.
+Monitoring can be done using the tool cockpit which can be reached on the address `http://<host>:9090`. It also supports Kubernetes and can be reached with the tab 'Cluster'.
 
 
 ## Links
