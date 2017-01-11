@@ -12,15 +12,9 @@
   failed_when: false
   changed_when: false
 
-- debug: msg="current='not set'"
-  when: etcd_network_config.rc == 4
-- debug: msg="current='{{ etcd_network_config.stdout }}'"
-  when: etcd_network_config.rc == 0
-- debug: msg="target='{{ flannel_network_config_value }}'"
-
 - name: setup network config in etcd
-  command: "/usr/bin/etcdctl --endpoints '{{ flannel_etcd_url }}' put '{{ flannel_network_config_key }}' '{{ flannel_network_config_value }}'"
-  changed_when: etcd_network_config.rc != 0 || etcd_network_config.stdout != "{{ flannel_network_config_value }}"
+  command: "/usr/bin/etcdctl --endpoints '{{ flannel_etcd_url }}' set '{{ flannel_network_config_key }}' '{{ flannel_network_config_value }}'"
+  changed_when: etcd_network_config.rc != 0 or etcd_network_config.stdout != "{{ flannel_network_config_value }}"
 
 # ------------------------------------------------------------------------------
 - name: set FLANNEL_ETCD_ENDPOINTS
