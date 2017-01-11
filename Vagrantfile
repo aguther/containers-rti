@@ -56,7 +56,7 @@ if $vm_proxy_enabled == true
   end
   $cntlm_no_proxy += ",192.168.*"
   $cntlm_no_proxy += ",%s*" % $instance_name_prefix
-  $cntlm_no_proxy += ENV['CNTLM_NO_PROXY'].to_s
+  $cntlm_no_proxy += ",%s" % ENV['CNTLM_NO_PROXY'].to_s
 end
 
 # define playbook
