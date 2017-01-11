@@ -8,9 +8,9 @@ In the default configuration you will get 3 VMs where the first is in the master
 
 | Host         | Groups           | Private IP      |
 |:------------:|:----------------:|:---------------:|
-| centos-7-1   | centos<br>master | 172.20.0.101/24 |
-| centos-7-2   | centos<br>nodes  | 172.20.0.102/24 |
-| centos-7-3   | centos<br>nodes  | 172.20.0.103/24 |
+| centos-7-1   | centos<br>master | 172.16.0.101/24 |
+| centos-7-2   | centos<br>nodes  | 172.16.0.102/24 |
+| centos-7-3   | centos<br>nodes  | 172.16.0.103/24 |
 
 #### Initialization
 Thanks to vagrant the deployment of the virtual machines is really easy. The configuration can be found in the file `Vagrantfile`. It's possible to change the number of virtual machines and the playbook used during provisioning via environment variables (see below).

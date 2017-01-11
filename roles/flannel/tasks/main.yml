@@ -12,16 +12,20 @@
   failed_when: false
   changed_when: false
 
-- debug: msg="stdout={{ etcd_network_config.stdout }}"
-- debug: msg="stderr={{ etcd_network_config.stderr }}"
+- debug: msg="current='not set'"
+  when: etcd_network_config.rc == 4
+- debug: msg="current='{{ etcd_network_config.stdout }}'"
+  when: etcd_network_config.rc == 0
+- debug: msg="target='{{ flannel_network_config_value }}'"
 
 - name: setup network config in etcd
   command: "/usr/bin/etcdctl --endpoints '{{ flannel_etcd_url }}' put '{{ flannel_network_config_key }}' '{{ flannel_network_config_value }}'"
+  changed_when: etcd_network_config.rc != 0 || etcd_network_config.stdout != "{{ flannel_network_config_value }}"
 
 # ------------------------------------------------------------------------------
 - name: set FLANNEL_ETCD_ENDPOINTS
   command: "sed -i 's/\\(FLANNEL_ETCD_ENDPOINTS=\"\\).*\\(\"\\)/\\1{{ item }}\\2/g' /etc/sysconfig/flanneld"
-  with_items: "{{ flannel_etcd_url }}"
+  with_items: "{{ flannel_etcd_url | regex_replace('/', '\\/') }}"
 
 - name: set FLANNEL_OPTS
   command: "sed -i 's/[#]{0,1}\\(FLANNEL_OPTS=\"\\).*\\(\"\\)/\\1{{ item }}\\2/g' /etc/sysconfig/flanneld"
