@@ -49,7 +49,7 @@ if $vm_proxy_enabled == true
 
   $cntlm_listening_port = 3128
   $cntlm_address = "http://127.0.0.1:%d/" % $cntlm_listening_port
-  
+
   $cntlm_no_proxy = "localhost,127.0.0.1"
   $cntlm_no_proxy += ",10.*"
   (16..31).each do |ip_part|
@@ -112,7 +112,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         vbox.gui = $vm_gui
         vbox.cpus = $vm_cpus
         vbox.memory = $vm_memory
-        # Use faster paravirtualized networking
         vbox.customize ["modifyvm", :id, "--nictype1", "virtio"]
         vbox.customize ["modifyvm", :id, "--nictype2", "virtio"]
       end
