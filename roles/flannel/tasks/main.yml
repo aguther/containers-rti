@@ -14,7 +14,7 @@
 
 - name: setup network config in etcd
   command: "/usr/bin/etcdctl --endpoints '{{ flannel_etcd_url }}' set '{{ flannel_network_config_key }}' '{{ flannel_network_config_value }}'"
-  changed_when: etcd_network_config.rc != 0 or etcd_network_config.stdout != "{{ flannel_network_config_value }}"
+  changed_when: etcd_network_config.rc != 0 or etcd_network_config.stdout != {{ flannel_network_config_value }}
 
 # ------------------------------------------------------------------------------
 - name: set FLANNEL_ETCD_ENDPOINTS
