@@ -13,12 +13,14 @@ require 'ipaddr'
 require 'vagrant-hostmanager'
 
 # define instances
-$instance_name_prefix = (ENV['INSTANCE_NAME_PREFIX'] || "centos-").to_sym
 $instances = (ENV['INSTANCES'] || 3).to_i
 # ensure we have at least two instances
 if $instances < 2
   raise "This vagrantfile needs at least 2 instances to function properly. Please increase the value of 'instance_count'."
 end
+
+# define hostnames
+$vm_hostname_prefix = (ENV['VM_HOSTNAME_PREFIX'] || "centos-").to_sym
 
 # define virtual machine hardware
 $vm_cpus = (ENV['VM_CPUS'] || 1).to_i
@@ -56,7 +58,7 @@ if $vm_proxy_enabled == true
     $cntlm_no_proxy += ",172.%d.*" % ip_part
   end
   $cntlm_no_proxy += ",192.168.*"
-  $cntlm_no_proxy += ",%s*" % $instance_name_prefix
+  $cntlm_no_proxy += ",%s*" % $vm_hostname_prefix
   $cntlm_no_proxy += ",%s" % ENV['CNTLM_NO_PROXY'].to_s
 end
 
@@ -93,7 +95,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # create virtual machines
   ($instances).downto(1) do |id|
     # create hostname
-    hostname = "%s%d" % [$instance_name_prefix, id]
+    hostname = "%s%d" % [$vm_hostname_prefix, id]
     # define the virtual machine
     config.vm.define hostname, primary: (id == 1) ? true : false do |instance_config|
       # hostname within virtual machine
@@ -168,8 +170,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
           ansible.verbose = false
           # groups
           ansible.groups = {
-            "master" => "%s1" % $instance_name_prefix,
-            "nodes" => "%s[2:%d]" % [$instance_name_prefix, $instances],
+            "master" => "%s1" % $vm_hostname_prefix,
+            "nodes" => "%s[2:%d]" % [$vm_hostname_prefix, $instances],
             "centos:children" => [
               "master",
               "nodes",
