@@ -12,29 +12,49 @@ In the default configuration you will get 3 VMs where the first is in the master
 | centos-2   | centos<br>nodes  | 172.30.0.12/24 |
 | centos-3   | centos<br>nodes  | 172.30.0.13/24 |
 
-#### Initialization
+### Proxy Configuration
+If applicable, using a proxy is possible directly via proxy address or with a configured cntlm running inside the virtual machines.
+
+#### Direct Proxy
+Take the following steps to configure the virtual machines for an proxy address.
+```bash
+export VM_PROXY_ENABLED=true
+export VM_PROXY_ADDRESS=http://proxy.domain:8080/
+```
+
+#### Proxy via CNTLM
+```bash
+export VM_PROXY_ENABLED=true
+export VM_PROXY_CNTLM_ENABLED=true
+export VM_PROXY_CNTLM_PROXY_ADDRESS=http://proxy.domain:8080/
+export VM_PROXY_CNTLM_USERNAME=<USER>
+export VM_PROXY_CNTLM_DOMAIN=<DOMAIN>
+export VM_PROXY_CNTLM_PASS_HASH=<HASH>
+```
+
+### Initialization
 Thanks to vagrant the deployment of the virtual machines is really easy. The configuration can be found in the file `Vagrantfile`. It's possible to change the number of virtual machines and the playbook used during provisioning via environment variables (see below).
 
 The virtual machines can be deploying with the following commands:
 ```bash
 # optional, default = 3
-export instance_count=4
+export VM_INSTANCES=4
 # optional, default = deploy-docker.yml
-export ansible_playbook=deploy-kubernetes.yml
+export PLAYBOOK=deploy-kubernetes.yml
 vagrant up
 ```
 
-#### Execution of additional playbooks after provisioning
+### Execution of additional playbooks after provisioning
 ```bash
 vagrant ssh -c "cd /vagrant; ansible-playbook -i /tmp/vagrant-ansible/inventory/vagrant_ansible_local_inventory <playbook>"
 ```
 
-#### Shutdown
+### Shutdown
 ```bash
 vagrant halt
 ```
 
-#### Destroy
+### Destroy
 ```bash
 vagrant destroy -f
 ```
@@ -45,7 +65,7 @@ Weave-Net is used to connect the containers on the different hosts.
 
 ### Start
 ```bash
-export ansible_playbook=deploy-docker.yml
+export PLAYBOOK=deploy-docker.yml
 vagrant destroy -f
 vagrant up
 vagrant ssh -c "cd /vagrant; ansible-playbook -i /tmp/vagrant-ansible/inventory/vagrant_ansible_local_inventory rti-perftest-docker-start.yml"
@@ -70,7 +90,7 @@ The difference to the former scenario is that it's not predefined on which host 
 
 ### Start
 ```bash
-export ansible_playbook=deploy-docker-swarm.yml
+export PLAYBOOK=deploy-docker-swarm.yml
 vagrant destroy -f
 vagrant up
 vagrant ssh -c "cd /vagrant; ansible-playbook -i /tmp/vagrant-ansible/inventory/vagrant_ansible_local_inventory rti-perftest-docker-swarm-start.yml"
@@ -110,7 +130,7 @@ Weave-Net is used to connect the containers on the different hosts.
 
 ### Start
 ```bash
-export ansible_playbook=deploy-kubernetes.yml
+export PLAYBOOK=deploy-kubernetes.yml
 vagrant destroy -f
 vagrant up
 vagrant ssh -c "cd /vagrant; ansible-playbook -i /tmp/vagrant-ansible/inventory/vagrant_ansible_local_inventory rti-perftest-kubernetes-start.yml"
