@@ -33,33 +33,44 @@ $vm_gui = (ENV['VM_GUI']).to_s == "true" ? true : false
 $vm_ip_template = (ENV['VM_IP_TEMPLATE'] || "172.30.0.%d").to_s
 $vm_ip_netmask = (ENV['VM_IP_NETMASK'] || "255.255.255.0").to_s
 $vm_ip_netmask_cidr = IPAddr.new($vm_ip_netmask).to_i.to_s(2).count("1")
-$vm_ip_template_network = $vm_ip_template % 0
-$vm_ip_template_network_cidr = "%s/%d" % [$vm_ip_template_network, $vm_ip_netmask_cidr]
-$vm_ip_interface_name = "ens33"
+
+# interface name
+$vm_ip_interface_name = (ENV['VM_IP_INTERFACE_NAME'] || "ens334").to_s
 
 # should the vm use a proxy?
-$vm_proxy_enabled = (ENV['VM_PROXY_ENABLED']).to_s == "true" ? true : false
-if $vm_proxy_enabled == true
+if $vm_proxy_enabled = (ENV['VM_PROXY_ENABLED']).to_s == "true" ? true : false == true
   require 'vagrant-proxyconf'
 
-  $cntlm_rpm = (ENV['CNTLM_RPM'] || "cntlm/cntlm-0.92.3-1.x86_64.rpm").to_s
-  $cntlm_username = (ENV['CNTLM_USERNAME'] || "USER").to_s
-  $cntlm_domain = (ENV['CNTLM_DOMAIN'] || "DOMAIN").to_s
-  $cntlm_pass_auth = (ENV['CNTLM_PASS_AUTH'] || "NTLMv2").to_s
-  $cntlm_pass_hash = (ENV['CNTLM_PASS_HASH'] || "PASSHASH").to_s
-  $cntlm_proxy_address = (ENV['CNTLM_PROXY_ADDRESS'] || "http://proxy.company.domain:8080").to_s
+  # this is the proxy address that will be used by the operating system
+  $vm_proxy_address = (ENV['VM_PROXY_ADDRESS'] || "http://127.0.0.1:3128/").to_s
 
-  $cntlm_listening_port = 3128
-  $cntlm_address = "http://127.0.0.1:%d/" % $cntlm_listening_port
+  if $cntlm_enabled = (ENV['CNTLM_ENABLED']).to_s == "true" ? true : false == true
+    # define the rpm file for cntlm
+    $cntlm_rpm = (ENV['CNTLM_RPM'] || "cntlm/cntlm-0.92.3-1.x86_64.rpm").to_s
 
-  $cntlm_no_proxy = "localhost,127.0.0.1"
-  $cntlm_no_proxy += ",10.*"
-  (16..31).each do |ip_part|
-    $cntlm_no_proxy += ",172.%d.*" % ip_part
+    # listening port
+    $cntlm_port = (ENV['CNTLM_PORT'] || "3128").to_s
+
+    # upstream proxy address
+    $cntlm_proxy_address = (ENV['CNTLM_PROXY_ADDRESS'] || "http://proxy.company.domain:8080").to_s
+
+    # addresses / ips where upstream proxy should be skipped
+    # we add here the general private address ranges per default
+    $cntlm_no_proxy = "localhost,127.0.0.1"
+    $cntlm_no_proxy += ",10.*"
+    (16..31).each do |ip_part|
+      $cntlm_no_proxy += ",172.%d.*" % ip_part
+    end
+    $cntlm_no_proxy += ",192.168.*"
+    $cntlm_no_proxy += ",%s*" % $vm_hostname_prefix
+    $cntlm_no_proxy += ",%s" % ENV['CNTLM_NO_PROXY'].to_s
+
+    # user configuration
+    $cntlm_username = (ENV['CNTLM_USERNAME'] || "USER").to_s
+    $cntlm_domain = (ENV['CNTLM_DOMAIN'] || "DOMAIN").to_s
+    $cntlm_pass_auth = (ENV['CNTLM_PASS_AUTH'] || "NTLMv2").to_s
+    $cntlm_pass_hash = (ENV['CNTLM_PASS_HASH'] || "PASSHASH").to_s
   end
-  $cntlm_no_proxy += ",192.168.*"
-  $cntlm_no_proxy += ",%s*" % $vm_hostname_prefix
-  $cntlm_no_proxy += ",%s" % ENV['CNTLM_NO_PROXY'].to_s
 end
 
 # define playbook
@@ -88,8 +99,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # when plugin proxyconf is installed, use it
   if $vm_proxy_enabled == true
       config.proxy.enabled = true
-      config.proxy.http = $cntlm_address
-      config.proxy.https = $cntlm_address
+      config.proxy.http = $vm_proxy_address
+      config.proxy.https = $vm_proxy_address
   end
 
   # create virtual machines
@@ -128,25 +139,34 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       end
 
       # provision cntlm if proxy shall be used
-      if $vm_proxy_enabled == true
+      if $cntlm_enabled == true
         # copy cntlm rpm
         instance_config.vm.provision :file do |file|
           file.source = $cntlm_rpm
           file.destination = "/tmp/cntlm.rpm"
         end
 
-        # deploy cntlm including configuration
+        # install cntlm including configuration
         instance_config.vm.provision :shell do |shell|
-          shell.path = "cntlm/deploy-cntlm.sh"
+          shell.path = "proxy/deploy-cntlm.sh"
           shell.args = [
             $cntlm_proxy_address,
-            $cntlm_listening_port,
+            $cntlm_port,
             $cntlm_domain,
             $cntlm_username,
             $cntlm_pass_auth,
             $cntlm_pass_hash,
             $cntlm_no_proxy,
-            $cntlm_address,
+          ]
+        end
+      end
+
+      # provision proxy configuration for docker
+      if $vm_proxy_enabled == true
+        instance_config.vm.provision :shell do |shell|
+          shell.path = "proxy/deploy-docker.sh"
+          shell.args = [
+            $vm_proxy_address,
           ]
         end
       end

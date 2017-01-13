@@ -17,14 +17,3 @@ sudo echo -e "NoProxy\t\t\t$7"		>>	$CNTLM_CONFIGURATION_FILE
 
 # start service
 sudo systemctl restart cntlm
-
-# deploy proxy configuration for docker
-DOCKER_SERVICE_EXTENSION_DIRECTORY=/etc/systemd/system/docker.service.d
-DOCKER_PROXY_CONFIGURATION_FILE=$DOCKER_SERVICE_EXTENSION_DIRECTORY/proxy.conf
-
-sudo mkdir -p $DOCKER_SERVICE_EXTENSION_DIRECTORY
-sudo echo "[Service]"						>	$DOCKER_PROXY_CONFIGURATION_FILE
-sudo echo "Environment=\"HTTP_PROXY=$8\""	>>	$DOCKER_PROXY_CONFIGURATION_FILE
-sudo echo "Environment=\"HTTPS_PROXY=$8\""	>>	$DOCKER_PROXY_CONFIGURATION_FILE
-sudo echo "Environment=\"http_proxy=$8\""	>>	$DOCKER_PROXY_CONFIGURATION_FILE
-sudo echo "Environment=\"https_proxy=$8\""	>>	$DOCKER_PROXY_CONFIGURATION_FILE
