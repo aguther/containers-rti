@@ -6,9 +6,24 @@
     state: latest
 
 # ------------------------------------------------------------------------------
+- name: check network config in etcd
+  command: "/usr/bin/etcdctl --endpoints '{{ flannel_etcd_url }}' get '{{ flannel_network_config_key }}'"
+  register: etcd_network_config
+  failed_when: false
+  changed_when: false
+
+- name: setup network config in etcd
+  command: "/usr/bin/etcdctl --endpoints '{{ flannel_etcd_url }}' set '{{ flannel_network_config_key }}' '{{ flannel_network_config_value }}'"
+  changed_when: etcd_network_config.rc != 0 or etcd_network_config.stdout != {{ flannel_network_config_value }}
+
+# ------------------------------------------------------------------------------
 - name: set FLANNEL_ETCD_ENDPOINTS
   command: "sed -i 's/\\(FLANNEL_ETCD_ENDPOINTS=\"\\).*\\(\"\\)/\\1{{ item }}\\2/g' /etc/sysconfig/flanneld"
-  with_items: "http:\\/\\/{{ groups['master'][0] }}:2379"
+  with_items: "{{ flannel_etcd_url | regex_replace('/', '\\/') }}"
+
+- name: set FLANNEL_OPTS
+  command: "sed -i 's/[#]{0,1}\\(FLANNEL_OPTS=\"\\).*\\(\"\\)/\\1{{ item }}\\2/g' /etc/sysconfig/flanneld"
+  with_items: "--iface={{ flannel_interface }} {{ flannel_opts }}"
 
 # ------------------------------------------------------------------------------
 - name: enable and start
@@ -16,4 +31,3 @@
     name: flanneld.service
     state: running
     enabled: yes
-...

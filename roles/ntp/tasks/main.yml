@@ -10,4 +10,3 @@
     name: ntpd.service
     state: running
     enabled: yes
-...

@@ -4,4 +4,3 @@
   roles:
     - rti-perftest/docker/swarm/log/publisher
     - rti-perftest/docker/swarm/log/subscriber
-...

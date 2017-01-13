@@ -7,4 +7,3 @@
 - hosts: nodes
   roles:
     - rti-perftest/docker/start/subscriber
-...

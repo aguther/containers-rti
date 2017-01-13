@@ -59,4 +59,3 @@
     - kube-proxy.service
     - kubelet.service
   when: inventory_hostname in groups['nodes']
-...

@@ -1,7 +1,0 @@
----
-
-- name: Install CNTLM for enterprise proxy
-  tags: cntlm
-  apt: >
-    name={{ cntlm_package_file }}
-    state=present

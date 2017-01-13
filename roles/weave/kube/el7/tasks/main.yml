@@ -10,4 +10,3 @@
     name: kubelet.service
     state: restarted
     enabled: yes
-...

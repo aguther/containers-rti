@@ -28,4 +28,3 @@
     state: enabled
     permanent: true
   when: service_firewalld_status.rc == 0
-...

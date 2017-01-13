@@ -34,4 +34,3 @@
   file:
     path: /tmp/rti-perftest-sub.yml
     state: absent
-...

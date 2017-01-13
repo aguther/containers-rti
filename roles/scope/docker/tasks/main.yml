@@ -11,6 +11,7 @@
   get_url:
     url: http://git.io/scope
     dest: /usr/local/bin/scope
+    validate_certs: False
     owner: root
     group: root
     mode: 0755
@@ -26,4 +27,3 @@
 - name: launch
   command: "/usr/local/bin/scope launch"
   when: scope_status.rc != 0
-...

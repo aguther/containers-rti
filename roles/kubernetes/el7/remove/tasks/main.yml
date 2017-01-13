@@ -6,4 +6,3 @@
       - kubernetes-master
       - kubernetes-client
     state: removed
-...

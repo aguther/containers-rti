@@ -9,8 +9,9 @@
 # ------------------------------------------------------------------------------
 - name: download binary
   get_url:
-    url: http://git.io/weave
+    url: https://git.io/weave
     dest: /usr/local/bin/weave
+    validate_certs: False
     owner: root
     group: root
     mode: 0755
@@ -41,6 +42,5 @@
 
 # ------------------------------------------------------------------------------
 - name: launch
-  command: "/usr/local/bin/weave launch {% for host in groups['centos'] if host != ansible_host %} {{ host }} {% endfor %}"
+  command: "/usr/local/bin/weave launch {% for host in groups[weave_group] if host != ansible_host %} {{ host }} {% endfor %}"
   when: weave_status.rc != 0
-...

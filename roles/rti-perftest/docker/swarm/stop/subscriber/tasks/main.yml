@@ -3,4 +3,3 @@
 - name: stop
   command: "docker -H tcp://{{ groups['master'][0] }}:2400 rm -f rti-perftest-sub-{{ item }}"
   with_sequence: start=1 end={{ groups['nodes'] | length }}
-...

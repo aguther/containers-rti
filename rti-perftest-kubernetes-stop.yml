@@ -3,4 +3,3 @@
 - hosts: master
   roles:
     - rti-perftest/kubernetes/stop
-...

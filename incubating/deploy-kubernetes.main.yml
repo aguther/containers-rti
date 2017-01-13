@@ -2,14 +2,13 @@
 # ------------------------------------------------------------------------------
 - hosts: centos
   roles:
-    - ntp
-    - disable-selinux
-    - disable-firewall
-    - weave/kube/main
-    - kubernetes/main
+    - { role: ntp }
+    - { role: disable-selinux }
+    - { role: disable-firewall }
+    - { role: weave/kube/main, weave_group: "centos" }
+    - { role: kubernetes/main }
 
 # ------------------------------------------------------------------------------
 - hosts: master
   roles:
-    - scope/kubernetes/main
-...
+    - { role: scope/kubernetes/main }

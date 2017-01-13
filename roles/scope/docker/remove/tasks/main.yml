@@ -24,4 +24,3 @@
     path: /usr/local/bin/scope
     state: absent
   when: scope_binary.stat.exists == true
-...
