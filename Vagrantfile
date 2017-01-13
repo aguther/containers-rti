@@ -63,7 +63,7 @@ if $vm_proxy_enabled == true
 end
 
 # define playbook
-$ansible_playbook = (ENV['ANSIBLE_PLAYBOOK'] || "deploy-docker-swarm.yml").to_sym
+$playbook = (ENV['PLAYBOOK'] || "deploy-docker.yml").to_sym
 
 # configure instances
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
@@ -161,7 +161,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
           # ensure ansible is installed
           ansible.install = true
           # define playbook to execute
-          ansible.playbook = "/vagrant/%s" % $ansible_playbook
+          ansible.playbook = "/vagrant/%s" % $playbook
           # target group
           ansible.limit = "centos"
           # run as sudo
