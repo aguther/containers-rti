@@ -1,8 +1,0 @@
----
-- hosts: centos
-  roles:
-    - { role: disable-selinux }
-    - { role: disable-firewall }
-    - { role: ntp }
-    - { role: docker/main }
-    - { role: weave/net }

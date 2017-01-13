@@ -1,4 +1,0 @@
----
-# currently this does not work due to a bug in the network policy controller
-#- name: install weave
-#  shell: "kubectl apply -f https://git.io/weave-kube"
