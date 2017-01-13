@@ -14,9 +14,9 @@ require 'vagrant-hostmanager'
 
 # define instances
 $instance_name_prefix = (ENV['INSTANCE_NAME_PREFIX'] || "centos-").to_sym
-$instance_count = (ENV['INSTANCE_COUNT'] || 3).to_i
+$instances = (ENV['INSTANCES'] || 3).to_i
 # ensure we have at least two instances
-if $instance_count < 2
+if $instances < 2
   raise "This vagrantfile needs at least 2 instances to function properly. Please increase the value of 'instance_count'."
 end
 
@@ -91,7 +91,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   end
 
   # create virtual machines
-  ($instance_count).downto(1) do |id|
+  ($instances).downto(1) do |id|
     # create hostname
     hostname = "%s%d" % [$instance_name_prefix, id]
     # define the virtual machine
@@ -169,7 +169,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
           # groups
           ansible.groups = {
             "master" => "%s1" % $instance_name_prefix,
-            "nodes" => "%s[2:%d]" % [$instance_name_prefix, $instance_count],
+            "nodes" => "%s[2:%d]" % [$instance_name_prefix, $instances],
             "centos:children" => [
               "master",
               "nodes",
