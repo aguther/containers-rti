@@ -30,7 +30,7 @@ $vm_memory = (ENV['VM_MEMORY'] || 1024).to_i
 $vm_gui = (ENV['VM_GUI']).to_s == "true" ? true : false
 
 # define ip configuration
-$vm_ip_template = (ENV['VM_IP_TEMPLATE'] || "172.16.0.%d").to_s
+$vm_ip_template = (ENV['VM_IP_TEMPLATE'] || "172.30.0.%d").to_s
 $vm_ip_netmask = (ENV['VM_IP_NETMASK'] || "255.255.255.0").to_s
 $vm_ip_netmask_cidr = IPAddr.new($vm_ip_netmask).to_i.to_s(2).count("1")
 $vm_ip_template_network = $vm_ip_template % 0

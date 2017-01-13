@@ -6,11 +6,11 @@ Vagrant can be used to deploy the necessary virtual machines.
 
 In the default configuration you will get 3 VMs where the first is in the master group and the other two in the nodes group:
 
-| Host         | Groups           | Private IP      |
-|:------------:|:----------------:|:---------------:|
-| centos-7-1   | centos<br>master | 172.16.0.101/24 |
-| centos-7-2   | centos<br>nodes  | 172.16.0.102/24 |
-| centos-7-3   | centos<br>nodes  | 172.16.0.103/24 |
+| Host         | Groups           | Private IP     |
+|:------------:|:----------------:|:--------------:|
+| centos-7-1   | centos<br>master | 172.30.0.11/24 |
+| centos-7-2   | centos<br>nodes  | 172.30.0.12/24 |
+| centos-7-3   | centos<br>nodes  | 172.30.0.13/24 |
 
 #### Initialization
 Thanks to vagrant the deployment of the virtual machines is really easy. The configuration can be found in the file `Vagrantfile`. It's possible to change the number of virtual machines and the playbook used during provisioning via environment variables (see below).
