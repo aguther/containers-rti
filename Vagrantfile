@@ -13,9 +13,9 @@ require 'ipaddr'
 require 'vagrant-hostmanager'
 
 # define instances
-$instances = (ENV['INSTANCES'] || 3).to_i
+$vm_instances = (ENV['VM_INSTANCES'] || 3).to_i
 # ensure we have at least two instances
-if $instances < 2
+if $vm_instances < 2
   raise "This vagrantfile needs at least 2 instances to function properly. Please increase the value of 'instance_count'."
 end
 
@@ -93,7 +93,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   end
 
   # create virtual machines
-  ($instances).downto(1) do |id|
+  ($vm_instances).downto(1) do |id|
     # create hostname
     hostname = "%s%d" % [$vm_hostname_prefix, id]
     # define the virtual machine
@@ -171,7 +171,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
           # groups
           ansible.groups = {
             "master" => "%s1" % $vm_hostname_prefix,
-            "nodes" => "%s[2:%d]" % [$vm_hostname_prefix, $instances],
+            "nodes" => "%s[2:%d]" % [$vm_hostname_prefix, $vm_instances],
             "centos:children" => [
               "master",
               "nodes",
