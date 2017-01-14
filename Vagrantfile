@@ -35,7 +35,7 @@ $vm_ip_netmask = (ENV['VM_IP_NETMASK'] || "255.255.255.0").to_s
 $vm_ip_netmask_cidr = IPAddr.new($vm_ip_netmask).to_i.to_s(2).count("1")
 
 # interface name
-$vm_ip_interface_name = (ENV['VM_IP_INTERFACE_NAME'] || "ens33").to_s
+$vm_ip_interface_name = (ENV['VM_IP_INTERFACE_NAME'] || "eth1").to_s
 
 # should the vm use a proxy?
 if $vm_proxy_enabled = (ENV['VM_PROXY_ENABLED']).to_s == "true" ? true : false == true
