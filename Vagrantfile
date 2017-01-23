@@ -43,34 +43,6 @@ if $vm_proxy_enabled = (ENV['VM_PROXY_ENABLED']).to_s == "true" ? true : false =
 
   # this is the proxy address that will be used by the operating system
   $vm_proxy_address = (ENV['VM_PROXY_ADDRESS'] || "http://127.0.0.1:3128/").to_s
-
-  if $vm_proxy_cntlm_enabled = (ENV['VM_PROXY_CNTLM_ENABLED']).to_s == "true" ? true : false == true
-    # define the rpm file for cntlm
-    $vm_proxy_cntlm_rpm = (ENV['VM_PROXY_CNTLM_RPM'] || "cntlm/cntlm-0.92.3-1.x86_64.rpm").to_s
-
-    # listening port
-    $vm_proxy_cntlm_port = (ENV['VM_PROXY_CNTLM_PORT'] || "3128").to_s
-
-    # upstream proxy address
-    $vm_proxy_cntlm_proxy_address = (ENV['VM_PROXY_CNTLM_PROXY_ADDRESS'] || "http://proxy.company.domain:8080").to_s
-
-    # addresses / ips where upstream proxy should be skipped
-    # we add here the general private address ranges per default
-    $vm_proxy_cntlm_no_proxy = "localhost,127.0.0.1"
-    $vm_proxy_cntlm_no_proxy += ",10.*"
-    (16..31).each do |ip_part|
-      $vm_proxy_cntlm_no_proxy += ",172.%d.*" % ip_part
-    end
-    $vm_proxy_cntlm_no_proxy += ",192.168.*"
-    $vm_proxy_cntlm_no_proxy += ",%s*" % $vm_hostname_prefix
-    $vm_proxy_cntlm_no_proxy += ",%s" % ENV['VM_PROXY_CNTLM_NO_PROXY'].to_s
-
-    # user configuration
-    $vm_proxy_cntlm_username = (ENV['VM_PROXY_CNTLM_USERNAME'] || "USER").to_s
-    $vm_proxy_cntlm_domain = (ENV['VM_PROXY_CNTLM_DOMAIN'] || "DOMAIN").to_s
-    $vm_proxy_cntlm_pass_auth = (ENV['VM_PROXY_CNTLM_PASS_AUTH'] || "NTLMv2").to_s
-    $vm_proxy_cntlm_pass_hash = (ENV['VM_PROXY_CNTLM_PASS_HASH'] || "PASSHASH").to_s
-  end
 end
 
 # define playbook
@@ -79,15 +51,8 @@ $playbook = (ENV['PLAYBOOK'] || "deploy-docker.yml").to_sym
 # configure instances
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # ssh configuration
-  #config.ssh.pty = true
   config.ssh.insert_key = false
   config.ssh.username = 'vagrant'
-
-  # define order for providers
-  config.vm.provider "vmware_workstation"
-  config.vm.provider "vmware_fusion"
-  config.vm.provider "virtualbox"
-  config.vm.provider "libvirt"
 
   # update /etc/hosts to get working name resolution
   config.hostmanager.enabled = true
@@ -138,33 +103,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         end
       end
 
-      # provision cntlm if proxy shall be used
-      if $vm_proxy_cntlm_enabled == true
-        # copy cntlm rpm
-        instance_config.vm.provision :file do |file|
-          file.source = $vm_proxy_cntlm_rpm
-          file.destination = "/tmp/cntlm.rpm"
-        end
-
-        # install cntlm including configuration
-        instance_config.vm.provision :shell do |shell|
-          shell.path = "proxy/deploy-cntlm.sh"
-          shell.args = [
-            $vm_proxy_cntlm_proxy_address,
-            $vm_proxy_cntlm_port,
-            $vm_proxy_cntlm_domain,
-            $vm_proxy_cntlm_username,
-            $vm_proxy_cntlm_pass_auth,
-            $vm_proxy_cntlm_pass_hash,
-            $vm_proxy_cntlm_no_proxy,
-          ]
-        end
-      end
-
       # provision proxy configuration for docker
       if $vm_proxy_enabled == true
         instance_config.vm.provision :shell do |shell|
-          shell.path = "proxy/deploy-docker.sh"
+          shell.path = "proxy/set-proxy-docker.sh"
           shell.args = [
             $vm_proxy_address,
           ]

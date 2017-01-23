@@ -17,12 +17,12 @@ ifdef::backend-revealjs[]
 :revealjsdir: https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.4.0
 endif::backend-revealjs[]
 
+[%notitle]
 == Lunch & Learn
-[%step]
-* Vagrant
-* Ansible
-* Docker
-* Kubernetes
+===== Vagrant
+===== Ansible
+===== Docker
+===== Kubernetes
 
 == Vagrant
 
@@ -51,6 +51,7 @@ $ vagrant up
 Single-Machine
 
 === Multi-Machine
+===== Simple
 [source,ruby]
 ----
 Vagrant.configure("2") do |config|
@@ -64,6 +65,13 @@ Vagrant.configure("2") do |config|
   end
 
 end
+----
+
+=== Multi-Machine
+===== Our Use-Case
+[source,ruby]
+----
+include::Vagrantfile[]
 ----
 
 === Demo
@@ -99,14 +107,16 @@ ____
 . Create inventory
 . Execute desired command
 
-=== Inventory Creation
+=== Inventory
+===== Creation
 [source,bash]
 ----
 $ touch ./hosts
 $ vim ./hosts
 ----
 
-=== Inventory Content
+=== Inventory
+===== Content
 [source,ini]
 ----
 [centos]
@@ -130,6 +140,15 @@ Single Command
 
 === Playbooks
 Playbooks are a combination of tasks that want to achieve a certain end state.
+
+At best playbooks make use of roles.
+
+=== Playbooks
+==== Example
+[source,yaml]
+----
+include::deploy-docker.yml[]
+----
 
 === Demo
 Playbooks
@@ -155,6 +174,13 @@ ENTRYPOINT ["[...]/perftest_cpp"]
 
 === Complete Dockerfile
 https://github.com/aguther/rti-perftest/blob/master/Dockerfile
+
+=== Run rtiperftest
+[source,bash]
+----
+docker run --detach=true --name rti-perftest-pub guther/rti-perftest -pub -numSubscribers 1 -sleep 1000
+docker run --detach=true --name rti-perftest-sub guther/rti-perftest -sub
+----
 
 === Demo
 Single-Node
@@ -202,6 +228,14 @@ TIP: ...and it supports multicast!
 === Weave Net
 image::https://www.weave.works/wp-content/uploads/d989f137a913d15c6ab2afe14149d8acfd180db3.png[]
 
+=== Run rtiperftest
+====== with Weave Net
+[source,bash]
+----
+docker run --detach=true --net=weave --name rti-perftest-pub guther/rti-perftest -pub -numSubscribers 1 -sleep 1000
+docker run --detach=true --net=weave --name rti-perftest-sub guther/rti-perftest -sub
+----
+
 === Demo
 Multi-Node with Weave Net
 
@@ -224,19 +258,6 @@ include::roles/rti-perftest/kubernetes/start/templates/rti-perftest-sub.yml.j2[]
 
 === Demo
 Multi-Node with Weave Net
-
-== PlantUML Example
-[plantuml, diagram-classes, svg]
-....
-class BlockProcessor
-class DiagramBlock
-class DitaaBlock
-class PlantUmlBlock
-
-BlockProcessor <|-- DiagramBlock
-DiagramBlock <|-- DitaaBlock
-DiagramBlock <|-- PlantUmlBlock
-....
 
 == Thank you
 ...for your attention!
