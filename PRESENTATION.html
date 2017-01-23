@@ -1,0 +1,357 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="author" content="Andreas Guther"><title>Lunch &amp; Learn</title><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui" name="viewport"><link href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.4.0/css/reveal.css" rel="stylesheet"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.4.0/css/theme/black.css" id="theme"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css"><link href="https://cdn.jsdelivr.net/highlight.js/9.9.0/styles/atom-one-dark.min.css" rel="stylesheet"><script>document.write( '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.4.0/css/print/' + ( window.location.search.match( /print-pdf/gi ) ? 'pdf' : 'paper' ) + '.css" type="text/css" media="print">' );</script></head><body><div class="reveal"><div class="slides"><section class="title"><h1>Lunch &amp; Learn</h1><p class="author"><small>Andreas Guther</small></p></section><section id="_lunch_learn"><h4>Vagrant</h4>
+<h4>Ansible</h4>
+<h4>Docker</h4>
+<h4>Kubernetes</h4></section>
+<section><section id="_vagrant_2"><h2>Vagrant</h2></section><section id="_vagrant_3"><div class="quoteblock"><blockquote>Vagrant is an open-source software product for building and maintaining portable virtual development environments.</blockquote><div class="attribution">&#8212; wikipedia.org</div></div></section><section id="_how_to_use"><h2>How to use?</h2></section><section id="_installation"><h2>Installation</h2><div class="ulist"><ul><li class="fragment"><p>Windows, Linux or macOS</p></li><li class="fragment"><p>Administrative Account</p></li><li class="fragment"><p>VirtualBox</p></li><li class="fragment"><p>Vagrant</p></li></ul></div></section><section id="_get_started"><h2>Get started</h2><div class="listingblock"><div class="content"><pre class="highlight"><code class="bash language-bash">$ vagrant init bento/centos-7.3
+$ vagrant up</code></pre></div></div></section><section id="_demo"><h2>Demo</h2><div class="paragraph"><p>Single-Machine</p></div></section><section id="_multi_machine"><h2>Multi-Machine</h2><h4>Simple</h4><div class="listingblock"><div class="content"><pre class="highlight"><code class="ruby language-ruby">Vagrant.configure("2") do |config|
+
+  config.vm.define "web" do |web|
+    web.vm.box = "apache"
+  end
+
+  config.vm.define "db" do |db|
+    db.vm.box = "mysql"
+  end
+
+end</code></pre></div></div></section><section id="_multi_machine_2"><h2>Multi-Machine</h2><h4>Our Use-Case</h4><div class="listingblock"><div class="content"><pre class="highlight"><code class="ruby language-ruby"># -*- mode: ruby -*-
+# # vi: set ft=ruby :
+
+# required vagrant version
+Vagrant.require_version "&gt;= 1.9.0"
+Vagrant.require_version "&lt; 1.9.1"
+
+# api version to be used
+VAGRANTFILE_API_VERSION = "2"
+
+# required plugins
+require 'ipaddr'
+require 'vagrant-hostmanager'
+
+# define instances
+$vm_instances = (ENV['VM_INSTANCES'] || 3).to_i
+# ensure we have at least two instances
+if $vm_instances &lt; 2
+  raise "This vagrantfile needs at least 2 instances to function properly. Please increase the value of 'instance_count'."
+end
+
+# define hostnames
+$vm_hostname_prefix = (ENV['VM_HOSTNAME_PREFIX'] || "centos-").to_sym
+
+# define virtual machine hardware
+$vm_cpus = (ENV['VM_CPUS'] || 1).to_i
+$vm_memory = (ENV['VM_MEMORY'] || 1024).to_i
+
+# define virtual machine mode
+$vm_gui = (ENV['VM_GUI']).to_s == "true" ? true : false
+
+# define ip configuration
+$vm_ip_template = (ENV['VM_IP_TEMPLATE'] || "172.30.0.%d").to_s
+$vm_ip_netmask = (ENV['VM_IP_NETMASK'] || "255.255.255.0").to_s
+$vm_ip_netmask_cidr = IPAddr.new($vm_ip_netmask).to_i.to_s(2).count("1")
+
+# interface name
+$vm_ip_interface_name = (ENV['VM_IP_INTERFACE_NAME'] || "eth1").to_s
+
+# should the vm use a proxy?
+if $vm_proxy_enabled = (ENV['VM_PROXY_ENABLED']).to_s == "true" ? true : false == true
+  require 'vagrant-proxyconf'
+
+  # this is the proxy address that will be used by the operating system
+  $vm_proxy_address = (ENV['VM_PROXY_ADDRESS'] || "http://127.0.0.1:3128/").to_s
+end
+
+# define playbook
+$playbook = (ENV['PLAYBOOK'] || "deploy-docker.yml").to_sym
+
+# configure instances
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+  # ssh configuration
+  config.ssh.insert_key = false
+  config.ssh.username = 'vagrant'
+
+  # update /etc/hosts to get working name resolution
+  config.hostmanager.enabled = true
+  config.hostmanager.manage_host = false
+  config.hostmanager.manage_guest = true
+  config.hostmanager.ignore_private_ip = false
+  config.hostmanager.include_offline = true
+
+  # when plugin proxyconf is installed, use it
+  if $vm_proxy_enabled == true
+      config.proxy.enabled = true
+      config.proxy.http = $vm_proxy_address
+      config.proxy.https = $vm_proxy_address
+  end
+
+  # create virtual machines
+  ($vm_instances).downto(1) do |id|
+    # create hostname
+    hostname = "%s%d" % [$vm_hostname_prefix, id]
+    # define the virtual machine
+    config.vm.define hostname, primary: (id == 1) ? true : false do |instance_config|
+      # hostname within virtual machine
+      instance_config.vm.hostname = hostname
+      # define image to be used
+      instance_config.vm.box = "bento/centos-7.3"
+      # enable synced folder
+      instance_config.vm.synced_folder ".", "/vagrant"
+      # private network for connection between virtual machines
+      instance_config.vm.network :private_network,
+        ip: $vm_ip_template % (10 + id),
+        netmask: $vm_ip_netmask
+
+      # virtual box settings
+      instance_config.vm.provider :virtualbox do |vbox, override|
+        vbox.gui = $vm_gui
+        vbox.cpus = $vm_cpus
+        vbox.memory = $vm_memory
+        vbox.customize ["modifyvm", :id, "--nictype1", "virtio"]
+        vbox.customize ["modifyvm", :id, "--nictype2", "virtio"]
+      end
+
+      # vmware settings
+      [:vmware_fusion, :vmware_workstation].each do |provider|
+        instance_config.vm.provider provider do |vmware, override|
+          vmware.gui = $vm_gui
+          vmware.vmx["numvcpus"] = $vm_cpus
+          vmware.vmx["memsize"] = $vm_memory
+        end
+      end
+
+      # provision proxy configuration for docker
+      if $vm_proxy_enabled == true
+        instance_config.vm.provision :shell do |shell|
+          shell.path = "proxy/set-proxy-docker.sh"
+          shell.args = [
+            $vm_proxy_address,
+          ]
+        end
+      end
+
+      # add vagrant user to group wheel
+      instance_config.vm.provision :shell,
+        inline: "sudo usermod -a -G wheel %s" % config.ssh.username
+
+      # provision using ansible, but only once and not for every instance
+      if id == 1
+        instance_config.vm.provision :ansible_local do |ansible|
+          # ensure ansible is installed
+          ansible.install = true
+          # define playbook to execute
+          ansible.playbook = "/vagrant/%s" % $playbook
+          # target group
+          ansible.limit = "centos"
+          # run as sudo
+          ansible.sudo = true
+          # logging verbosity
+          ansible.verbose = false
+          # groups
+          ansible.groups = {
+            "master" =&gt; "%s1" % $vm_hostname_prefix,
+            "nodes" =&gt; "%s[2:%d]" % [$vm_hostname_prefix, $vm_instances],
+            "centos:children" =&gt; [
+              "master",
+              "nodes",
+            ],
+            "centos:vars" =&gt; {
+              "ansible_ssh_pass" =&gt; config.ssh.username,
+            },
+          }
+          # extra variables to configure roles
+          ansible.extra_vars = {
+            docker_group_users: "vagrant",
+            docker_swarm_interface: $vm_ip_interface_name,
+            etcd_interface: $vm_ip_interface_name,
+            flannel_interface: $vm_ip_interface_name,
+          }
+        end
+      end
+    end
+  end
+end</code></pre></div></div></section><section id="_demo_2"><h2>Demo</h2><div class="paragraph"><p>Multi-Machine</p></div></section></section>
+<section><section id="_ansible_2"><h2>Ansible</h2></section><section id="_ansible_3"><div class="quoteblock"><blockquote>Ansible is an open-source automation engine that automates cloud provisioning, configuration management, and application deployment.</blockquote><div class="attribution">&#8212; wikipedia.org</div></div></section><section id="_ansible_4"><div class="quoteblock"><blockquote><div class="paragraph"><p><strong>AUTOMATION FOR EVERYONE</strong></p></div>
+<div class="paragraph"><p>Deploy apps. Manage systems. Crush complexity.
+Ansible helps you build a strong foundation for DevOps.</p></div></blockquote><div class="attribution">&#8212; ansible.com</div></div></section><section id="_how_to_use_2"><h2>How to use?</h2></section><section id="_installation_2"><h2>Installation</h2><div class="ulist"><ul><li><p>RHEL / CentOS with EPEL repository<br>
+<code>yum install ansible</code></p></li><li><p>Other platforms<br>
+see <a href="http://docs.ansible.com/ansible/intro_installation.html">docs.ansible.com</a></p></li></ul></div></section><section id="_get_started_2"><h2>Get started</h2><div class="olist arabic"><ol class="arabic"><li class="fragment"><p>Create inventory</p></li><li class="fragment"><p>Execute desired command</p></li></ol></div></section><section id="_inventory"><h2>Inventory</h2><h4>Creation</h4><div class="listingblock"><div class="content"><pre class="highlight"><code class="bash language-bash">$ touch ./hosts
+$ vim ./hosts</code></pre></div></div></section><section id="_inventory_2"><h2>Inventory</h2><h4>Content</h4><div class="listingblock"><div class="content"><pre class="highlight"><code class="ini language-ini">[centos]
+centos-1
+centos-2
+centos-3
+
+[centos:vars]
+ansible_user=vagrant
+ansible_ssh_password=vagrant</code></pre></div></div></section><section id="_execute_command"><h2>Execute Command</h2><div class="listingblock"><div class="content"><pre class="highlight"><code class="bash language-bash">$ ansible -i ./hosts all -a "hostname"</code></pre></div></div></section><section id="_demo_3"><h2>Demo</h2><div class="paragraph"><p>Single Command</p></div></section><section id="_playbooks"><h2>Playbooks</h2><div class="paragraph"><p>Playbooks are a combination of tasks that want to achieve a certain end state.</p></div>
+<div class="paragraph"><p>At best playbooks make use of roles.</p></div></section><section id="_playbooks_2"><h2>Playbooks</h2><h3>Example</h3><div class="listingblock"><div class="content"><pre class="highlight"><code class="yaml language-yaml">---
+- hosts: centos
+  roles:
+    - { role: disable-selinux }
+    - { role: disable-firewall }
+    - { role: ntp }
+    - { role: docker/el7 }
+    - { role: weave/net, weave_group: "centos" }
+    - { role: cockpit }</code></pre></div></div></section><section id="_demo_4"><h2>Demo</h2><div class="paragraph"><p>Playbooks</p></div></section></section>
+<section><section id="_docker_2"><h2>Docker</h2></section><section id="_dockerfile"><h2>Dockerfile</h2><div class="listingblock"><div class="content"><pre class="highlight"><code class="docker language-docker"># define parent
+FROM centos:7
+
+# add RTI Perftest binary package
+ADD https://[...] /rtiperftest.tar.gz
+
+# extract archive
+RUN tar xzf /rtiperftest.tar.gz
+
+# define work directory and entrypoint
+WORKDIR "[...]"
+ENTRYPOINT ["[...]/perftest_cpp"]</code></pre></div></div></section><section id="_complete_dockerfile"><h2>Complete Dockerfile</h2><div class="paragraph"><p><a href="https://github.com/aguther/rti-perftest/blob/master/Dockerfile" class="bare">https://github.com/aguther/rti-perftest/blob/master/Dockerfile</a></p></div></section><section id="_run_rtiperftest"><h2>Run rtiperftest</h2><div class="listingblock"><div class="content"><pre class="highlight"><code class="bash language-bash">docker run --detach=true --name rti-perftest-pub guther/rti-perftest -pub -numSubscribers 1 -sleep 1000
+docker run --detach=true --name rti-perftest-sub guther/rti-perftest -sub</code></pre></div></div></section><section id="_demo_5"><h2>Demo</h2><div class="paragraph"><p>Single-Node</p></div></section><section id="_demo_6"><h2>Demo</h2><div class="paragraph"><p>Multi-Node</p></div></section><section id="_what_is_the_problem"><h2>What is the problem?</h2></section><section id="_network_types_in_docker"><h2>Network Types in Docker</h2><div class="ulist"><ul><li class="fragment"><p>bridge</p></li><li class="fragment"><p>overlay</p></li><li class="fragment"><p>MACVLAN</p></li><li class="fragment"><p>network plugins</p></li></ul></div></section><section id="_bridge_network"><h2>Bridge Network</h2><div class="paragraph"><p>The bridge network is the default and has local scope.</p></div>
+<div class="imageblock" style=""><img src="https://docs.docker.com/engine/userguide/networking/images/bridge_network.png" alt="bridge network"></div></section><section id="_overlay_network"><h2>Overlay Network</h2><div class="paragraph"><p>The overlay network has a global scope&#8230;&#8203;</p></div>
+<div class="imageblock" style=""><img src="https://docs.docker.com/engine/userguide/networking/images/overlay-network-final.png" alt="overlay network final"></div></section><section id="_overlay_network_2"><h2>Overlay Network</h2><div class="admonitionblock important"><table><tr><td class="icon"><i class="fa fa-exclamation-circle" title="Important"></i></td><td class="content">&#8230;&#8203;but it does not support multicast!</td></tr></table></div></section><section id="_one_solution"><h2>One Solution</h2></section><section id="_weave_net"><h2>Weave Net</h2><div class="paragraph"><p>by</p></div>
+<div class="imageblock" style=""><img src="https://www.weave.works/wp-content/themes/weave-theme/assets/img/logo.png" alt="weaveworks"></div></section><section id="_weave_net_2"><div class="quoteblock"><blockquote>Quickly, easily, and securely network and cluster containers across any environment (on premises, in the cloud, or hybrid) with zero code or configuration.</blockquote><div class="attribution">&#8212; weave.works</div></div></section><section id="_weave_net_3"><h2>Weave Net</h2><div class="admonitionblock tip"><table><tr><td class="icon"><i class="fa fa-lightbulb-o" title="Tip"></i></td><td class="content">&#8230;&#8203;and it supports multicast!</td></tr></table></div></section><section id="_weave_net_4"><h2>Weave Net</h2><div class="imageblock" style=""><img src="https://www.weave.works/wp-content/uploads/d989f137a913d15c6ab2afe14149d8acfd180db3.png" alt="d989f137a913d15c6ab2afe14149d8acfd180db3"></div></section><section id="_run_rtiperftest_2"><h2>Run rtiperftest</h2><h5>with Weave Net</h5><div class="listingblock"><div class="content"><pre class="highlight"><code class="bash language-bash">docker run --detach=true --net=weave --name rti-perftest-pub guther/rti-perftest -pub -numSubscribers 1 -sleep 1000
+docker run --detach=true --net=weave --name rti-perftest-sub guther/rti-perftest -sub</code></pre></div></div></section><section id="_demo_7"><h2>Demo</h2><div class="paragraph"><p>Multi-Node with Weave Net</p></div></section></section>
+<section><section id="_kubernetes_2"><h2>Kubernetes</h2></section><section id="_kubernetes_3"></section><section id="_deploy_publisher"><h2>Deploy Publisher</h2><div class="listingblock"><div class="content"><pre class="highlight"><code class="yaml language-yaml">---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: rti-perftest-pub
+spec:
+  replicas: {{ groups['master'] | length }}
+  template:
+    metadata:
+      labels:
+        app: rti-perftest-pub
+    spec:
+      containers:
+        - name: rti-perftest-pub
+          image: guther/rti-perftest
+          args:
+            - "-pub"
+            - "-enableTurboMode"
+            - "-dataLen"
+            - "1024"
+            - "-sleep"
+            - "1"
+            - "-numSubscribers"
+            - "{{ groups['nodes'] | length }}"
+          ports:
+            - containerPort: 7400
+              protocol: "UDP"
+              name: "rtps2-disc-mult"
+            - containerPort: 7401
+              protocol: "UDP"
+              name: "rtps2-disc-uni"
+            - containerPort: 7410
+              protocol: "UDP"
+              name: "rtps2-data-mult"
+            - containerPort: 7411
+              protocol: "UDP"
+              name: "rtps2-data-uni"
+...</code></pre></div></div></section><section id="_deploy_subscriber"><h2>Deploy Subscriber</h2><div class="listingblock"><div class="content"><pre class="highlight"><code class="yaml language-yaml">---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: rti-perftest-sub
+spec:
+  replicas: {{ groups['nodes'] | length }}
+  template:
+    metadata:
+      labels:
+        app: rti-perftest-sub
+    spec:
+      containers:
+        - name: rti-perftest-sub
+          image: guther/rti-perftest
+          args:
+            - "-sub"
+          ports:
+            - containerPort: 7400
+              protocol: "UDP"
+              name: "rtps2-disc-mult"
+            - containerPort: 7401
+              protocol: "UDP"
+              name: "rtps2-disc-uni"
+            - containerPort: 7410
+              protocol: "UDP"
+              name: "rtps2-data-mult"
+            - containerPort: 7411
+              protocol: "UDP"
+              name: "rtps2-data-uni"
+...</code></pre></div></div></section><section id="_demo_8"><h2>Demo</h2><div class="paragraph"><p>Multi-Node with Weave Net</p></div></section></section>
+<section id="_thank_you"><h2>Thank you</h2><div class="paragraph"><p>&#8230;&#8203;for your attention!</p></div></section>
+<section id="_links"><h2>Links</h2><div class="ulist"><ul><li><p><a href="http://github.com/aguther" class="bare">http://github.com/aguther</a></p></li><li><p><a href="http://www.weave.works" class="bare">http://www.weave.works</a></p></li></ul></div></section></div></div><script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.4.0/lib/js/head.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.4.0/js/reveal.js"></script><script>// See https://github.com/hakimel/reveal.js#configuration for a full list of configuration options
+Reveal.initialize({
+  // Display controls in the bottom right corner
+  controls: false,
+  // Display a presentation progress bar
+  progress: true,
+  // Display the page number of the current slide
+  slideNumber: true,
+  // Push each slide change to the browser history
+  history: false,
+  // Enable keyboard shortcuts for navigation
+  keyboard: true,
+  // Enable the slide overview mode
+  overview: true,
+  // Vertical centering of slides
+  center: true,
+  // Enables touch navigation on devices with touch input
+  touch: true,
+  // Loop the presentation
+  loop: false,
+  // Change the presentation direction to be RTL
+  rtl: false,
+  // Turns fragments on and off globally
+  fragments: true,
+  // Flags if the presentation is running in an embedded mode,
+  // i.e. contained within a limited portion of the screen
+  embedded: false,
+  // Number of milliseconds between automatically proceeding to the
+  // next slide, disabled when set to 0, this value can be overwritten
+  // by using a data-autoslide attribute on your slides
+  autoSlide: 0,
+  // Stop auto-sliding after user input
+  autoSlideStoppable: true,
+  // Enable slide navigation via mouse wheel
+  mouseWheel: false,
+  // Hides the address bar on mobile devices
+  hideAddressBar: true,
+  // Opens links in an iframe preview overlay
+  previewLinks: false,
+  // Theme (e.g., beige, black, league, night, serif, simple, sky, solarized, white)
+  // NOTE setting the theme in the config no longer works in reveal.js 3.x
+  //theme: Reveal.getQueryHash().theme || 'black',
+  // Transition style (e.g., none, fade, slide, convex, concave, zoom)
+  transition: Reveal.getQueryHash().transition || 'slide',
+  // Transition speed (e.g., default, fast, slow)
+  transitionSpeed: 'default',
+  // Transition style for full page slide backgrounds (e.g., none, fade, slide, convex, concave, zoom)
+  backgroundTransition: 'fade',
+  // Number of slides away from the current that are visible
+  viewDistance: 3,
+  // Parallax background image (e.g., "'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg'")
+  parallaxBackgroundImage: '',
+  // Parallax background size in CSS syntax (e.g., "2100px 900px")
+  parallaxBackgroundSize: '',
+
+  // The "normal" size of the presentation, aspect ratio will be preserved
+  // when the presentation is scaled to fit different resolutions. Can be
+  // specified using percentage units.
+  width: 960,
+  height: 700,
+
+  // Factor of the display size that should remain empty around the content
+  margin: 0.1,
+
+  // Bounds for smallest/largest possible scale to apply to content
+  minScale: 0.2,
+  maxScale: 1.5,
+
+  // Optional libraries used to extend on reveal.js
+  dependencies: [
+      { src: 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.4.0/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+      { src: 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.4.0/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+      { src: 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.4.0/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+      { src: 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.4.0/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+      { src: 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.4.0/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+      { src: 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.4.0/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+  ]
+});</script></body></html>
