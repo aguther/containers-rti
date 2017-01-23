@@ -1,4 +1,0 @@
----
-dependencies:
-  - { role: disable-selinux }
-  - { role: docker/el7 }
