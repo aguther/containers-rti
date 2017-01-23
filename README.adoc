@@ -6,7 +6,7 @@ Vagrant can be used to deploy the necessary virtual machines.
 
 In the default configuration you will get 3 VMs where the first is in the master group and the other two in the nodes group:
 
-[width="15%", cols="1,1a,1", options="header"]
+[width="20%", cols="1,1a,1", options="header"]
 |===
 | Host | Groups | Private IP
 
@@ -78,14 +78,12 @@ export PLAYBOOK=deploy-docker.yml
 vagrant destroy -f
 vagrant up
 vagrant ssh -c "cd /vagrant; ansible-playbook -i /tmp/vagrant-ansible/inventory/vagrant_ansible_local_inventory rti-perftest-docker-start.yml"
-exit
 ----
 
 === Stop
 [source,bash]
 ----
 vagrant ssh -c "cd /vagrant; ansible-playbook -i /tmp/vagrant-ansible/inventory/vagrant_ansible_local_inventory rti-perftest-docker-stop.yml"
-exit
 ----
 
 === Monitoring
@@ -104,7 +102,6 @@ export PLAYBOOK=deploy-docker-swarm.yml
 vagrant destroy -f
 vagrant up
 vagrant ssh -c "cd /vagrant; ansible-playbook -i /tmp/vagrant-ansible/inventory/vagrant_ansible_local_inventory rti-perftest-docker-swarm-start.yml"
-exit
 ----
 
 === Stop
@@ -121,7 +118,6 @@ If you want to monitor using Weave-Scope you can enter the following command to 
 [source,bash]
 ----
 vagrant ssh -c "cd /vagrant; ansible -i /tmp/vagrant-ansible/inventory/vagrant_ansible_local_inventory centos -a \"scope launch\""
-exit
 ----
 
 === Remark
@@ -147,14 +143,12 @@ export PLAYBOOK=deploy-kubernetes.yml
 vagrant destroy -f
 vagrant up
 vagrant ssh -c "cd /vagrant; ansible-playbook -i /tmp/vagrant-ansible/inventory/vagrant_ansible_local_inventory rti-perftest-kubernetes-start.yml"
-exit
 ----
 
 === Stop
 [source,bash]
 ----
 vagrant ssh -c "cd /vagrant; ansible-playbook -i /tmp/vagrant-ansible/inventory/vagrant_ansible_local_inventory rti-perftest-kubernetes-stop.yml"
-exit
 ----
 
 === Monitoring
