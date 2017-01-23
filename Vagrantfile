@@ -46,7 +46,7 @@ if $vm_proxy_enabled = (ENV['VM_PROXY_ENABLED']).to_s == "true" ? true : false =
 end
 
 # define playbook
-$playbook = (ENV['PLAYBOOK'] || "deploy-docker.yml").to_sym
+$playbook = (ENV['PLAYBOOK'] || "deploy-docker-weave.yml").to_sym
 
 # configure instances
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
