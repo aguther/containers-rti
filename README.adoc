@@ -108,7 +108,6 @@ vagrant ssh -c "cd /vagrant; ansible-playbook -i /tmp/vagrant-ansible/inventory/
 [source,bash]
 ----
 vagrant ssh -c "cd /vagrant; ansible-playbook -i /tmp/vagrant-ansible/inventory/vagrant_ansible_local_inventory rti-perftest-docker-swarm-stop.yml"
-exit
 ----
 
 === Monitoring
