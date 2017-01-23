@@ -7,17 +7,8 @@
     - { role: disable-firewall }
 
 # ------------------------------------------------------------------------------
-- hosts: master
-  roles:
-    - { role: kubernetes/el7 }
-
-# ------------------------------------------------------------------------------
-- hosts: nodes
+- hosts: centos
   roles:
     - { role: kubernetes/el7 }
     #- { role: weave/kube/el7, weave_group: "nodes" }
-
-# ------------------------------------------------------------------------------
-- hosts: centos
-  roles:
     - { role: cockpit }
