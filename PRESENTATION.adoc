@@ -13,7 +13,8 @@ ifdef::backend-revealjs[]
 :revealjs_slideNumber: true
 :revealjs_controls: false
 :source-highlighter: highlightjs
-:highlightjs-theme: https://cdn.jsdelivr.net/highlight.js/9.9.0/styles/atom-one-dark.min.css
+//:highlightjs-theme: https://cdn.jsdelivr.net/highlight.js/9.9.0/styles/atom-one-dark.min.css
+:highlightjs-theme: https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/atom-one-dark.min.css
 :revealjsdir: https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.4.0
 endif::backend-revealjs[]
 
