@@ -1,0 +1,246 @@
+= Lunch & Learn
+// author and version
+Andreas Guther <github.com/aguther>
+v1.0, 2017
+// configuration
+:toc:
+:icons: font
+:imagesdir: assets/images
+:homepage: http://github.com/aguther
+:source-highlighter: coderay
+ifdef::backend-revealjs[]
+:revealjs_theme: black
+:revealjs_slideNumber: true
+:revealjs_controls: false
+:source-highlighter: highlightjs
+:highlightjs-theme: https://cdn.jsdelivr.net/highlight.js/9.9.0/styles/atom-one-dark.min.css
+:revealjsdir: https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.4.0
+endif::backend-revealjs[]
+
+== Lunch & Learn
+[%step]
+* Vagrant
+* Ansible
+* Docker
+* Kubernetes
+
+== Vagrant
+
+[%notitle]
+=== Vagrant
+[quote,wikipedia.org]
+Vagrant is an open-source software product for building and maintaining portable virtual development environments.
+
+=== How to use?
+
+=== Installation
+[%step]
+* Windows, Linux or macOS
+* Administrative Account
+* VirtualBox
+* Vagrant
+
+=== Get started
+[source,bash]
+----
+$ vagrant init bento/centos-7.3
+$ vagrant up
+----
+
+=== Demo
+Single-Machine
+
+=== Multi-Machine
+[source,ruby]
+----
+Vagrant.configure("2") do |config|
+
+  config.vm.define "web" do |web|
+    web.vm.box = "apache"
+  end
+
+  config.vm.define "db" do |db|
+    db.vm.box = "mysql"
+  end
+
+end
+----
+
+=== Demo
+Multi-Machine
+
+== Ansible
+
+[%notitle]
+=== Ansible
+[quote,wikipedia.org]
+Ansible is an open-source automation engine that automates cloud provisioning, configuration management, and application deployment.
+
+[%notitle]
+=== Ansible
+[quote,ansible.com]
+____
+*AUTOMATION FOR EVERYONE*
+
+Deploy apps. Manage systems. Crush complexity.
+Ansible helps you build a strong foundation for DevOps.
+____
+
+=== How to use?
+
+=== Installation
+* RHEL / CentOS with EPEL repository +
+  `yum install ansible`
+* Other platforms +
+  see http://docs.ansible.com/ansible/intro_installation.html[docs.ansible.com]
+
+=== Get started
+[%step]
+. Create inventory
+. Execute desired command
+
+=== Inventory Creation
+[source,bash]
+----
+$ touch ./hosts
+$ vim ./hosts
+----
+
+=== Inventory Content
+[source,ini]
+----
+[centos]
+centos-1
+centos-2
+centos-3
+
+[centos:vars]
+ansible_user=vagrant
+ansible_ssh_password=vagrant
+----
+
+=== Execute Command
+[source,bash]
+----
+$ ansible -i ./hosts all -a "hostname"
+----
+
+=== Demo
+Single Command
+
+=== Playbooks
+Playbooks are a combination of tasks that want to achieve a certain end state.
+
+=== Demo
+Playbooks
+
+== Docker
+
+=== Dockerfile
+[source,docker]
+----
+# define parent
+FROM centos:7
+
+# add RTI Perftest binary package
+ADD https://[...] /rtiperftest.tar.gz
+
+# extract archive
+RUN tar xzf /rtiperftest.tar.gz
+
+# define work directory and entrypoint
+WORKDIR "[...]"
+ENTRYPOINT ["[...]/perftest_cpp"]
+----
+
+=== Complete Dockerfile
+https://github.com/aguther/rti-perftest/blob/master/Dockerfile
+
+=== Demo
+Single-Node
+
+=== Demo
+Multi-Node
+
+=== What is the problem?
+
+=== Network Types in Docker
+[%step]
+* bridge
+* overlay
+* MACVLAN
+* network plugins
+
+=== Bridge Network
+The bridge network is the default and has local scope.
+
+image::https://docs.docker.com/engine/userguide/networking/images/bridge_network.png[]
+
+=== Overlay Network
+The overlay network has a global scope...
+
+image::https://docs.docker.com/engine/userguide/networking/images/overlay-network-final.png[]
+
+=== Overlay Network
+IMPORTANT: ...but it does not support multicast!
+
+=== One Solution
+
+=== Weave Net
+by
+
+image::https://www.weave.works/wp-content/themes/weave-theme/assets/img/logo.png[weaveworks]
+
+[%notitle]
+=== Weave Net
+[quote,weave.works]
+Quickly, easily, and securely network and cluster containers across any environment (on premises, in the cloud, or hybrid) with zero code or configuration.
+
+=== Weave Net
+TIP: ...and it supports multicast!
+
+=== Weave Net
+image::https://www.weave.works/wp-content/uploads/d989f137a913d15c6ab2afe14149d8acfd180db3.png[]
+
+=== Demo
+Multi-Node with Weave Net
+
+== Kubernetes
+
+[%notitle]
+=== Kubernetes
+
+=== Deploy Publisher
+[source,yaml]
+----
+include::roles/rti-perftest/kubernetes/start/templates/rti-perftest-pub.yml.j2[]
+----
+
+=== Deploy Subscriber
+[source,yaml]
+----
+include::roles/rti-perftest/kubernetes/start/templates/rti-perftest-sub.yml.j2[]
+----
+
+=== Demo
+Multi-Node with Weave Net
+
+== PlantUML Example
+[plantuml, diagram-classes, svg]
+....
+class BlockProcessor
+class DiagramBlock
+class DitaaBlock
+class PlantUmlBlock
+
+BlockProcessor <|-- DiagramBlock
+DiagramBlock <|-- DitaaBlock
+DiagramBlock <|-- PlantUmlBlock
+....
+
+== Thank you
+...for your attention!
+
+== Links
+* http://github.com/aguther
+* http://www.weave.works
