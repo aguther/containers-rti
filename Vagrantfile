@@ -46,7 +46,11 @@ if $vm_proxy_enabled = (ENV['VM_PROXY_ENABLED']).to_s == "true" ? true : false =
 end
 
 # define playbook
-$playbook = (ENV['PLAYBOOK'] || "deploy-docker-weave.yml").to_sym
+$playbook = (ENV['PLAYBOOK'] || "")
+# check if playbook file exists if specified
+if ($playbook != "") & (!File.exists? File.expand_path($playbook))
+  raise "Playbook does not exist!"
+end
 
 # configure instances
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
@@ -118,7 +122,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         inline: "sudo usermod -a -G wheel %s" % config.ssh.username
 
       # provision using ansible, but only once and not for every instance
-      if id == 1
+      if ($playbook != "") & (id == 1)
         instance_config.vm.provision :ansible_local do |ansible|
           # ensure ansible is installed
           ansible.install = true
