@@ -1,17 +1,23 @@
 ---
-# ------------------------------------------------------------------------------
-- name: set KUBE_ALLOW_PRIV
-  command: "sed -i 's/\\(KUBE_ALLOW_PRIV=\"--allow-privileged=\\).*\\(\"\\)/\\1{{ item }}\\2/g' /etc/kubernetes/config"
-  with_items: "true"
+## ------------------------------------------------------------------------------
+#- name: set KUBE_ALLOW_PRIV
+#  command: "sed -i 's/\\(KUBE_ALLOW_PRIV=\"--allow-privileged=\\).*\\(\"\\)/\\1{{ item }}\\2/g' /etc/kubernetes/config"
+#  with_items: "true"
+#
+## ------------------------------------------------------------------------------
+#- name: restart master services
+#  service:
+#    name: "{{ item }}"
+#    state: restarted
+#  with_items:
+#    - kube-apiserver.service
+#  when: inventory_hostname in groups['master']
 
 # ------------------------------------------------------------------------------
-- name: restart master services
-  service:
-    name: "{{ item }}"
-    state: restarted
-  with_items:
-    - kube-apiserver.service
-  when: inventory_hostname in groups['master']
+- name: set KUBELET_ARGS
+  command: "sed -i 's/\\(KUBELET_ARGS=\"\\).*\\(\"\\)/\\1{{ item }}\\2/g' /etc/kubernetes/kubelet"
+  with_items: " --network-plugin=cni --network-plugin-dir=\\/etc\\/cni\\/net.d"
+  when: inventory_hostname in groups['nodes']
 
 - name: restart node services
   service:
@@ -21,7 +27,7 @@
     - kubelet.service
   when: inventory_hostname in groups['nodes']
 
-# ------------------------------------------------------------------------------
-- name: install weave
-  command: "kubectl apply -f https://git.io/weave-kube"
-  when: inventory_hostname in groups['master']
+## ------------------------------------------------------------------------------
+#- name: install weave
+#  command: "kubectl apply -f https://git.io/weave-kube"
+#  when: inventory_hostname in groups['master']

@@ -1,3 +1,4 @@
 ---
 dependencies:
-  - { role: weave/net/remove }
+  - { role: weave/net }
+  #- { role: weave/net/remove }
