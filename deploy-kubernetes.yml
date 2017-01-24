@@ -10,5 +10,5 @@
 - hosts: centos
   roles:
     - { role: kubernetes/el7 }
-    #- { role: weave/kube/el7, weave_group: "nodes" }
+    - { role: weave/kube/el7, weave_group: "nodes" }
     - { role: cockpit }

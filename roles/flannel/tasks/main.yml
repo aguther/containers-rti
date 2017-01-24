@@ -2,8 +2,8 @@
 # ------------------------------------------------------------------------------
 - name: install
   yum:
-    name: flannel
-    state: latest
+    name: flannel-0.5.5-2.el7
+    state: present
 
 # ------------------------------------------------------------------------------
 - name: check network config in etcd
