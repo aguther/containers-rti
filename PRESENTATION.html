@@ -3,7 +3,8 @@
 <h4>Docker</h4>
 <h4>Kubernetes</h4></section>
 <section><section id="_vagrant_2"><h2>Vagrant</h2></section><section id="_vagrant_3"><div class="quoteblock"><blockquote>Vagrant is an open-source software product for building and maintaining portable virtual development environments.</blockquote><div class="attribution">&#8212; wikipedia.org</div></div></section><section id="_how_to_use"><h2>How to use?</h2></section><section id="_installation"><h2>Installation</h2><div class="ulist"><ul><li class="fragment"><p>Windows, Linux or macOS</p></li><li class="fragment"><p>Administrative Account</p></li><li class="fragment"><p>VirtualBox</p></li><li class="fragment"><p>Vagrant</p></li></ul></div></section><section id="_get_started"><h2>Get started</h2><div class="listingblock"><div class="content"><pre class="highlight"><code class="bash language-bash">$ vagrant init bento/centos-7.3
-$ vagrant up</code></pre></div></div></section><section id="_demo"><h2>Demo</h2><div class="paragraph"><p>Single-Machine</p></div></section><section id="_multi_machine"><h2>Multi-Machine</h2><h4>Simple</h4><div class="listingblock"><div class="content"><pre class="highlight"><code class="ruby language-ruby">Vagrant.configure("2") do |config|
+$ vagrant up
+$ vagrant ssh</code></pre></div></div></section><section id="_demo"><h2>Demo</h2><div class="paragraph"><p>Single-Machine</p></div></section><section id="_multi_machine"><h2>Multi-Machine</h2><h4>Simple</h4><div class="listingblock"><div class="content"><pre class="highlight"><code class="ruby language-ruby">Vagrant.configure("2") do |config|
 
   config.vm.define "web" do |web|
     web.vm.box = "apache"
@@ -61,7 +62,11 @@ if $vm_proxy_enabled = (ENV['VM_PROXY_ENABLED']).to_s == "true" ? true : false =
 end
 
 # define playbook
-$playbook = (ENV['PLAYBOOK'] || "deploy-docker.yml").to_sym
+$playbook = (ENV['PLAYBOOK'] || "")
+# check if playbook file exists if specified
+if ($playbook != "") &amp; (!File.exists? File.expand_path($playbook))
+  raise "Playbook does not exist!"
+end
 
 # configure instances
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
@@ -133,7 +138,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         inline: "sudo usermod -a -G wheel %s" % config.ssh.username
 
       # provision using ansible, but only once and not for every instance
-      if id == 1
+      if ($playbook != "") &amp; (id == 1)
         instance_config.vm.provision :ansible_local do |ansible|
           # ensure ansible is installed
           ansible.install = true
@@ -160,7 +165,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
           # extra variables to configure roles
           ansible.extra_vars = {
             docker_group_users: "vagrant",
-            docker_swarm_interface: $vm_ip_interface_name,
             etcd_interface: $vm_ip_interface_name,
             flannel_interface: $vm_ip_interface_name,
           }
@@ -173,25 +177,33 @@ end</code></pre></div></div></section><section id="_demo_2"><h2>Demo</h2><div cl
 <div class="paragraph"><p>Deploy apps. Manage systems. Crush complexity.
 Ansible helps you build a strong foundation for DevOps.</p></div></blockquote><div class="attribution">&#8212; ansible.com</div></div></section><section id="_how_to_use_2"><h2>How to use?</h2></section><section id="_installation_2"><h2>Installation</h2><div class="ulist"><ul><li><p>RHEL / CentOS with EPEL repository<br>
 <code>yum install ansible</code></p></li><li><p>Other platforms<br>
-see <a href="http://docs.ansible.com/ansible/intro_installation.html">docs.ansible.com</a></p></li></ul></div></section><section id="_get_started_2"><h2>Get started</h2><div class="olist arabic"><ol class="arabic"><li class="fragment"><p>Create inventory</p></li><li class="fragment"><p>Execute desired command</p></li></ol></div></section><section id="_inventory"><h2>Inventory</h2><h4>Creation</h4><div class="listingblock"><div class="content"><pre class="highlight"><code class="bash language-bash">$ touch ./hosts
-$ vim ./hosts</code></pre></div></div></section><section id="_inventory_2"><h2>Inventory</h2><h4>Content</h4><div class="listingblock"><div class="content"><pre class="highlight"><code class="ini language-ini">[centos]
+see <a href="http://docs.ansible.com/ansible/intro_installation.html">docs.ansible.com</a></p></li></ul></div></section><section id="_get_started_2"><h2>Get started</h2><div class="olist arabic"><ol class="arabic"><li class="fragment"><p>Install Ansible</p></li><li class="fragment"><p>Create inventory</p></li><li class="fragment"><p>Execute desired command</p></li></ol></div></section><section id="_install_ansible"><h2>Install Ansible</h2><div class="listingblock"><div class="content"><pre class="highlight"><code class="bash language-bash">$ yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+$ yum install -y ansible</code></pre></div></div></section><section id="_inventory"><h2>Inventory</h2><h4>Creation</h4><div class="listingblock"><div class="content"><pre class="highlight"><code class="bash language-bash">$ touch ./hosts
+$ vi ./hosts</code></pre></div></div></section><section id="_inventory_2"><h2>Inventory</h2><h4>Content</h4><div class="listingblock"><div class="content"><pre class="highlight"><code class="ini language-ini">[centos]
 centos-1
 centos-2
 centos-3
 
 [centos:vars]
 ansible_user=vagrant
-ansible_ssh_password=vagrant</code></pre></div></div></section><section id="_execute_command"><h2>Execute Command</h2><div class="listingblock"><div class="content"><pre class="highlight"><code class="bash language-bash">$ ansible -i ./hosts all -a "hostname"</code></pre></div></div></section><section id="_demo_3"><h2>Demo</h2><div class="paragraph"><p>Single Command</p></div></section><section id="_playbooks"><h2>Playbooks</h2><div class="paragraph"><p>Playbooks are a combination of tasks that want to achieve a certain end state.</p></div>
-<div class="paragraph"><p>At best playbooks make use of roles.</p></div></section><section id="_playbooks_2"><h2>Playbooks</h2><h3>Example</h3><div class="listingblock"><div class="content"><pre class="highlight"><code class="yaml language-yaml">---
+ansible_ssh_pass=vagrant</code></pre></div></div></section><section id="_execute_command"><h2>Execute Command</h2><div class="listingblock"><div class="content"><pre class="highlight"><code class="bash language-bash">$ export ANSIBLE_HOST_KEY_CHECKING=false
+$ ansible -i ./hosts all -a "/usr/sbin/ip addr"</code></pre></div></div></section><section id="_demo_3"><h2>Demo</h2><div class="paragraph"><p>Single Command</p></div></section><section id="_playbooks"><h2>Playbooks</h2><div class="paragraph"><p>Playbooks are a combination of tasks and/or roles that want to achieve a certain end state on your managed systems.</p></div></section><section id="_playbooks_2"><h2>Playbooks</h2><h3>Example</h3><div class="listingblock"><div class="content"><pre class="highlight"><code class="yaml language-yaml">---
 - hosts: centos
   roles:
     - { role: disable-selinux }
     - { role: disable-firewall }
     - { role: ntp }
     - { role: docker/el7 }
-    - { role: weave/net, weave_group: "centos" }
-    - { role: cockpit }</code></pre></div></div></section><section id="_demo_4"><h2>Demo</h2><div class="paragraph"><p>Playbooks</p></div></section></section>
-<section><section id="_docker_2"><h2>Docker</h2></section><section id="_dockerfile"><h2>Dockerfile</h2><div class="listingblock"><div class="content"><pre class="highlight"><code class="docker language-docker"># define parent
+    - { role: cockpit }</code></pre></div></div></section><section id="_roles"><h2>Roles</h2><div class="paragraph"><p>Roles are a combination of tasks, files, templates etc. to form a clean, reusable abstraction of a certain concern (e.g. install docker).</p></div></section><section id="_roles_2"><h2>Roles</h2><h3>Example</h3><div class="listingblock"><div class="content"><pre class="highlight"><code class="yaml language-yaml">---
+# ------------------------------------------------------------------------------
+- name: stop and disable
+  service:
+    name: firewalld.service
+    state: stopped
+    enabled: false</code></pre></div></div></section><section id="_demo_4"><h2>Demo</h2><div class="paragraph"><p>Playbooks &amp; Roles</p></div></section></section>
+<section><section id="_docker_2"><h2>Docker</h2></section><section id="_docker_3"><div class="quoteblock"><blockquote>Docker containers wrap a piece of software in a complete filesystem that contains everything needed to run: code, runtime, system tools, system libraries&#8201;&#8212;&#8201;anything that can be installed on a server. This guarantees that the software will always run the same, regardless of its environment.</blockquote><div class="attribution">&#8212; docker.com</div></div></section><section id="_get_started_3"><h2>Get started</h2><div class="olist arabic"><ol class="arabic"><li class="fragment"><p>Install Docker</p></li><li class="fragment"><p>Execute "Hello World"</p></li></ol></div></section><section id="_install_docker"><h2>Install Docker</h2><div class="listingblock"><div class="content"><pre class="highlight"><code class="bash language-bash">$ export PLAYBOOK=deploy-docker-only.yml
+$ vagrant provision</code></pre></div></div></section><section id="_execute_hello_world"><h2>Execute "Hello World"</h2><div class="listingblock"><div class="content"><pre class="highlight"><code class="bash language-bash">$ vagrant ssh
+$ docker run hello-world</code></pre></div></div></section><section id="_dockerfile"><h2>Dockerfile</h2><div class="listingblock"><div class="content"><pre class="highlight"><code class="docker language-docker"># define parent
 FROM centos:7
 
 # add RTI Perftest binary package
@@ -202,12 +214,12 @@ RUN tar xzf /rtiperftest.tar.gz
 
 # define work directory and entrypoint
 WORKDIR "[...]"
-ENTRYPOINT ["[...]/perftest_cpp"]</code></pre></div></div></section><section id="_complete_dockerfile"><h2>Complete Dockerfile</h2><div class="paragraph"><p><a href="https://github.com/aguther/rti-perftest/blob/master/Dockerfile" class="bare">https://github.com/aguther/rti-perftest/blob/master/Dockerfile</a></p></div></section><section id="_run_rtiperftest"><h2>Run rtiperftest</h2><div class="listingblock"><div class="content"><pre class="highlight"><code class="bash language-bash">docker run --detach=true --name rti-perftest-pub guther/rti-perftest -pub -numSubscribers 1 -sleep 1000
-docker run --detach=true --name rti-perftest-sub guther/rti-perftest -sub</code></pre></div></div></section><section id="_demo_5"><h2>Demo</h2><div class="paragraph"><p>Single-Node</p></div></section><section id="_demo_6"><h2>Demo</h2><div class="paragraph"><p>Multi-Node</p></div></section><section id="_what_is_the_problem"><h2>What is the problem?</h2></section><section id="_network_types_in_docker"><h2>Network Types in Docker</h2><div class="ulist"><ul><li class="fragment"><p>bridge</p></li><li class="fragment"><p>overlay</p></li><li class="fragment"><p>MACVLAN</p></li><li class="fragment"><p>network plugins</p></li></ul></div></section><section id="_bridge_network"><h2>Bridge Network</h2><div class="paragraph"><p>The bridge network is the default and has local scope.</p></div>
-<div class="imageblock" style=""><img src="https://docs.docker.com/engine/userguide/networking/images/bridge_network.png" alt="bridge network"></div></section><section id="_overlay_network"><h2>Overlay Network</h2><div class="paragraph"><p>The overlay network has a global scope&#8230;&#8203;</p></div>
+ENTRYPOINT ["[...]/perftest_cpp"]</code></pre></div></div></section><section id="_complete_dockerfile"><h2>Complete Dockerfile</h2><div class="paragraph"><p><a href="https://github.com/aguther/rti-perftest/blob/master/Dockerfile" class="bare">https://github.com/aguther/rti-perftest/blob/master/Dockerfile</a></p></div></section><section id="_run_rtiperftest"><h2>Run rtiperftest</h2><div class="listingblock"><div class="content"><pre class="highlight"><code class="bash language-bash">docker run --detach=true --name pub guther/rti-perftest -pub -numSubscribers 1 -sleep 1000
+docker run --detach=true --name sub guther/rti-perftest -sub</code></pre></div></div></section><section id="_demo_5"><h2>Demo</h2><div class="paragraph"><p>Single-Node</p></div></section><section id="_demo_6"><h2>Demo</h2><div class="paragraph"><p>Multi-Node</p></div></section><section id="_what_is_the_problem"><h2>What is the problem?</h2></section><section id="_network_types_in_docker"><h2>Network Types in Docker</h2><div class="ulist"><ul><li class="fragment"><p>bridge</p></li><li class="fragment"><p>overlay</p></li><li class="fragment"><p>macvlan</p></li><li class="fragment"><p>network plugins</p></li></ul></div></section><section id="_bridge_network"><h2>Bridge Network</h2><div class="paragraph"><p>The bridge network is the default and is local scope.</p></div>
+<div class="imageblock" style=""><img src="https://docs.docker.com/engine/userguide/networking/images/bridge_network.png" alt="bridge network"></div></section><section id="_overlay_network"><h2>Overlay Network</h2><div class="paragraph"><p>The overlay network is global scope.</p></div>
 <div class="imageblock" style=""><img src="https://docs.docker.com/engine/userguide/networking/images/overlay-network-final.png" alt="overlay network final"></div></section><section id="_overlay_network_2"><h2>Overlay Network</h2><div class="admonitionblock important"><table><tr><td class="icon"><i class="fa fa-exclamation-circle" title="Important"></i></td><td class="content">&#8230;&#8203;but it does not support multicast!</td></tr></table></div></section><section id="_one_solution"><h2>One Solution</h2></section><section id="_weave_net"><h2>Weave Net</h2><div class="paragraph"><p>by</p></div>
-<div class="imageblock" style=""><img src="https://www.weave.works/wp-content/themes/weave-theme/assets/img/logo.png" alt="weaveworks"></div></section><section id="_weave_net_2"><div class="quoteblock"><blockquote>Quickly, easily, and securely network and cluster containers across any environment (on premises, in the cloud, or hybrid) with zero code or configuration.</blockquote><div class="attribution">&#8212; weave.works</div></div></section><section id="_weave_net_3"><h2>Weave Net</h2><div class="admonitionblock tip"><table><tr><td class="icon"><i class="fa fa-lightbulb-o" title="Tip"></i></td><td class="content">&#8230;&#8203;and it supports multicast!</td></tr></table></div></section><section id="_weave_net_4"><h2>Weave Net</h2><div class="imageblock" style=""><img src="https://www.weave.works/wp-content/uploads/d989f137a913d15c6ab2afe14149d8acfd180db3.png" alt="d989f137a913d15c6ab2afe14149d8acfd180db3"></div></section><section id="_run_rtiperftest_2"><h2>Run rtiperftest</h2><h5>with Weave Net</h5><div class="listingblock"><div class="content"><pre class="highlight"><code class="bash language-bash">docker run --detach=true --net=weave --name rti-perftest-pub guther/rti-perftest -pub -numSubscribers 1 -sleep 1000
-docker run --detach=true --net=weave --name rti-perftest-sub guther/rti-perftest -sub</code></pre></div></div></section><section id="_demo_7"><h2>Demo</h2><div class="paragraph"><p>Multi-Node with Weave Net</p></div></section></section>
+<div class="imageblock" style=""><img src="https://www.weave.works/wp-content/themes/weave-theme/assets/img/logo.png" alt="weaveworks"></div></section><section id="_weave_net_2"><div class="quoteblock"><blockquote>Quickly, easily, and securely network and cluster containers across any environment (on premises, in the cloud, or hybrid) with zero code or configuration.</blockquote><div class="attribution">&#8212; weave.works</div></div></section><section id="_weave_net_3"><h2>Weave Net</h2><div class="admonitionblock tip"><table><tr><td class="icon"><i class="fa fa-lightbulb-o" title="Tip"></i></td><td class="content">&#8230;&#8203;and it supports multicast!</td></tr></table></div></section><section id="_weave_net_4"><h2>Weave Net</h2><div class="imageblock" style=""><img src="https://www.weave.works/wp-content/uploads/d989f137a913d15c6ab2afe14149d8acfd180db3.png" alt="d989f137a913d15c6ab2afe14149d8acfd180db3"></div></section><section id="_run_rtiperftest_2"><h2>Run rtiperftest</h2><h5>with Weave Net</h5><div class="listingblock"><div class="content"><pre class="highlight"><code class="bash language-bash">docker run --detach=true --net=weave --name pub guther/rti-perftest -pub -numSubscribers 1 -sleep 1000
+docker run --detach=true --net=weave --name sub guther/rti-perftest -sub</code></pre></div></div></section><section id="_demo_7"><h2>Demo</h2><div class="paragraph"><p>Multi-Node with Weave Net</p></div></section></section>
 <section><section id="_kubernetes_2"><h2>Kubernetes</h2></section><section id="_kubernetes_3"></section><section id="_deploy_publisher"><h2>Deploy Publisher</h2><div class="listingblock"><div class="content"><pre class="highlight"><code class="yaml language-yaml">---
 apiVersion: extensions/v1beta1
 kind: Deployment

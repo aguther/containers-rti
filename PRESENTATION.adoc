@@ -150,21 +150,53 @@ $ ansible -i ./hosts all -a "/usr/sbin/ip addr"
 Single Command
 
 === Playbooks
-Playbooks are a combination of tasks that want to achieve a certain end state.
-
-At best playbooks make use of roles.
+Playbooks are a combination of tasks and/or roles that want to achieve a certain end state on your managed systems.
 
 === Playbooks
 ==== Example
 [source,yaml]
 ----
-include::deploy-docker.yml[]
+include::deploy-docker-only.yml[]
+----
+
+=== Roles
+Roles are a combination of tasks, files, templates etc. to form a clean, reusable abstraction of a certain concern (e.g. install docker).
+
+=== Roles
+==== Example
+[source,yaml]
+----
+include::roles/disable-firewall/tasks/disable-firewall.yml[]
 ----
 
 === Demo
-Playbooks
+Playbooks & Roles
 
 == Docker
+
+[%notitle]
+=== Docker
+[quote,docker.com]
+Docker containers wrap a piece of software in a complete filesystem that contains everything needed to run: code, runtime, system tools, system libraries -- anything that can be installed on a server. This guarantees that the software will always run the same, regardless of its environment.
+
+=== Get started
+[%step]
+. Install Docker
+. Execute "Hello World"
+
+=== Install Docker
+[source,bash]
+----
+$ export PLAYBOOK=deploy-docker-only.yml
+$ vagrant provision
+----
+
+=== Execute "Hello World"
+[source,bash]
+----
+$ vagrant ssh
+$ docker run hello-world
+----
 
 === Dockerfile
 [source,docker]
@@ -205,16 +237,16 @@ Multi-Node
 [%step]
 * bridge
 * overlay
-* MACVLAN
+* macvlan
 * network plugins
 
 === Bridge Network
-The bridge network is the default and has local scope.
+The bridge network is the default and is local scope.
 
 image::https://docs.docker.com/engine/userguide/networking/images/bridge_network.png[]
 
 === Overlay Network
-The overlay network has a global scope...
+The overlay network is global scope.
 
 image::https://docs.docker.com/engine/userguide/networking/images/overlay-network-final.png[]
 
