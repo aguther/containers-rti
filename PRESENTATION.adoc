@@ -265,6 +265,7 @@ image::https://www.weave.works/wp-content/themes/weave-theme/assets/img/logo.png
 [quote,weave.works]
 Quickly, easily, and securely network and cluster containers across any environment (on premises, in the cloud, or hybrid) with zero code or configuration.
 
+[%notitle]
 === Weave Net
 TIP: ...and it supports multicast!
 
@@ -304,7 +305,3 @@ Multi-Node with Weave Net
 
 == Thank you
 ...for your attention!
-
-== Links
-* http://github.com/aguther
-* http://www.weave.works
