@@ -46,6 +46,7 @@ Vagrant is an open-source software product for building and maintaining portable
 ----
 $ vagrant init bento/centos-7.3
 $ vagrant up
+$ vagrant ssh
 ----
 
 === Demo
@@ -105,15 +106,23 @@ ____
 
 === Get started
 [%step]
+. Install Ansible
 . Create inventory
 . Execute desired command
+
+=== Install Ansible
+[source,bash]
+----
+$ yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+$ yum install -y ansible
+----
 
 === Inventory
 ===== Creation
 [source,bash]
 ----
 $ touch ./hosts
-$ vim ./hosts
+$ vi ./hosts
 ----
 
 === Inventory
@@ -127,13 +136,14 @@ centos-3
 
 [centos:vars]
 ansible_user=vagrant
-ansible_ssh_password=vagrant
+ansible_ssh_pass=vagrant
 ----
 
 === Execute Command
 [source,bash]
 ----
-$ ansible -i ./hosts all -a "hostname"
+$ export ANSIBLE_HOST_KEY_CHECKING=false
+$ ansible -i ./hosts all -a "/usr/sbin/ip addr"
 ----
 
 === Demo
@@ -179,8 +189,8 @@ https://github.com/aguther/rti-perftest/blob/master/Dockerfile
 === Run rtiperftest
 [source,bash]
 ----
-docker run --detach=true --name rti-perftest-pub guther/rti-perftest -pub -numSubscribers 1 -sleep 1000
-docker run --detach=true --name rti-perftest-sub guther/rti-perftest -sub
+docker run --detach=true --name pub guther/rti-perftest -pub -numSubscribers 1 -sleep 1000
+docker run --detach=true --name sub guther/rti-perftest -sub
 ----
 
 === Demo
@@ -233,8 +243,8 @@ image::https://www.weave.works/wp-content/uploads/d989f137a913d15c6ab2afe14149d8
 ====== with Weave Net
 [source,bash]
 ----
-docker run --detach=true --net=weave --name rti-perftest-pub guther/rti-perftest -pub -numSubscribers 1 -sleep 1000
-docker run --detach=true --net=weave --name rti-perftest-sub guther/rti-perftest -sub
+docker run --detach=true --net=weave --name pub guther/rti-perftest -pub -numSubscribers 1 -sleep 1000
+docker run --detach=true --net=weave --name sub guther/rti-perftest -sub
 ----
 
 === Demo
