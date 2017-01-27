@@ -81,6 +81,9 @@ end
 ----
 include::Vagrantfile[]
 ----
++++<small>+++
+https://github.com/aguther/containers-rti/blob/master/Vagrantfile
++++</small>+++
 
 === Demo
 Multi-Machine
