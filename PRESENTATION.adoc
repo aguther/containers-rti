@@ -214,9 +214,7 @@ RUN tar xzf /rtiperftest.tar.gz
 WORKDIR "[...]"
 ENTRYPOINT ["[...]/perftest_cpp"]
 ----
-
-=== Complete Dockerfile
-https://github.com/aguther/rti-perftest/blob/master/Dockerfile
+https://hub.docker.com/r/guther/rti-perftest/~/dockerfile/
 
 === Run rtiperftest
 [source,bash]
@@ -268,9 +266,6 @@ Quickly, easily, and securely network and cluster containers across any environm
 [%notitle]
 === Weave Net
 TIP: ...and it supports multicast!
-
-=== Weave Net
-image::https://www.weave.works/wp-content/uploads/d989f137a913d15c6ab2afe14149d8acfd180db3.png[]
 
 === Run rtiperftest
 ====== with Weave Net
