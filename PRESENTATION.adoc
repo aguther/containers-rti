@@ -82,7 +82,7 @@ end
 include::Vagrantfile[]
 ----
 +++<small>+++
-https://github.com/aguther/containers-rti/blob/master/Vagrantfile
+https://github.com/aguther/containers-rti/blob/legacy/Vagrantfile
 +++</small>+++
 
 === Demo
