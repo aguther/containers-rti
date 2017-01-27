@@ -16,6 +16,11 @@ ifdef::backend-revealjs[]
 //:highlightjs-theme: https://cdn.jsdelivr.net/highlight.js/9.9.0/styles/atom-one-dark.min.css
 :highlightjs-theme: https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/atom-one-dark.min.css
 :revealjsdir: https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.4.0
++++
+<style>
+.reveal section img { background:none; border:none; box-shadow:none; }
+</style>
++++
 endif::backend-revealjs[]
 
 [%notitle]
@@ -26,6 +31,7 @@ endif::backend-revealjs[]
 ===== Kubernetes
 
 == Vagrant
+image::https://www.vagrantup.com/assets/images/vagrant_header_background-482a12a7.png[]
 
 [%notitle]
 === Vagrant
@@ -79,7 +85,9 @@ include::Vagrantfile[]
 === Demo
 Multi-Machine
 
+[%notitle]
 == Ansible
+image::https://www.ansible.com/hs-fs/hubfs/-2015-template-assets/images/retina-icons/ANSI_logotype_web_white2x.png?t=1485468585722&width=428&name=ANSI_logotype_web_white2x.png[]
 
 [%notitle]
 === Ansible
@@ -172,7 +180,9 @@ include::roles/disable-firewall/tasks/disable-firewall.yml[]
 === Demo
 Playbooks & Roles
 
+[%notitle]
 == Docker
+image::https://www.docker.com/sites/all/themes/docker/assets/images/brand-full.svg[]
 
 [%notitle]
 === Docker
@@ -214,7 +224,9 @@ RUN tar xzf /rtiperftest.tar.gz
 WORKDIR "[...]"
 ENTRYPOINT ["[...]/perftest_cpp"]
 ----
++++<small>+++
 https://hub.docker.com/r/guther/rti-perftest/~/dockerfile/
++++</small>+++
 
 === Run rtiperftest
 [source,bash]
@@ -278,10 +290,14 @@ docker run --detach=true --net=weave --name sub guther/rti-perftest -sub
 === Demo
 Multi-Node with Weave Net
 
+[%notitle]
 == Kubernetes
+image::https://kubernetes.io/images/nav_logo.svg[]
 
 [%notitle]
 === Kubernetes
+[quote,kubernetes.io]
+Kubernetes is an open-source system for automating deployment, scaling, and management of containerized applications.
 
 === Deploy Publisher
 [source,yaml]
@@ -296,7 +312,7 @@ include::roles/rti-perftest/kubernetes/start/templates/rti-perftest-sub.yml.j2[]
 ----
 
 === Demo
-Multi-Node with Weave Net
+Kubernetes Cluster with Weave Net
 
 == Thank you
 ...for your attention!
