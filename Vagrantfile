@@ -11,6 +11,7 @@ VAGRANTFILE_API_VERSION = "2"
 # required plugins
 require 'ipaddr'
 require 'vagrant-hostmanager'
+require 'vagrant-vbguest'
 
 # define instances
 $vm_instances = (ENV['VM_INSTANCES'] || 3).to_i
@@ -57,6 +58,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # ssh configuration
   config.ssh.insert_key = false
   config.ssh.username = 'vagrant'
+
+  # disable update of guest additions
+  config.vbguest.auto_update = false
+  config.vbguest.no_install = true
+  config.vbguest.no_remote = true
 
   # update /etc/hosts to get working name resolution
   config.hostmanager.enabled = true
