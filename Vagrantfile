@@ -39,11 +39,11 @@ $vm_ip_netmask_cidr = IPAddr.new($vm_ip_netmask).to_i.to_s(2).count("1")
 $vm_ip_interface_name = (ENV['VM_IP_INTERFACE_NAME'] || "eth1").to_s
 
 # should the vm use a proxy?
-if $vm_proxy_enabled = (ENV['http_proxy']).to_s != "" ? true : false == true
+if $vm_proxy_enabled = (ENV['VM_PROXY']).to_s != "" ? true : false == true
   require 'vagrant-proxyconf'
 
   # this is the proxy address that will be used by the operating system
-  $vm_proxy_address = (ENV['http_proxy'] || "http://127.0.0.1:3128/").to_s
+  $vm_proxy_address = (ENV['VM_PROXY']).to_s
 end
 
 # define playbook
