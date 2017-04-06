@@ -2,8 +2,7 @@
 # # vi: set ft=ruby :
 
 # required vagrant version
-Vagrant.require_version ">= 1.9.0"
-Vagrant.require_version "< 1.9.1"
+Vagrant.require_version ">= 1.9.2"
 
 # api version to be used
 VAGRANTFILE_API_VERSION = "2"
