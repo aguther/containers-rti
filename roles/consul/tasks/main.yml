@@ -50,4 +50,4 @@
 - name:
   command: "{{ consul_bin_directory }}/consul join {{ item }}"
   with_items:
-    - "{{ groups['consul_group'] }}"
+    - "{{ groups[consul_group] }}"

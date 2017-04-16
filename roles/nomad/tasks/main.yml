@@ -55,4 +55,4 @@
 - name:
   command: "{{ nomad_bin_directory }}/nomad server-join {{ item }}"
   with_items:
-    - "{{ groups['nomad_group'] }}"
+    - "{{ groups[nomad_group] }}"
