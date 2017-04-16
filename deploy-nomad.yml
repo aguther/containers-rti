@@ -1,0 +1,13 @@
+---
+# ------------------------------------------------------------------------------
+- hosts: centos
+  roles:
+    - { role: ntp }
+    - { role: disable-selinux }
+    - { role: disable-firewall }
+
+# ------------------------------------------------------------------------------
+- hosts: centos
+  roles:
+    - { role: nomad/server }
+    - { role: nomad/client }
