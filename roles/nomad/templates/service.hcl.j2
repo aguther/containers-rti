@@ -12,7 +12,7 @@ consul {
 
 server {
   enabled = true
-  bootstrap_expect = "{{ groups[nomad_group] | length }}"
+  bootstrap_expect = {{ groups[nomad_group] | length }}
 }
 
 client {

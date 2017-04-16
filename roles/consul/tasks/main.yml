@@ -47,6 +47,11 @@
     state: running
     enabled: yes
 
+- name: wait for service
+  wait_for:
+    port: 8500
+    delay: 1
+
 - name:
   command: "{{ consul_bin_directory }}/consul join {{ item }}"
   with_items:

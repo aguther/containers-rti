@@ -67,14 +67,15 @@ vagrant halt
 vagrant destroy -f
 ----
 
-== Docker - CentOS
-In this scenario the rti-perftest example will be executed on single hosts with Docker 1.10 installed which is available in the extras-repository.
+
+== Docker
+In this scenario the rti-perftest example will be executed on single hosts with Docker installed which is available in the extras-repository.
 Weave-Net is used to connect the containers on the different hosts.
 
 === Start
 [source,bash]
 ----
-export PLAYBOOK=deploy-docker.yml
+export PLAYBOOK=deploy-docker-weave.yml
 vagrant destroy -f
 vagrant up
 vagrant ssh -c "cd /vagrant; ansible-playbook -i /tmp/vagrant-ansible/inventory/vagrant_ansible_local_inventory rti-perftest-docker-start.yml"
@@ -89,50 +90,9 @@ vagrant ssh -c "cd /vagrant; ansible-playbook -i /tmp/vagrant-ansible/inventory/
 === Monitoring
 Monitoring can be done using the tool cockpit which can be reached on the address `http://<host>:9090`.
 
-== Docker - CentOS - Swarm Mode
-In this scenario the rti-perftest example will be executed on hosts with Docker 1.10 which is available in the extras-repository and additionally configured as a swarm.
-Weave-Net is used to connect the containers on the different hosts.
 
-The difference to the former scenario is that it's not predefined on which host the containers are executed, just the number.
-
-=== Start
-[source,bash]
-----
-export PLAYBOOK=deploy-docker-swarm.yml
-vagrant destroy -f
-vagrant up
-vagrant ssh -c "cd /vagrant; ansible-playbook -i /tmp/vagrant-ansible/inventory/vagrant_ansible_local_inventory rti-perftest-docker-swarm-start.yml"
-----
-
-=== Stop
-[source,bash]
-----
-vagrant ssh -c "cd /vagrant; ansible-playbook -i /tmp/vagrant-ansible/inventory/vagrant_ansible_local_inventory rti-perftest-docker-swarm-stop.yml"
-----
-
-=== Monitoring
-Monitoring can be done using the tool cockpit which can be reached on the address `http://<host>:9090`. Cockpit has no support for Docker Swarm therefore every single host has to be monitored.
-
-If you want to monitor using Weave-Scope you can enter the following command to deploy it:
-[source,bash]
-----
-vagrant ssh -c "cd /vagrant; ansible -i /tmp/vagrant-ansible/inventory/vagrant_ansible_local_inventory centos -a \"scope launch\""
-----
-
-=== Remark
-When operating with Docker Swarm before 1.12 the commands need to be prefixed with `docker -H tcp://<swarm manager>:2400 <command> <arguments>`.
-
-Example(s):
-[source,bash]
-----
-vagrant ssh
-docker -H tcp://localhost:2400 info
-docker -H tcp://localhost:2400 ps
-exit
-----
-
-== Kubernetes - CentOS
-In this scenario the rti-perftest example will be executed on a kubernetes cluster 1.3 which is available in the extras-repository.
+== Kubernetes
+In this scenario the rti-perftest example will be executed on a Kubernetes cluster which is available in the extras-repository.
 Weave-Net is used to connect the containers on the different hosts.
 
 === Start
@@ -152,6 +112,33 @@ vagrant ssh -c "cd /vagrant; ansible-playbook -i /tmp/vagrant-ansible/inventory/
 
 === Monitoring
 Monitoring can be done using the tool cockpit which can be reached on the address `http://<host>:9090`. It also supports Kubernetes and can be reached with the tab 'Cluster'.
+
+
+== Nomad
+In this scenario the rti-perftest example will be executed on a Nomad cluster using the Docker driver.
+
+=== Start
+[source,bash]
+----
+export PLAYBOOK=deploy-nomad.yml
+vagrant destroy -f
+vagrant up
+vagrant ssh -c "cd /vagrant; ansible-playbook -i /tmp/vagrant-ansible/inventory/vagrant_ansible_local_inventory rti-perftest-nomad-start.yml"
+----
+
+=== Stop
+[source,bash]
+----
+vagrant ssh -c "cd /vagrant; ansible-playbook -i /tmp/vagrant-ansible/inventory/vagrant_ansible_local_inventory rti-perftest-nomad-stop.yml"
+----
+
+=== Monitoring
+Monitoring can be done using the tool cockpit which can be reached on the address `http://<host>:9090`. Additionally the nomad status can be checked with:
+[source,bash]
+----
+vagrant ssh -c "nomad status"
+----
+
 
 == Links
 * https://www.vagrantup.com[Vagrant]

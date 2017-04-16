@@ -8,7 +8,7 @@
   "client_addr": "0.0.0.0",
 
   "server": true,
-  "bootstrap_expect": "{{ groups[consul_group] | length }}",
+  "bootstrap_expect": {{ groups[consul_group] | length }},
 
   "telemetry": {
      "statsite_address": "127.0.0.1:2180"
