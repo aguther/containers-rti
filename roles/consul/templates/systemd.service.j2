@@ -1,0 +1,11 @@
+[Unit]
+Description=Consul server daemon
+After=network.target
+
+[Service]
+Type=simple
+ExecStart={{ consul_bin_directory }}/consul agent -config-dir={{ consul_config_directory }}
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

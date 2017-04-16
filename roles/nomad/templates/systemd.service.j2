@@ -1,0 +1,11 @@
+[Unit]
+Description=Nomad server daemon
+After=network.target
+
+[Service]
+Type=simple
+ExecStart={{ nomad_bin_directory }}/nomad agent -config={{ nomad_config_directory }}
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

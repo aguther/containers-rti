@@ -1,0 +1,21 @@
+data_dir  = "{{ nomad_data_directory }}"
+log_level = "INFO"
+
+region     = "europe"
+datacenter = "vagrant"
+
+bind_addr = "0.0.0.0"
+
+consul {
+  address = "127.0.0.1:8500"
+}
+
+server {
+  enabled = true
+  bootstrap_expect = {{ groups['nomad_group'] | length }}
+}
+
+client {
+  enabled = true
+  servers = ["127.0.0.1:4647"]
+}

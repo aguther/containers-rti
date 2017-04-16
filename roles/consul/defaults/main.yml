@@ -1,0 +1,13 @@
+---
+consul_version: "0.8.0"
+
+consul_interface: "{{ ansible_default_ipv4.interface }}"
+consul_host_ipv4_address: "{{ hostvars[inventory_hostname]['ansible_' + consul_interface].ipv4.address }}"
+
+consul_bin_directory: "/usr/bin"
+consul_config_directory: "/etc/consul"
+consul_data_directory: "/var/lib/consul"
+
+consul_systemd_unit_name: "consul"
+
+consul_group: "consul"

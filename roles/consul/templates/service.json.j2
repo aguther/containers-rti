@@ -1,0 +1,16 @@
+{
+  "data_dir": "{{ consul_data_directory }}",
+  "log_level": "INFO",
+
+  "datacenter": "vagrant",
+
+  "bind_addr": "{{ consul_host_ipv4_address }}",
+  "client_addr": "0.0.0.0",
+
+  "server": true,
+  "bootstrap_expect": {{ groups['consul_group'] | length }},
+
+  "telemetry": {
+     "statsite_address": "127.0.0.1:2180"
+  }
+}

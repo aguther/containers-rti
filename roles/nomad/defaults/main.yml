@@ -1,0 +1,10 @@
+---
+nomad_version: "0.5.6"
+
+nomad_bin_directory: "/usr/bin"
+nomad_config_directory: "/etc/nomad"
+nomad_data_directory: "/var/lib/nomad"
+
+nomad_systemd_unit_name: "nomad"
+
+nomad_group: "nomad"

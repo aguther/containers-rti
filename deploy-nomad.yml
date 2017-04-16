@@ -5,9 +5,10 @@
     - { role: ntp }
     - { role: disable-selinux }
     - { role: disable-firewall }
+    - { role: docker/el7 }
+    - { role: cockpit }
 
 # ------------------------------------------------------------------------------
 - hosts: centos
   roles:
-    - { role: nomad/server }
-    - { role: nomad/client }
+    - { role: nomad, nomad_group: "centos" }

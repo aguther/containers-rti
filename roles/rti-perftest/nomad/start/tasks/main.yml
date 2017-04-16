@@ -1,0 +1,28 @@
+---
+# ------------------------------------------------------------------------------
+- name: "publisher : create job file"
+  template:
+    src: rti-perftest-pub.nomad.j2
+    dest: "/tmp/rti-perftest-pub.nomad"
+
+- name: "publisher : run job"
+  command: "nomad run /tmp/rti-perftest-pub.nomad"
+
+- name: "publisher : delete job file"
+  file:
+    path: /tmp/rti-perftest-pub.nomad
+    state: absent
+
+# ------------------------------------------------------------------------------
+- name: "subscriber : create job file"
+  template:
+    src: rti-perftest-sub.nomad.j2
+    dest: "/tmp/rti-perftest-sub.nomad"
+
+- name: "subscriber : run job"
+  command: "nomad run /tmp/rti-perftest-sub.nomad"
+
+- name: "subscriber : delete job file"
+  file:
+    path: /tmp/rti-perftest-sub.nomad
+    state: absent
