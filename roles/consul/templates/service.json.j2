@@ -10,6 +10,8 @@
   "server": true,
   "bootstrap_expect": {{ groups[consul_group] | length }},
 
+  "ui": true,
+
   "telemetry": {
      "statsite_address": "127.0.0.1:2180"
   }
