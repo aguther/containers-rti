@@ -8,3 +8,6 @@ nomad_data_directory: "/var/lib/nomad"
 nomad_systemd_unit_name: "nomad"
 
 nomad_group: "nomad"
+
+nomad_region: "global"
+nomad_datacenter: "nomad"

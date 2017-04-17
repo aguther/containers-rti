@@ -52,7 +52,7 @@
     port: 8500
     delay: 1
 
-- name:
+- name: join servers
   command: "{{ consul_bin_directory }}/consul join {{ item }}"
   with_items:
     - "{{ groups[consul_group] }}"

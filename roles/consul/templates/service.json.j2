@@ -2,7 +2,7 @@
   "data_dir": "{{ consul_data_directory }}",
   "log_level": "INFO",
 
-  "datacenter": "vagrant",
+  "datacenter": "{{ consul_datacenter }}",
 
   "bind_addr": "{{ consul_host_ipv4_address }}",
   "client_addr": "0.0.0.0",

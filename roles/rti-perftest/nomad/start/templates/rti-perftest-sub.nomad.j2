@@ -1,8 +1,7 @@
 job "rti-perftest-sub" {
   type = "service"
 
-  region = "europe"
-  datacenters = ["vagrant"]
+  datacenters = ["dc-1", "dc-2"]
 
   group "sub" {
     count = 1

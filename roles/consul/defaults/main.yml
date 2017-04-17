@@ -11,3 +11,5 @@ consul_data_directory: "/var/lib/consul"
 consul_systemd_unit_name: "consul"
 
 consul_group: "consul"
+
+consul_datacenter: "global"

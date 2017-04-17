@@ -1,8 +1,7 @@
 job "rti-perftest-pub" {
   type = "service"
 
-  region = "europe"
-  datacenters = ["vagrant"]
+  datacenters = ["dc-1", "dc-2"]
 
   group "pub" {
     count = 1

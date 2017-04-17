@@ -9,6 +9,31 @@
     - { role: cockpit }
 
 # ------------------------------------------------------------------------------
-- hosts: centos
+- hosts: datacenter-1
   roles:
-    - { role: nomad, nomad_group: "centos" }
+    - {
+        role: nomad,
+        nomad_group: "datacenter-1",
+        nomad_region: "region-1",
+        nomad_datacenter: "dc-1"
+      }
+
+# ------------------------------------------------------------------------------
+- hosts: datacenter-2
+  roles:
+    - {
+        role: nomad,
+        nomad_group: "datacenter-2",
+        nomad_region: "region-2",
+        nomad_datacenter: "dc-2"
+      }
+
+# ------------------------------------------------------------------------------
+- hosts: datacenter-1[0]
+  roles:
+    - {
+        role: nomad-federation,
+        other_group: "datacenter-2",
+        consul_bin_directory: "/usr/bin",
+        nomad_bin_directory: "/usr/bin"
+      }
