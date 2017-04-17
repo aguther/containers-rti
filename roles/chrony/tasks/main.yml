@@ -2,11 +2,11 @@
 # ------------------------------------------------------------------------------
 - name: install
   yum:
-    name: ntp
+    name: chrony
     state: latest
 
 - name: enable and start
   service:
-    name: ntpd.service
+    name: chronyd.service
     state: running
     enabled: yes

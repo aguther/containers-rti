@@ -1,9 +1,9 @@
 ---
 - hosts: centos
   roles:
+    - { role: chrony }
     - { role: disable-selinux }
     - { role: disable-firewall }
-    - { role: ntp }
     - { role: docker/el7 }
     - { role: weave/net, weave_group: "centos" }
     - { role: cockpit }
