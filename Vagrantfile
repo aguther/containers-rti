@@ -104,13 +104,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       end
 
       # vmware settings
-      [:vmware_fusion, :vmware_workstation].each do |provider|
-        instance_config.vm.provider provider do |vmware, override|
-          vmware.gui = $vm_gui
-          vmware.vmx["numvcpus"] = $vm_cpus
-          vmware.vmx["memsize"] = $vm_memory
-          vmware.vmx["ethernet0.pcislotnumber"] = "33"
-        end
+      config.vm.provider :vmare_workstation do |vmware, override|
+        vmware.gui = $vm_gui
+        vmware.vmx["numvcpus"] = $vm_cpus
+        vmware.vmx["memsize"] = $vm_memory
+        vmware.vmx["ethernet0.pcislotnumber"] = "33"
       end
 
       # provision proxy configuration for docker
