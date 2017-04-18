@@ -109,6 +109,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
           vmware.gui = $vm_gui
           vmware.vmx["numvcpus"] = $vm_cpus
           vmware.vmx["memsize"] = $vm_memory
+          vmware.vmx["ethernet0.pcislotnumber"] = "33"
         end
       end
 
