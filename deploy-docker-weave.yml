@@ -1,9 +1,11 @@
 ---
 - hosts: centos
+  vars:
+    - weave_group: "centos"
   roles:
-    - { role: chrony }
-    - { role: disable-selinux }
-    - { role: disable-firewall }
-    - { role: docker/el7 }
-    - { role: weave/net, weave_group: "centos" }
-    - { role: cockpit }
+    - chrony
+    - disable-selinux
+    - disable-firewall
+    - docker/el7
+    - weave/net
+    - cockpit
