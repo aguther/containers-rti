@@ -21,6 +21,7 @@ job "rti-perftest-sub" {
         args = [
           "-sub",
         ]
+        network_mode = "weave"
       }
 
       resources {
