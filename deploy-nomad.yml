@@ -13,6 +13,8 @@
 
 # ------------------------------------------------------------------------------
 - hosts: datacenter-1
+  tags:
+    - nomad
   vars:
     - nomad_group: "datacenter-1"
     - nomad_region: "region-1"
@@ -22,6 +24,8 @@
 
 # ------------------------------------------------------------------------------
 - hosts: datacenter-2
+  tags:
+    - nomad
   vars:
     - nomad_group: "datacenter-2"
     - nomad_region: "region-2"
@@ -31,9 +35,22 @@
 
 # ------------------------------------------------------------------------------
 - hosts: datacenter-1[0]
+  tags:
+    - nomad
+    - federation
   vars:
     - other_group: "datacenter-2"
     - consul_bin_directory: "/usr/bin"
     - nomad_bin_directory: "/usr/bin"
   roles:
     - nomad-federation
+
+# ------------------------------------------------------------------------------
+- hosts:
+    - datacenter-1[0]
+    - datacenter-2[0]
+  tags:
+    - nomad
+    - ui
+  roles:
+    - hashi-ui

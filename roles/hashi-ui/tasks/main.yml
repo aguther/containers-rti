@@ -1,0 +1,4 @@
+---
+# ------------------------------------------------------------------------------
+- name: Start Container
+  command: "docker run --detach=true --name hashi-ui --env NOMAD_ENABLE=1 --env NOMAD_ADDR=http://{{ ansible_default_ipv4.address }}:4646 --env CONSUL_ENABLE=1 --env CONSUL_ADDR={{ ansible_default_ipv4.address }}:8500 --publish 3000:3000 jippi/hashi-ui"
