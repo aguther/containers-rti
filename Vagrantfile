@@ -123,7 +123,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
       # add vagrant user to group wheel
       instance_config.vm.provision :shell,
-        inline: "sudo usermod -a -G wheel %s" % config.ssh.username
+        privileged: true,
+        inline: "usermod -a -G wheel %s" % config.ssh.username
 
       # provision using ansible, but only once and not for every instance
       if ($playbook != "") & (id == 1)
