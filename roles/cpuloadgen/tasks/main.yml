@@ -1,0 +1,9 @@
+---
+# ------------------------------------------------------------------------------
+- name: copy
+  copy:
+    src: /vagrant/tools/cpuloadgen
+    dest: /bin/cpuloadgen
+    owner: root
+    group: root
+    mode: 0755

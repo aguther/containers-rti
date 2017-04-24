@@ -1,0 +1,11 @@
+---
+# ------------------------------------------------------------------------------
+- name: epel
+  yum:
+    name: https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+    state: present
+
+- name: installation
+  yum:
+    name: iftop
+    state: present
