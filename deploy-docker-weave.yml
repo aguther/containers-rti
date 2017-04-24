@@ -1,5 +1,6 @@
 ---
-- hosts: centos
+- hosts:
+    - centos
   vars:
     - weave_group: "centos"
   roles:

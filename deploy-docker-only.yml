@@ -1,5 +1,6 @@
 ---
-- hosts: centos
+- hosts:
+    - centos
   roles:
     - chrony
     - disable-selinux

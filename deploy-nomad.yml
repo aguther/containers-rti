@@ -1,6 +1,7 @@
 ---
 # ------------------------------------------------------------------------------
-- hosts: centos
+- hosts:
+    - centos
   vars:
     - weave_group: "centos"
   roles:
@@ -12,7 +13,8 @@
     - weave/net
 
 # ------------------------------------------------------------------------------
-- hosts: datacenter-1
+- hosts:
+    - datacenter-1
   tags:
     - nomad
   vars:
@@ -23,7 +25,8 @@
     - nomad
 
 # ------------------------------------------------------------------------------
-- hosts: datacenter-2
+- hosts:
+    - datacenter-2
   tags:
     - nomad
   vars:
@@ -34,7 +37,8 @@
     - nomad
 
 # ------------------------------------------------------------------------------
-- hosts: datacenter-1[0]
+- hosts:
+    - datacenter-1[0]
   tags:
     - nomad
     - federation

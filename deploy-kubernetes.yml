@@ -1,13 +1,15 @@
 ---
 # ------------------------------------------------------------------------------
-- hosts: centos
+- hosts:
+    - centos
   roles:
     - chrony
     - disable-selinux
     - disable-firewall
 
 # ------------------------------------------------------------------------------
-- hosts: centos
+- hosts:
+    - centos
   vars:
     - weave_group: "nodes"
   roles:
