@@ -32,8 +32,7 @@ If applicable, using a proxy is possible directly via proxy address inside the v
 Take the following steps to configure the virtual machines for an proxy address.
 [source,bash]
 ----
-export VM_PROXY_ENABLED=true
-export VM_PROXY_ADDRESS=http://proxy.domain:8080/
+export VM_PROXY=http://proxy.domain:8080/
 ----
 
 === Initialization
@@ -44,7 +43,7 @@ The virtual machines can be deploying with the following commands:
 ----
 = optional, default = 3
 export VM_INSTANCES=4
-= optional, default = deploy-docker.yml
+= optional, default = none
 export PLAYBOOK=deploy-kubernetes.yml
 vagrant up
 ----
