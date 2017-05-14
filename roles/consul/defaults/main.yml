@@ -1,5 +1,5 @@
 ---
-consul_version: "0.8.1"
+consul_version: "0.8.3"
 
 consul_interface: "{{ ansible_default_ipv4.interface }}"
 consul_host_ipv4_address: "{{ hostvars[inventory_hostname]['ansible_' + consul_interface].ipv4.address }}"
