@@ -3,10 +3,10 @@
 - name: install
   yum:
     name: chrony
-    state: latest
+    state: present
 
 - name: enable and start
   service:
     name: chronyd.service
-    state: running
+    state: started
     enabled: yes
