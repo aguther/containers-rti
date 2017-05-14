@@ -1,4 +1,0 @@
----
-dependencies:
-  - { role: weave/net }
-  #- { role: weave/net/remove }

@@ -1,9 +1,0 @@
----
-etcd_interface: "{{ ansible_default_ipv4.interface }}"
-etcd_host_ipv4_address: "{{ hostvars[inventory_hostname]['ansible_' + etcd_interface].ipv4.address }}"
-
-etcd_client_port: "2379"
-etcd_url_scheme: "http"
-
-etcd_advertise_client_urls: "{{ etcd_url_scheme }}:\\/\\/{{ etcd_host_ipv4_address }}:{{ etcd_client_port }}"
-etcd_listen_client_urls: "{{ etcd_url_scheme }}:\\/\\/0.0.0.0:{{ etcd_client_port }}"
