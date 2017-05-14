@@ -6,7 +6,9 @@
     state: latest
   with_items:
     - cockpit
-    - cockpit-kubernetes
+    - cockpit-dashboard
+    - cockpit-doc
+    - cockpit-docker
 
 - name: enable and start
   service:
