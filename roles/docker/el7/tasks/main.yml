@@ -2,7 +2,7 @@
 # ------------------------------------------------------------------------------
 - name: install
   yum:
-    name: docker-1.10.3-59.el7.centos
+    name: docker
     state: present
 
 - group:
