@@ -1,0 +1,4 @@
+---
+- name: install weave
+  command: "/usr/bin/kubectl apply --kubeconfig=/etc/kubernetes/admin.conf -f https://git.io/weave-kube-1.6"
+  when: inventory_hostname == groups['master'][0]

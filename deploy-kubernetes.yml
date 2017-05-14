@@ -6,13 +6,6 @@
     - chrony
     - disable-selinux
     - disable-firewall
-
-# ------------------------------------------------------------------------------
-- hosts:
-    - centos
-  vars:
-    - weave_group: "nodes"
-  roles:
-    - kubernetes/el7
-    - weave/kube/el7
+    - kubernetes
+    - weave/kubernetes
     - cockpit

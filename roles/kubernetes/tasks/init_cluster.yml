@@ -1,0 +1,25 @@
+---
+- name: generate token
+  command: /usr/bin/kubeadm token generate
+  register: kubeadm_token_cmd
+
+- name: store token
+  set_fact:
+    kubeadm_token: "{{ kubeadm_token_cmd.stdout_lines[0] }}"
+
+- name: init master
+  command: "/usr/bin/kubeadm init --token={{ hostvars[groups['master'][0]].kubeadm_token }} --apiserver-advertise-address={{ hostvars[inventory_hostname]['ansible_' + kubernetes_interface].ipv4.address }}"
+  register: kubeadm_init_cmd
+
+- name: make kubectl configuration readable for users
+  file:
+    path: /etc/kubernetes/admin.conf
+    mode: 0644
+
+- name: set configuration for kubectl
+  copy:
+    src: kubernetes.sh
+    dest: /etc/profile.d/kubernetes.sh
+
+- name: taint master
+  command: "/usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf taint nodes --all node-role.kubernetes.io/master-"

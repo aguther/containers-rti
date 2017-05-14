@@ -1,0 +1,51 @@
+---
+- name: set kernel configuration
+  copy:
+    src: k8s.conf
+    dest: /etc/sysctl.d/k8s.conf
+
+- name: reload kernel configuration
+  command: /usr/sbin/sysctl --system
+
+- name: add repository
+  yum_repository:
+    file: kubernetes
+    name: Kubernetes
+    description: Kubernetes
+    baseurl: https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+    enabled: true
+    gpgcheck: false
+    state: present
+
+- name: install packages
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - bash-completion
+    - kubeadm
+    - kubectl
+    - kubelet
+
+- name: enable and start
+  service:
+    name: kubelet.service
+    state: started
+    enabled: yes
+
+- name: get configuration file status
+  stat:
+    path: /etc/kubernetes/admin.conf
+  register: kubeadm_config_file
+
+- name: get configuration file status
+  set_fact:
+    kubeadm_deployed: "{{ kubeadm_config_file.stat.exists }}"
+
+- include: init_cluster.yml
+  when: (hostvars[groups['master'][0]].kubeadm_deployed == false)
+        and (inventory_hostname == groups['master'][0])
+
+- include: join_cluster.yml
+  when: (hostvars[groups['master'][0]].kubeadm_deployed == false)
+        and (inventory_hostname in groups['nodes'])

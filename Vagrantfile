@@ -156,9 +156,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
           # extra variables to configure roles
           ansible.extra_vars = {
             docker_group_users: "vagrant",
-            etcd_interface: $vm_ip_interface_name,
-            flannel_interface: $vm_ip_interface_name,
             consul_interface: $vm_ip_interface_name,
+            kubernetes_interface: $vm_ip_interface_name,
           }
         end
       end
