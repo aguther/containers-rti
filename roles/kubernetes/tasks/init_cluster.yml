@@ -7,6 +7,9 @@
   set_fact:
     kubeadm_token: "{{ kubeadm_token_cmd.stdout_lines[0] }}"
 
+- name: use reset to clean environment
+  command: "/usr/bin/kubeadm reset"
+
 - name: init master
   command: "/usr/bin/kubeadm init --token={{ hostvars[groups['master'][0]].kubeadm_token }} --apiserver-advertise-address={{ hostvars[inventory_hostname]['ansible_' + kubernetes_interface].ipv4.address }}"
   register: kubeadm_init_cmd
