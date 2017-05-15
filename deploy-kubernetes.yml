@@ -9,3 +9,4 @@
     - kubernetes
     - weave/kubernetes
     - cockpit
+    - kubernetes/dashboard
