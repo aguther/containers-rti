@@ -44,7 +44,7 @@
 - name: enable and start
   service:
     name: "{{ consul_systemd_unit_name }}.service"
-    state: running
+    state: started
     enabled: yes
 
 - name: wait for service
