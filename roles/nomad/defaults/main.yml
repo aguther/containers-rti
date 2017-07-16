@@ -1,5 +1,5 @@
 ---
-nomad_version: "0.5.6"
+nomad_version: "0.6.0-rc1"
 
 nomad_bin_directory: "/usr/bin"
 nomad_config_directory: "/etc/nomad"
