@@ -1,6 +1,6 @@
 ---
 - name: join nodes
-  command: "/usr/bin/kubeadm join --token={{ hostvars[groups['master'][0]].kubeadm_token }} {{ hostvars[groups['master'][0]]['ansible_' + kubernetes_interface].ipv4.address }}:6443"
+  command: "/usr/bin/kubeadm join --skip-preflight-checks --token={{ hostvars[groups['master'][0]].kubeadm_token }} {{ hostvars[groups['master'][0]]['ansible_' + kubernetes_interface].ipv4.address }}:6443"
 
 # this should only be needed on vagrant boxes
 - name: setup route
