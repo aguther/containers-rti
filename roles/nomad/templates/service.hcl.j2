@@ -6,6 +6,12 @@ datacenter = "{{ nomad_datacenter }}"
 
 bind_addr = "0.0.0.0"
 
+advertise {
+  http = "{{ nomad_host_ipv4_address }}"
+  rpc  = "{{ nomad_host_ipv4_address }}"
+  serf = "{{ nomad_host_ipv4_address }}"
+}
+
 consul {
   address = "127.0.0.1:8500"
 }
