@@ -110,7 +110,7 @@ vagrant ssh -c "cd /vagrant; ansible-playbook -i /tmp/vagrant-ansible/inventory/
 ----
 
 === Monitoring
-Monitoring can be done using the tool cockpit which can be reached on the address `http://<host>:9090`. It also supports Kubernetes and can be reached with the tab 'Cluster'.
+Monitoring can be done using the Kubernetes Dashboard UI. It can be reached on the address `http://<host>:32000`. Additionally you can also access the tool cockpit which can be reached on the address `http://<host>:9090`.
 
 
 == Nomad
