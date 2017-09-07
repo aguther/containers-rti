@@ -136,7 +136,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
           # target group
           ansible.limit = "centos"
           # run as sudo
-          ansible.sudo = true
+          ansible.become = true
           # logging verbosity
           ansible.verbose = false
           # groups
