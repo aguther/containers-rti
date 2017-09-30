@@ -6,6 +6,7 @@
     - chrony
     - disable-selinux
     - disable-firewall
+    - disable-swap
     - kubernetes
     - weave/kubernetes
     - cockpit
