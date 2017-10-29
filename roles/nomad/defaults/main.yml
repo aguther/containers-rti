@@ -1,5 +1,5 @@
 ---
-nomad_version: "0.6.3"
+nomad_version: "0.7.0-rc2"
 
 nomad_interface: "{{ ansible_default_ipv4.interface }}"
 nomad_host_ipv4_address: "{{ hostvars[inventory_hostname]['ansible_' + nomad_interface].ipv4.address }}"
