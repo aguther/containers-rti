@@ -1,0 +1,25 @@
+---
+# ------------------------------------------------------------------------------
+- hosts:
+    - centos
+  vars:
+    - weave_group: "centos"
+    - nomad_group: "datacenter-1"
+    - nomad_region: "region-1"
+    - nomad_datacenter: "dc-1"
+  roles:
+    - chrony
+    - disable-selinux
+    - disable-firewall
+    - docker/el7
+    - cockpit
+    - weave/net
+    - cpuloadgen
+    - iftop
+    - nomad
+
+# ------------------------------------------------------------------------------
+- hosts:
+    - centos[0]
+  roles:
+    - hashi-ui
