@@ -8,7 +8,7 @@
     - disable-firewall
     - disable-swap
     - kubernetes
-    - weave/kubernetes
+    - weave/net/kubernetes
     - cockpit
     - kubernetes/wait-ready
     - kubernetes/dashboard
