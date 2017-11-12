@@ -14,6 +14,6 @@
   command: /usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf patch service kubernetes-dashboard -p '{"spec":{"type":"NodePort"}}' --namespace=kube-system
   when: (inventory_hostname == groups['master'][0])
 
-- name: set NodePort to fixed value of 32000
-  command: /usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf patch service kubernetes-dashboard -p '{"spec":{"ports":[{"port":443,"nodePort":32000}]}}' --namespace=kube-system
+- name: set NodePort to fixed value of 30000
+  command: /usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf patch service kubernetes-dashboard -p '{"spec":{"ports":[{"port":443,"nodePort":30000}]}}' --namespace=kube-system
   when: (inventory_hostname == groups['master'][0])
