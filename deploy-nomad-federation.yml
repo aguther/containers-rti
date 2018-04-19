@@ -10,7 +10,7 @@
     - disable-firewall
     - docker/el7
     - cockpit
-    - weave/net
+    - weave/net/docker
     - cpuloadgen
     - iftop
 

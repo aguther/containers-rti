@@ -9,5 +9,5 @@
     - disable-selinux
     - disable-firewall
     - docker/el7
-    - weave/net
+    - weave/net/docker
     - cockpit
