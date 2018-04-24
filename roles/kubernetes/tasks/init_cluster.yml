@@ -12,6 +12,8 @@
 
 - name: init master
   command: "/usr/bin/kubeadm init --feature-gates=SelfHosting=true --token={{ hostvars[groups['master'][0]].kubeadm_token }} --apiserver-advertise-address={{ hostvars[inventory_hostname]['ansible_' + kubernetes_interface].ipv4.address }}"
+  environment:
+    no_proxy: "10.0.0.0/16, 10.96.0.0/16"
   register: kubeadm_init_cmd
 
 - name: make kubectl configuration readable for users
@@ -26,3 +28,5 @@
 
 - name: taint master
   command: "/usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf taint nodes --all node-role.kubernetes.io/master-"
+  environment:
+    no_proxy: "10.0.0.0/16, 10.96.0.0/16"
