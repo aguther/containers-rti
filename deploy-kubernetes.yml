@@ -9,3 +9,5 @@
     - disable-swap
     - kubernetes
     - weave/net/kubernetes
+    - kubernetes/wait-ready
+    - kubernetes/dashboard
