@@ -1,0 +1,7 @@
+---
+# ------------------------------------------------------------------------------
+- hosts:
+    - centos
+  roles:
+    - kubernetes/wait-ready
+    - kubernetes/dashboard
