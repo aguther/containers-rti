@@ -12,7 +12,6 @@
     - disable-selinux
     - disable-firewall
     - docker/el7
-    - cockpit
     - weave/net/docker
     - cpuloadgen
     - iftop
