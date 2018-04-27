@@ -1,12 +1,12 @@
 ---
 - name: deploy scope
-  shell: "/usr/bin/kubectl apply --namespace kube-system -f \"https://cloud.weave.works/k8s/scope.yaml?k8s-version=$(/usr/bin/kubectl version | base64 | tr -d '\n')\""
+  shell: "/usr/bin/kubectl apply --namespace weave -f \"https://cloud.weave.works/k8s/scope.yaml?k8s-version=$(/usr/bin/kubectl version | base64 | tr -d '\n')\""
   when: inventory_hostname == groups['master'][0]
 
 - name: change service to NodePort
-  command: /usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf patch service weave-scope-app -p '{"spec":{"type":"NodePort"}}' --namespace=kube-system
+  command: /usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf patch service weave-scope-app -p '{"spec":{"type":"NodePort"}}' --namespace=weave
   when: (inventory_hostname == groups['master'][0])
 
 - name: set NodePort to fixed value of 30001
-  command: /usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf patch service weave-scope-app -p '{"spec":{"ports":[{"port":80,"nodePort":30001}]}}' --namespace=kube-system
+  command: /usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf patch service weave-scope-app -p '{"spec":{"ports":[{"port":80,"nodePort":30001}]}}' --namespace=weave
   when: (inventory_hostname == groups['master'][0])
