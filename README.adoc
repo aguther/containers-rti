@@ -41,9 +41,9 @@ Thanks to vagrant the deployment of the virtual machines is really easy. The con
 The virtual machines can be deploying with the following commands:
 [source,bash]
 ----
-= optional, default = 3
+# optional, default = 3
 export VM_INSTANCES=4
-= optional, default = none
+# optional, default = none
 export PLAYBOOK=deploy-kubernetes.yml
 vagrant up
 ----
