@@ -5,3 +5,6 @@
 
 - name: "subscribers : delete"
   command: "/usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf delete deployment rti-perftest-sub"
+
+- name: "network policy : delete"
+  command: "/usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf delete networkpolicy rti-perftest"

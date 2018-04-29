@@ -1,5 +1,19 @@
 ---
 # ------------------------------------------------------------------------------
+- name: "network policy : create definition file"
+  template:
+    src: rti-perftest-network-policy.yml.j2
+    dest: "/tmp/rti-perftest-network-policy.yml"
+
+- name: "network policy : apply"
+  command: "/usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf apply -f /tmp/rti-perftest-network-policy.yml"
+
+- name: "network policy : delete definition file"
+  file:
+    path: /tmp/rti-perftest-network-policy.yml
+    state: absent
+
+# ------------------------------------------------------------------------------
 - name: "publishers : create definition file"
   template:
     src: rti-perftest-pub.yml.j2
@@ -13,6 +27,7 @@
     path: /tmp/rti-perftest-pub.yml
     state: absent
 
+# ------------------------------------------------------------------------------
 - name: "subscribers : create definition file"
   template:
     src: rti-perftest-sub.yml.j2

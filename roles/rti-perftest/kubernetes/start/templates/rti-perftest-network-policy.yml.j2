@@ -1,0 +1,22 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: rti-perftest
+  namespace: default
+spec:
+  podSelector:
+    matchLabels:
+      app: rti-perftest
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: rti-perftest
+  egress:
+  - to:
+    - podSelector:
+        matchLabels:
+          app: rti-perftest
