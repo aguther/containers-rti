@@ -23,10 +23,8 @@ spec:
     spec:
       containers:
         - name: "rti-perftest-{{ rti_perftest_id }}-pub"
-          image: guther/rti-perftest:2.0
+          image: guther/rti-perftest:1.0
           args:
-            - "-verbosity"
-            - "2"
             - "-domain"
             - "0"
             - "-pub"
