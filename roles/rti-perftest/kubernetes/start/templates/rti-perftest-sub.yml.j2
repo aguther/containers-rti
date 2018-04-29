@@ -1,10 +1,13 @@
 ---
-apiVersion: apps/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: rti-perftest-sub
 spec:
   replicas: {{ groups['nodes'] | length }}
+  selector:
+    matchLabels:
+      app: rti-perftest-sub
   template:
     metadata:
       labels:
