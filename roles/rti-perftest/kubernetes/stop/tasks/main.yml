@@ -1,10 +1,10 @@
 ---
 # ------------------------------------------------------------------------------
 - name: "publishers : delete"
-  command: "/usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf delete deployment rti-perftest-pub"
+  command: "/usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf delete deployment rti-perftest-{{ rti_perftest_id }}-pub"
 
 - name: "subscribers : delete"
-  command: "/usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf delete deployment rti-perftest-sub"
+  command: "/usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf delete deployment rti-perftest-{{ rti_perftest_id }}-sub"
 
 - name: "network policy : delete"
-  command: "/usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf delete networkpolicy rti-perftest"
+  command: "/usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf delete networkpolicy rti-perftest-{{ rti_perftest_id }}"

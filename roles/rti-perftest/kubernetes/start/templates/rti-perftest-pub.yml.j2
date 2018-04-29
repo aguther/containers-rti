@@ -2,24 +2,27 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: rti-perftest-pub
+  name: "rti-perftest-{{ rti_perftest_id }}-pub"
   labels:
     app: rti-perftest
-    mode: pub
+    role: pub
+    id: "{{ rti_perftest_id }}"
 spec:
   replicas: {{ groups['master'] | length }}
   selector:
     matchLabels:
       app: rti-perftest
-      mode: pub
+      role: pub
+      id: "{{ rti_perftest_id }}"
   template:
     metadata:
       labels:
         app: rti-perftest
-        mode: pub
+        role: pub
+        id: "{{ rti_perftest_id }}"
     spec:
       containers:
-        - name: rti-perftest-pub
+        - name: "rti-perftest-{{ rti_perftest_id }}-pub"
           image: guther/rti-perftest:2.0
           args:
             - "-verbosity"

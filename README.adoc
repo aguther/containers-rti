@@ -92,7 +92,8 @@ Monitoring can be done using the tool cockpit which can be reached on the addres
 
 == Kubernetes
 In this scenario the rti-perftest example will be executed on a Kubernetes cluster which is available in the extras-repository.
-Weave-Net is used to connect the containers on the different hosts.
+
+Weave-Net is used to connect the containers on the different hosts. A network policy is deployed that isolates a pair of publishers/subscribers based on a id. The id is per default 1 but can be changed via Ansible variable (see below).
 
 === Start
 [source,bash]
@@ -100,13 +101,13 @@ Weave-Net is used to connect the containers on the different hosts.
 export PLAYBOOK=deploy-kubernetes.yml
 vagrant destroy -f
 vagrant up
-vagrant ssh -c "cd /vagrant; ansible-playbook -i /tmp/vagrant-ansible/inventory/vagrant_ansible_local_inventory rti-perftest-kubernetes-start.yml"
+vagrant ssh -c "cd /vagrant; ansible-playbook -i /tmp/vagrant-ansible/inventory/vagrant_ansible_local_inventory -e rti_perftest_id=1 rti-perftest-kubernetes-start.yml"
 ----
 
 === Stop
 [source,bash]
 ----
-vagrant ssh -c "cd /vagrant; ansible-playbook -i /tmp/vagrant-ansible/inventory/vagrant_ansible_local_inventory rti-perftest-kubernetes-stop.yml"
+vagrant ssh -c "cd /vagrant; ansible-playbook -i /tmp/vagrant-ansible/inventory/vagrant_ansible_local_inventory -e rti_perftest_id=1 rti-perftest-kubernetes-stop.yml"
 ----
 
 === Monitoring
