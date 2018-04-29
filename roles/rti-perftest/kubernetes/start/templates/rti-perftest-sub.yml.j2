@@ -3,15 +3,20 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: rti-perftest-sub
+  labels:
+    app: rti-perftest
+    mode: sub
 spec:
   replicas: {{ groups['nodes'] | length }}
   selector:
     matchLabels:
-      app: rti-perftest-sub
+      app: rti-perftest
+      mode: sub
   template:
     metadata:
       labels:
-        app: rti-perftest-sub
+        app: rti-perftest
+        mode: sub
     spec:
       containers:
         - name: rti-perftest-sub

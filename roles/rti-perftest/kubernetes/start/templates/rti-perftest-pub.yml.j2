@@ -3,15 +3,20 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: rti-perftest-pub
+  labels:
+    app: rti-perftest
+    mode: pub
 spec:
   replicas: {{ groups['master'] | length }}
   selector:
     matchLabels:
-      app: rti-perftest-pub
+      app: rti-perftest
+      mode: pub
   template:
     metadata:
       labels:
-        app: rti-perftest-pub
+        app: rti-perftest
+        mode: pub
     spec:
       containers:
         - name: rti-perftest-pub
