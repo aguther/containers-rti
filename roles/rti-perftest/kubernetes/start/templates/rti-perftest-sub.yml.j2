@@ -22,6 +22,8 @@ spec:
         - name: rti-perftest-sub
           image: guther/rti-perftest:2.0
           args:
+            - "-verbosity"
+            - "2"
             - "-domain"
             - "0"
             - "-sub"
