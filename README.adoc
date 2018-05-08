@@ -104,13 +104,13 @@ Weave-Net is used to connect the containers on the different hosts. A network po
 export PLAYBOOK=deploy-kubernetes.yml
 vagrant destroy -f
 vagrant up
-vagrant ssh -c "cd /vagrant; ansible-playbook -i /tmp/vagrant-ansible/inventory/vagrant_ansible_local_inventory -e rti_perftest_id=1 rti-perftest-kubernetes-start.yml"
+vagrant ssh -c "cd /vagrant; ansible-playbook -i /tmp/vagrant-ansible/inventory/vagrant_ansible_local_inventory -e rti_perftest_id=1 -e rti_perftest_sub_count=2 rti-perftest-kubernetes-start.yml"
 ----
 
 === Stop
 [source,bash]
 ----
-vagrant ssh -c "cd /vagrant; ansible-playbook -i /tmp/vagrant-ansible/inventory/vagrant_ansible_local_inventory -e rti_perftest_id=1 rti-perftest-kubernetes-stop.yml"
+vagrant ssh -c "cd /vagrant; ansible-playbook -i /tmp/vagrant-ansible/inventory/vagrant_ansible_local_inventory -e rti_perftest_id=1 -e rti_perftest_sub_count=2 rti-perftest-kubernetes-stop.yml"
 ----
 
 === Monitoring

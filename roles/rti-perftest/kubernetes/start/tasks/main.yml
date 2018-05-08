@@ -5,6 +5,6 @@
 - include_tasks: subscriber.yml
   vars:
     rti_perftest_id_subscriber: "{{ item }}"
-  with_sequence: count={{ groups['nodes'] | length }}
+  with_sequence: count={{ rti_perftest_sub_count }}
 
 - include_tasks: publisher.yml
