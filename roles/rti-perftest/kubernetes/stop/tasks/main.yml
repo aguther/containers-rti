@@ -1,10 +1,9 @@
 ---
-# ------------------------------------------------------------------------------
-- name: "publishers : delete"
-  command: "/usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf delete deployment rti-perftest-{{ rti_perftest_id }}-pub"
+- include_tasks: publisher.yml
 
-- name: "subscribers : delete"
-  command: "/usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf delete deployment rti-perftest-{{ rti_perftest_id }}-sub"
+- include_tasks: subscriber.yml
+  vars:
+    rti_perftest_id_subscriber: "{{ item }}"
+  with_sequence: count={{ groups['nodes'] | length }}
 
-- name: "network policy : delete"
-  command: "/usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf delete networkpolicy rti-perftest-{{ rti_perftest_id }}"
+- include_tasks: network-policy.yml

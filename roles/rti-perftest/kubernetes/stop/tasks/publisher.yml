@@ -1,0 +1,3 @@
+---
+- name: "publishers : delete"
+  command: "/usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf delete deployment rti-perftest-{{ rti_perftest_id }}-pub"

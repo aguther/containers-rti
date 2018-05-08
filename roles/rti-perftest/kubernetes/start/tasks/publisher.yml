@@ -1,0 +1,13 @@
+---
+- name: "publishers : create definition file"
+  template:
+    src: rti-perftest-pub.yml.j2
+    dest: "/tmp/rti-perftest-pub.yml"
+
+- name: "publishers : apply definition file"
+  command: "/usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf apply -f /tmp/rti-perftest-pub.yml"
+
+- name: "publishers : delete definition file"
+  file:
+    path: /tmp/rti-perftest-pub.yml
+    state: absent

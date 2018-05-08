@@ -1,0 +1,3 @@
+---
+- name: "network policy : delete"
+  command: "/usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf delete networkpolicy rti-perftest-{{ rti_perftest_id }}"

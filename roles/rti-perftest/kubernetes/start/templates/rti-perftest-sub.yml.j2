@@ -2,7 +2,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: "rti-perftest-{{ rti_perftest_id }}-sub"
+  name: "rti-perftest-{{ rti_perftest_id }}-sub-{{ rti_perftest_id_subscriber }}"
   labels:
     app: rti-perftest
     role: sub
@@ -31,7 +31,7 @@ spec:
             - "-verbosity"
             - "2"
             - "-sidMultiSubTest"
-            - "$(echo \"${POD_IP//./}\")"
+            - "{{ rti_perftest_id_subscriber }}"
           env:
             - name: POD_IP
               valueFrom:
