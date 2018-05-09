@@ -1,0 +1,13 @@
+---
+- name: "subscribers : create definition file"
+  template:
+    src: rti-perftest-sub.yml.j2
+    dest: "/tmp/rti-perftest-sub.yml"
+
+- name: "subscribers : apply definition file"
+  command: "/usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf apply -f /tmp/rti-perftest-sub.yml"
+
+- name: "subscribers : delete definition file"
+  file:
+    path: /tmp/rti-perftest-sub.yml
+    state: absent

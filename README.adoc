@@ -1,5 +1,5 @@
 = containers-rti
-Repository to test RTI DDS with container technologies (docker, kubernetes).
+Repository to test RTI Connext DDS with container technologies (docker, kubernetes).
 
 == Environment
 Vagrant can be used to deploy the necessary virtual machines.
@@ -29,7 +29,10 @@ In the default configuration you will get 3 VMs where the first is in the master
 === Proxy Configuration
 If applicable, using a proxy is possible directly via proxy address inside the virtual machines.
 
-Take the following steps to configure the virtual machines for an proxy address.
+[NOTE]
+The proxy must be reachable inside the VM to work properly.
+
+Take the following steps to configure the virtual machines for a proxy address.
 [source,bash]
 ----
 export VM_PROXY=http://proxy.domain:8080/
@@ -38,7 +41,7 @@ export VM_PROXY=http://proxy.domain:8080/
 === Initialization
 Thanks to vagrant the deployment of the virtual machines is really easy. The configuration can be found in the file `Vagrantfile`. It's possible to change the number of virtual machines and the playbook used during provisioning via environment variables (see below).
 
-The virtual machines can be deploying with the following commands:
+The virtual machines can be deployed with the following commands:
 [source,bash]
 ----
 # optional, default = 3
@@ -101,13 +104,13 @@ Weave-Net is used to connect the containers on the different hosts. A network po
 export PLAYBOOK=deploy-kubernetes.yml
 vagrant destroy -f
 vagrant up
-vagrant ssh -c "cd /vagrant; ansible-playbook -i /tmp/vagrant-ansible/inventory/vagrant_ansible_local_inventory -e rti_perftest_id=1 rti-perftest-kubernetes-start.yml"
+vagrant ssh -c "cd /vagrant; ansible-playbook -i /tmp/vagrant-ansible/inventory/vagrant_ansible_local_inventory -e rti_perftest_id=1 -e rti_perftest_sub_count=2 rti-perftest-kubernetes-start.yml"
 ----
 
 === Stop
 [source,bash]
 ----
-vagrant ssh -c "cd /vagrant; ansible-playbook -i /tmp/vagrant-ansible/inventory/vagrant_ansible_local_inventory -e rti_perftest_id=1 rti-perftest-kubernetes-stop.yml"
+vagrant ssh -c "cd /vagrant; ansible-playbook -i /tmp/vagrant-ansible/inventory/vagrant_ansible_local_inventory -e rti_perftest_id=1 -e rti_perftest_sub_count=2 rti-perftest-kubernetes-stop.yml"
 ----
 
 === Monitoring
