@@ -9,10 +9,8 @@
     - cockpit-dashboard
     - cockpit-doc
     - cockpit-docker
-    - cockpit-networkmanager
     - cockpit-pcp
     - cockpit-shell
-    - cockpit-sosreport
 
 - name: enable and start
   service:
