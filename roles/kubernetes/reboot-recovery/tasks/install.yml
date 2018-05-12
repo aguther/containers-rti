@@ -1,0 +1,25 @@
+---
+- name: install unzip
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - unzip
+
+- name: download and extract self hosted recovery scripts
+  unarchive:
+    src: https://github.com/xetys/k8s-self-hosted-recovery/archive/master.zip
+    dest: /tmp
+    remote_src: yes
+
+- name: install self hosted recovery scripts
+  command: /tmp/k8s-self-hosted-recovery-master/install.sh
+  args:
+    chdir: /tmp/k8s-self-hosted-recovery-master
+
+- name: remove temporary files
+  file:
+    path: "{{ item }}"
+    state: absent
+  with_items:
+    - /tmp/k8s-self-hosted-recovery-master
