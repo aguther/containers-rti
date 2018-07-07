@@ -87,7 +87,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       # hostname within virtual machine
       instance_config.vm.hostname = hostname
       # define image to be used
-      instance_config.vm.box = "bento/centos-7.4"
+      instance_config.vm.box = "bento/centos-7.5"
       # enable synced folder
       instance_config.vm.synced_folder ".", "/vagrant"
       # private network for connection between virtual machines
