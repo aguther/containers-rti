@@ -13,3 +13,4 @@
     - cockpit
     - kubernetes/wait-ready
     - kubernetes/dashboard
+    - helm
