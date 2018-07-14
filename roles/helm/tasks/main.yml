@@ -1,0 +1,6 @@
+---
+- include: deploy.yml
+  when: (inventory_hostname == groups['master'][0])
+
+- include: init.yml
+  when: (inventory_hostname == groups['master'][0])

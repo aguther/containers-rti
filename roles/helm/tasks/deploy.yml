@@ -1,0 +1,31 @@
+---
+- name: create temporary directory
+  tempfile:
+    state: directory
+    suffix: helm
+  register: helm_temp_directory
+
+- name: download and unarchive
+  unarchive:
+    src: "https://storage.googleapis.com/kubernetes-helm/helm-v{{ helm_version }}-linux-amd64.tar.gz"
+    dest: "{{ helm_temp_directory.path }}"
+    remote_src: yes
+    validate_certs: no
+    owner: root
+    group: root
+    mode: 0755
+
+- name: install binary
+  copy:
+    src: "{{ helm_temp_directory.path }}/linux-amd64/helm"
+    dest: "{{ helm_bin_directory }}/helm"
+    remote_src: yes
+    owner: root
+    group: root
+    mode: 0755
+    backup: no
+
+- name: delete temporary directory
+  file:
+    state: absent
+    path: "{{ helm_temp_directory.path }}"

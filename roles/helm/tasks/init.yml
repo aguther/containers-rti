@@ -1,0 +1,13 @@
+---
+- name: init
+  shell: "{{ helm_bin_directory }}/helm init --wait"
+  environment:
+    HELM_HOME: "/home/{{ helm_user }}/.helm"
+    KUBECONFIG: "{{ helm_kubeconfig }}"
+
+- name:
+  file:
+    path: "/home/{{ helm_user }}/.helm"
+    recurse: yes
+    owner: "{{ helm_user }}"
+    group: "{{ helm_user }}"
