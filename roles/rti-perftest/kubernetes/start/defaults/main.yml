@@ -1,2 +1,4 @@
 rti_perftest_id: 1
 rti_perftest_sub_count: "{{ groups['nodes'] | length }}"
+
+rti_perftest_image: "guther/rti-perftest:2.0"

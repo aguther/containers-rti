@@ -23,7 +23,7 @@ spec:
     spec:
       containers:
         - name: "rti-perftest-{{ rti_perftest_id }}-pub"
-          image: guther/rti-perftest:2.0
+          image: "{{ rti_perftest_image }}"
           args:
             - "-domain"
             - "0"
