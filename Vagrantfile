@@ -160,6 +160,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
             consul_interface: $vm_ip_interface_name,
             nomad_interface: $vm_ip_interface_name,
             kubernetes_interface: $vm_ip_interface_name,
+            ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
           }
         end
       end
