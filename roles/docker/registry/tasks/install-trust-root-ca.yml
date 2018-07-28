@@ -1,0 +1,32 @@
+---
+- name: fetch generated root certificate
+  fetch:
+    src: "{{ docker_registry_storage_certs }}/{{ docker_registry_certificate_root_filename }}.crt"
+    dest: /tmp/{{ docker_registry_certificate_root_filename }}.crt
+    flat: yes
+  when: (inventory_hostname == groups['master'][0])
+
+- name: ensure directories are created
+  file:
+    state: directory
+    path: "{{ item }}"
+  with_items:
+    - "/etc/pki/ca-trust/source/anchors/"
+    - "/etc/docker/certs.d/{{ groups['master'][0] }}:{{ docker_registry_port }}/"
+
+- name: copy certificate
+  copy:
+    src: "/tmp/{{ docker_registry_certificate_root_filename }}.crt"
+    dest: "{{ item }}"
+  with_items:
+    - "/etc/pki/ca-trust/source/anchors/{{ groups['master'][0] }}-{{ docker_registry_certificate_root_filename }}.crt"
+    - "/etc/docker/certs.d/{{ groups['master'][0] }}:{{ docker_registry_port }}/{{ docker_registry_certificate_root_filename }}.crt"
+
+- name: clean up
+  file:
+    state: absent
+    path: "/tmp/{{ docker_registry_certificate_root_filename }}.crt"
+  when: (inventory_hostname == groups['master'][0])
+
+- name: update trust
+  command: "update-ca-trust"

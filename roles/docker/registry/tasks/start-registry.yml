@@ -1,0 +1,12 @@
+---
+- name: start docker registry
+  command: >
+    /usr/bin/docker run -d -p 5000:{{ docker_registry_port }} --restart=always --name registry
+      -v {{ docker_registry_storage_auth }}:/{{ docker_registry_storage_postfix_auth }}
+      -e "REGISTRY_AUTH=htpasswd"
+      -e "REGISTRY_AUTH_HTPASSWD_REALM=Registry Realm"
+      -e "REGISTRY_AUTH_HTPASSWD_PATH=/{{ docker_registry_storage_postfix_auth }}/{{ docker_registry_auth_filename }}"
+      -v {{ docker_registry_storage_certs }}:/{{ docker_registry_storage_postfix_certs }}
+      -e "REGISTRY_HTTP_TLS_CERTIFICATE=/{{ docker_registry_storage_postfix_certs }}/{{ docker_registry_certificate_host_filename }}.crt"
+      -e "REGISTRY_HTTP_TLS_KEY=/{{ docker_registry_storage_postfix_certs }}/{{ docker_registry_certificate_host_filename }}.key"
+      registry:2

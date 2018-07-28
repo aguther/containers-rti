@@ -1,0 +1,7 @@
+---
+- name: login to registry
+  command: >
+    /usr/bin/docker login
+      --username {{ docker_registry_login_username }}
+      --password {{ docker_registry_login_password }}
+      {{ docker_registry_login_registry_url }}

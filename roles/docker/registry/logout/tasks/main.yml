@@ -1,0 +1,5 @@
+---
+- name: logout from registry
+  command: >
+    /usr/bin/docker logout
+      {{ docker_registry_logout_registry_url }}
