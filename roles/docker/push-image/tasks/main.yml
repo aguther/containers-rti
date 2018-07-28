@@ -1,0 +1,11 @@
+---
+- name: tag image
+  command: >
+    /usr/bin/docker tag
+      {{ docker_push_image_image }}
+      {{ docker_push_image_registry }}/{{ docker_push_image_image }}
+
+- name: push image
+  command: >
+    /usr/bin/docker push
+      {{ docker_push_image_registry }}/{{ docker_push_image_image }}

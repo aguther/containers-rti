@@ -1,0 +1,7 @@
+---
+- include_role:
+    name: docker/load-image
+  vars:
+    docker_load_image_image_path: "{{ item }}"
+  with_fileglob:
+    - "{{ docker_load_images_path }}/*.tar.gz"

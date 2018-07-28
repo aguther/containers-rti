@@ -1,0 +1,20 @@
+---
+- include_role:
+    name: docker/registry/login
+  vars:
+    docker_registry_login_registry_url: "{{ docker_push_images_registry_url }}"
+    docker_registry_login_username: "{{ docker_push_images_registry_username }}"
+    docker_registry_login_password: "{{ docker_push_images_registry_password }}"
+
+- include_role:
+    name: docker/push-image
+  vars:
+    docker_push_image_registry: "{{ docker_push_images_registry_url }}"
+    docker_push_image_image: "{{ item }}"
+  with_items:
+    - "{{ docker_push_images_image_list }}"
+
+- include_role:
+    name: docker/registry/logout
+  vars:
+    docker_registry_logout_registry_url: "{{ docker_push_images_registry_url }}"

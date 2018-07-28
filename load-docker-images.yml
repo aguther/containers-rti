@@ -1,0 +1,11 @@
+---
+# ------------------------------------------------------------------------------
+- hosts:
+    - "{{ groups['master'][0] }}"
+  vars:
+    docker_load_push_images_path: docker-images
+    docker_load_push_images_registry_url: "{{ groups['master'][0] }}:5000"
+    docker_load_push_images_registry_username: docker-registry
+    docker_load_push_images_registry_password: P@ssw0rd
+  roles:
+    - docker/load-push-images

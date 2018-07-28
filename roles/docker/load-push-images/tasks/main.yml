@@ -1,0 +1,19 @@
+---
+- include_role:
+    name: docker/load-images
+  vars:
+    docker_load_images_path: "{{ docker_load_push_images_path }}"
+
+- name: determine images and tags from file names
+  set_fact:
+    docker_load_push_images_image_list: "{{ docker_load_push_images_image_list | default([]) +  [ item | basename | regex_replace('^(.*)--(.*)\\.tar\\.gz$', '\\1:\\2') ] | list }}"
+  with_fileglob:
+    - "{{ docker_load_push_images_path }}/*.tar.gz"
+
+- include_role:
+    name: docker/push-images
+  vars:
+    docker_push_images_image_list: "{{ docker_load_push_images_image_list }}"
+    docker_push_images_registry_url: "{{ docker_load_push_images_registry_url }}"
+    docker_push_images_registry_username: "{{ docker_load_push_images_registry_username }}"
+    docker_push_images_registry_password: "{{ docker_load_push_images_registry_password }}"
