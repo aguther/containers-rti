@@ -1,9 +1,8 @@
 ---
-# ------------------------------------------------------------------------------
 - hosts: master
   roles:
     - rti-perftest/docker/log/publisher
-# ------------------------------------------------------------------------------
+
 - hosts: nodes
   roles:
     - rti-perftest/docker/log/subscriber
