@@ -1,0 +1,42 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: rti-routing-service
+  labels:
+    app: rti-routing-service
+spec:
+  containers:
+    - name: rti-routing-service
+      image: centos-1:5000/rti-routing-service:5.3.1
+      args:
+        - "-cfgName"
+        - "dds-examples-routing-static"
+        - "-verbosity"
+        - "4"
+      volumeMounts:
+      - name: rti-routing-service-config-volume
+        mountPath: /app
+      ports:
+        - containerPort: 7400
+          protocol: "UDP"
+          name: "rtps2-disc-mult"
+        - containerPort: 7401
+          protocol: "UDP"
+          name: "rtps2-disc-uni"
+        - containerPort: 7410
+          protocol: "UDP"
+          name: "rtps2-data-mult"
+        - containerPort: 7411
+          protocol: "UDP"
+          name: "rtps2-data-uni"
+        - containerPort: 7650
+          protocol: "TCP"
+          name: "rtps2-tcp"
+  imagePullSecrets:
+    - name: docker-registry-centos-1
+  volumes:
+    - name: rti-routing-service-config-volume
+      configMap:
+        name: rti-shapes-demo-rti-routing-service
+  restartPolicy: Always

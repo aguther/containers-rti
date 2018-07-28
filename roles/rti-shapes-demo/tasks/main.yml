@@ -1,0 +1,80 @@
+---
+- name: delete service
+  command: >
+    /usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf
+      delete service
+        rti-routing-service
+  ignore_errors: yes
+ 
+- name: delete pods
+  command: >
+    /usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf
+      delete pod
+        shape-publisher
+        rti-routing-service
+  ignore_errors: yes
+ 
+- name: delete config map
+  command: >
+    /usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf
+      delete configmap
+        rti-shapes-demo-rti-routing-service
+  ignore_errors: yes
+ 
+- name: create temporary directory
+  tempfile:
+    state: directory
+    suffix: rti_shapes_demo
+  register: rti_shapes_demo_temp_directory
+
+- name: copy configuration files
+  copy:
+    src: rti-routing-service
+    dest: "{{ rti_shapes_demo_temp_directory.path }}"
+
+- name: create config map
+  command: >
+    /usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf
+      create configmap
+        rti-shapes-demo-rti-routing-service
+        --from-file={{ rti_shapes_demo_temp_directory.path }}/rti-routing-service
+
+- name: delete temporary directory
+  file:
+    state: absent
+    path: "{{ rti_shapes_demo_temp_directory.path }}"
+
+- name: "pod : copy definition"
+  copy:
+    src: "{{ item }}"
+    dest: "/tmp/{{ item }}"
+  with_items:
+    - rti-routing-service.yml
+    - shape-publisher.yml
+
+- name: "pod : apply definition"
+  command: >
+    /usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf
+      apply
+        --filename /tmp/{{ item }}
+  with_items:
+    - rti-routing-service.yml
+    - shape-publisher.yml
+
+- name: "pod : clean-up definition"
+  file:
+    path: "/tmp/{{ item }}"
+    state: absent
+  with_items:
+    - rti-routing-service.yml
+    - shape-publisher.yml
+
+- name: expose port
+  command: >
+    /usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf
+      expose pod
+        rti-routing-service
+        --port=7650
+        --protocol=TCP
+        --target-port=rtps2-tcp
+        --external-ip=172.30.0.11
