@@ -11,6 +11,7 @@
     /usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf
       delete pod
         shape-publisher
+        shape-subscriber
         rti-routing-service
   ignore_errors: yes
  
@@ -51,6 +52,7 @@
   with_items:
     - rti-routing-service.yml
     - shape-publisher.yml
+    - shape-subscriber.yml
 
 - name: "pod : apply definition"
   command: >
@@ -60,6 +62,7 @@
   with_items:
     - rti-routing-service.yml
     - shape-publisher.yml
+    - shape-subscriber.yml
 
 - name: "pod : clean-up definition"
   file:
@@ -68,6 +71,7 @@
   with_items:
     - rti-routing-service.yml
     - shape-publisher.yml
+    - shape-subscriber.yml
 
 - name: expose port
   command: >
