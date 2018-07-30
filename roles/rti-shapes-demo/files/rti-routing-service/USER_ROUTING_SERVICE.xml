@@ -51,11 +51,11 @@
               </element>
               <element>
                 <name>dds.transport.TCPv4.tcp1.public_address</name>
-                <value>172.30.0.11:7650</value>
+                <value>$(NDDS_TCP_PUBLIC_ADDRESS)</value>
               </element>
               <element>
                 <name>dds.transport.TCPv4.tcp1.server_bind_port</name>
-                <value>7650</value>
+                <value>$(NDDS_TCP_SERVER_BIND_PORT)</value>
               </element>
             </value>
           </property>

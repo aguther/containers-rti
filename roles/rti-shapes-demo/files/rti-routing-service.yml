@@ -14,6 +14,11 @@ spec:
         - "dds-examples-routing-static"
         - "-verbosity"
         - "4"
+      env:
+        - name: NDDS_TCP_PUBLIC_ADDRESS
+          value: "172.30.0.11:7650"
+        - name: NDDS_TCP_SERVER_BIND_PORT
+          value: "7650"
       volumeMounts:
       - name: rti-routing-service-config-volume
         mountPath: /app
