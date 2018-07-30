@@ -7,8 +7,56 @@ metadata:
     app: shape-publisher
 spec:
   containers:
-    - name: shape-publisher
-      image: centos-1:5000/shape-publisher:latest
+    - name: shape-publisher-square-blue
+      image: centos-1:5000/dds-examples:latest
+      args:
+        - "com.github.aguther.dds.examples.shape.ShapePublisher"
+        - "--shape"
+        - "SQUARE"
+        - "--color"
+        - "BLUE"
+      ports:
+        - containerPort: 7400
+          protocol: "UDP"
+          name: "rtps2-disc-mult"
+        - containerPort: 7401
+          protocol: "UDP"
+          name: "rtps2-disc-uni"
+        - containerPort: 7410
+          protocol: "UDP"
+          name: "rtps2-data-mult"
+        - containerPort: 7411
+          protocol: "UDP"
+          name: "rtps2-data-uni"
+    - name: shape-publisher-circle-red
+      image: centos-1:5000/dds-examples:latest
+      args:
+        - "com.github.aguther.dds.examples.shape.ShapePublisher"
+        - "--shape"
+        - "CIRCLE"
+        - "--color"
+        - "RED"
+      ports:
+        - containerPort: 7400
+          protocol: "UDP"
+          name: "rtps2-disc-mult"
+        - containerPort: 7401
+          protocol: "UDP"
+          name: "rtps2-disc-uni"
+        - containerPort: 7410
+          protocol: "UDP"
+          name: "rtps2-data-mult"
+        - containerPort: 7411
+          protocol: "UDP"
+          name: "rtps2-data-uni"
+    - name: shape-publisher-triangle-green
+      image: centos-1:5000/dds-examples:latest
+      args:
+        - "com.github.aguther.dds.examples.shape.ShapePublisher"
+        - "--shape"
+        - "TRIANGLE"
+        - "--color"
+        - "GREEN"
       ports:
         - containerPort: 7400
           protocol: "UDP"
