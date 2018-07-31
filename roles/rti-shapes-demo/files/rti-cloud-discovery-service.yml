@@ -11,6 +11,13 @@ spec:
   containers:
     - name: rti-cloud-discovery-service
       image: centos-1:5000/rti-cloud-discovery-service:5.3.1
+      resources:
+        requests:
+          cpu: "0.05"
+          memory: "30Mi"
+        limits:
+          cpu: "0.10"
+          memory: "50Mi"
       args:
         - "-cfgName"
         - "rti-cloud-discovery-service"

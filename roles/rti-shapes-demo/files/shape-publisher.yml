@@ -11,6 +11,13 @@ spec:
   containers:
     - name: shape-publisher
       image: centos-1:5000/dds-examples:latest
+      resources:
+        requests:
+          cpu: "0.10"
+          memory: "150Mi"
+        limits:
+          cpu: "0.15"
+          memory: "200Mi"
       env:
         - name: SHAPE_KIND
           valueFrom:
@@ -57,6 +64,13 @@ spec:
   containers:
     - name: shape-publisher
       image: centos-1:5000/dds-examples:latest
+      resources:
+        requests:
+          cpu: "0.10"
+          memory: "150Mi"
+        limits:
+          cpu: "0.15"
+          memory: "200Mi"
       env:
         - name: SHAPE_KIND
           valueFrom:
@@ -103,6 +117,13 @@ spec:
   containers:
     - name: shape-publisher
       image: centos-1:5000/dds-examples:latest
+      resources:
+        requests:
+          cpu: "0.10"
+          memory: "150Mi"
+        limits:
+          cpu: "0.15"
+          memory: "200Mi"
       env:
         - name: SHAPE_KIND
           valueFrom:

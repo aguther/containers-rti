@@ -9,6 +9,13 @@ spec:
   containers:
     - name: rti-routing-service
       image: centos-1:5000/rti-routing-service:5.3.1
+      resources:
+        requests:
+          cpu: "0.10"
+          memory: "80Mi"
+        limits:
+          cpu: "0.15"
+          memory: "120Mi"
       args:
         - "-cfgName"
         - "dds-examples-routing-static"

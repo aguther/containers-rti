@@ -10,6 +10,13 @@ spec:
   containers:
     - name: shape-subscriber
       image: centos-1:5000/dds-examples:latest
+      resources:
+        requests:
+          cpu: "0.10"
+          memory: "130Mi"
+        limits:
+          cpu: "0.15"
+          memory: "180Mi"
       env:
         - name: SHAPE_KIND
           valueFrom:
@@ -49,6 +56,13 @@ spec:
   containers:
     - name: shape-subscriber
       image: centos-1:5000/dds-examples:latest
+      resources:
+        requests:
+          cpu: "0.10"
+          memory: "130Mi"
+        limits:
+          cpu: "0.15"
+          memory: "180Mi"
       env:
         - name: SHAPE_KIND
           valueFrom:
@@ -88,6 +102,13 @@ spec:
   containers:
     - name: shape-subscriber
       image: centos-1:5000/dds-examples:latest
+      resources:
+        requests:
+          cpu: "0.10"
+          memory: "130Mi"
+        limits:
+          cpu: "0.15"
+          memory: "180Mi"
       env:
         - name: SHAPE_KIND
           valueFrom:
