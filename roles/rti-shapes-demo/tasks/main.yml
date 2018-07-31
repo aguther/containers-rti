@@ -3,56 +3,70 @@
   command: >
     /usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf
       delete service
-        rti-routing-service
+        {{ item }}
   ignore_errors: yes
+  with_items:
+    - rti-routing-service
+    - rti-cloud-discovery-service
  
 - name: delete pods
   command: >
     /usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf
       delete pod
-        shape-publisher
-        shape-subscriber
-        rti-routing-service
+        {{ item }}
   ignore_errors: yes
- 
-- name: delete config map
-  command: >
-    /usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf
-      delete configmap
-        rti-shapes-demo-rti-routing-service
-  ignore_errors: yes
- 
-- name: create temporary directory
-  tempfile:
-    state: directory
-    suffix: rti_shapes_demo
-  register: rti_shapes_demo_temp_directory
+  with_items:
+    - shape-publisher-square-blue
+    - shape-subscriber-square
+    - rti-routing-service
+    - rti-cloud-discovery-service
 
-- name: copy configuration files
-  copy:
-    src: rti-routing-service
-    dest: "{{ rti_shapes_demo_temp_directory.path }}"
+- name: create config map for rti-cloud-discovery-service
+  include: create-configmap.yml
+  vars:
+    config_map_name: rti-shapes-demo-rti-cloud-discovery-service
+    config_map_path: "rti-cloud-discovery-service"
 
-- name: create config map
-  command: >
-    /usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf
-      create configmap
-        rti-shapes-demo-rti-routing-service
-        --from-file={{ rti_shapes_demo_temp_directory.path }}/rti-routing-service
-
-- name: delete temporary directory
-  file:
-    state: absent
-    path: "{{ rti_shapes_demo_temp_directory.path }}"
+- name: create config map for rti-routing-service
+  include: create-configmap.yml
+  vars:
+    config_map_name: rti-shapes-demo-rti-routing-service
+    config_map_path: "rti-routing-service"
 
 - name: "pod : copy definition"
   copy:
     src: "{{ item }}"
     dest: "/tmp/{{ item }}"
   with_items:
+    - rti-cloud-discovery-service.yml
     - rti-routing-service.yml
     - shape-publisher.yml
     - shape-subscriber.yml
+
+- name: "pod : apply definition for rti-cloud-discovery-service"
+  command: >
+    /usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf
+      apply
+        --filename /tmp/{{ item }}
+  with_items:
+    - rti-cloud-discovery-service.yml
+
+- name: "pod: wait for rti-cloud-discovery-service to be ready"
+  command: >
+    /usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf
+      wait pod
+        --for condition=ready
+        --selector app==rti-cloud-discovery-service
+        --timeout=60s
+
+- name: "pod : create service for cloud discovery"
+  command: >
+    /usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf
+      expose pod
+        rti-cloud-discovery-service
+        --port=7400
+        --target-port=7400
+        --protocol=UDP
 
 - name: "pod : apply definition"
   command: >
@@ -69,6 +83,7 @@
     path: "/tmp/{{ item }}"
     state: absent
   with_items:
+    - rti-cloud-discovery-service.yml
     - rti-routing-service.yml
     - shape-publisher.yml
     - shape-subscriber.yml

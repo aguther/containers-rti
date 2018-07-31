@@ -1,0 +1,30 @@
+---
+- name: delete config map
+  command: >
+    /usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf
+      delete configmap
+        {{ config_map_name }}
+  ignore_errors: yes
+
+- name: create temporary directory
+  tempfile:
+    state: directory
+    suffix: rti_shapes_demo
+  register: rti_shapes_demo_temp_directory
+
+- name: copy configuration files
+  copy:
+    src: "{{ config_map_path }}"
+    dest: "{{ rti_shapes_demo_temp_directory.path }}"
+
+- name: create config map
+  command: >
+    /usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf
+      create configmap
+        {{ config_map_name }}
+        --from-file={{ rti_shapes_demo_temp_directory.path }}/{{ config_map_path }}
+
+- name: delete temporary directory
+  file:
+    state: absent
+    path: "{{ rti_shapes_demo_temp_directory.path }}"

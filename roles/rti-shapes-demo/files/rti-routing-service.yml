@@ -19,6 +19,8 @@ spec:
           value: "172.30.0.11:7650"
         - name: NDDS_TCP_SERVER_BIND_PORT
           value: "7650"
+        - name: NDDS_DISCOVERY_PEERS
+          value: "rtps@udpv4://$(RTI_CLOUD_DISCOVERY_SERVICE_SERVICE_HOST):$(RTI_CLOUD_DISCOVERY_SERVICE_SERVICE_PORT)"
       volumeMounts:
       - name: rti-routing-service-config-volume
         mountPath: /app

@@ -1,0 +1,32 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: rti-cloud-discovery-service
+  labels:
+    app: rti-cloud-discovery-service
+spec:
+  hostname: discovery
+  subdomain: shapes
+  containers:
+    - name: rti-cloud-discovery-service
+      image: centos-1:5000/rti-cloud-discovery-service:5.3.1
+      args:
+        - "-cfgName"
+        - "rti-cloud-discovery-service"
+        - "-verbosity"
+        - "3"
+      volumeMounts:
+      - name: rti-cloud-discovery-service-config-volume
+        mountPath: /app
+      ports:
+        - containerPort: 7400
+          protocol: "UDP"
+          name: "rtps2-disc-mult"
+  imagePullSecrets:
+    - name: docker-registry-centos-1
+  volumes:
+    - name: rti-cloud-discovery-service-config-volume
+      configMap:
+        name: rti-shapes-demo-rti-cloud-discovery-service
+  restartPolicy: Always

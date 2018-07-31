@@ -2,55 +2,25 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: shape-subscriber
+  name: shape-subscriber-square
   labels:
     app: shape-subscriber
+    shapeKind: SQUARE
 spec:
   containers:
-    - name: shape-subscriber-square
+    - name: shape-subscriber
       image: centos-1:5000/dds-examples:latest
+      env:
+        - name: SHAPE_KIND
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.labels['shapeKind']
+        - name: NDDS_DISCOVERY_PEERS
+          value: "rtps@udpv4://$(RTI_CLOUD_DISCOVERY_SERVICE_SERVICE_HOST):$(RTI_CLOUD_DISCOVERY_SERVICE_SERVICE_PORT)"
       args:
         - "com.github.aguther.dds.examples.shape.ShapeSubscriber"
         - "--shape"
-        - "SQUARE"
-      ports:
-        - containerPort: 7400
-          protocol: "UDP"
-          name: "rtps2-disc-mult"
-        - containerPort: 7401
-          protocol: "UDP"
-          name: "rtps2-disc-uni"
-        - containerPort: 7410
-          protocol: "UDP"
-          name: "rtps2-data-mult"
-        - containerPort: 7411
-          protocol: "UDP"
-          name: "rtps2-data-uni"
-    - name: shape-subscriber-circle
-      image: centos-1:5000/dds-examples:latest
-      args:
-        - "com.github.aguther.dds.examples.shape.ShapeSubscriber"
-        - "--shape"
-        - "CIRCLE"
-      ports:
-        - containerPort: 7400
-          protocol: "UDP"
-          name: "rtps2-disc-mult"
-        - containerPort: 7401
-          protocol: "UDP"
-          name: "rtps2-disc-uni"
-        - containerPort: 7410
-          protocol: "UDP"
-          name: "rtps2-data-mult"
-        - containerPort: 7411
-          protocol: "UDP"
-          name: "rtps2-data-uni"
-    - name: shape-subscriber-triangle
-      image: centos-1:5000/dds-examples:latest
-      args:
-        - "com.github.aguther.dds.examples.shape.ShapeSubscriber"
-        - "--shape"
-        - "TRIANGLE"
+        - "$(SHAPE_KIND)"
       ports:
         - containerPort: 7400
           protocol: "UDP"
