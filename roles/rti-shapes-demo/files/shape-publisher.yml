@@ -44,3 +44,95 @@ spec:
   imagePullSecrets:
     - name: docker-registry-centos-1
   restartPolicy: Always
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: shape-publisher-circle-red
+  labels:
+    app: shape-publisher
+    shapeKind: CIRCLE
+    shapeColor: RED
+spec:
+  containers:
+    - name: shape-publisher
+      image: centos-1:5000/dds-examples:latest
+      env:
+        - name: SHAPE_KIND
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.labels['shapeKind']
+        - name: SHAPE_COLOR
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.labels['shapeColor']
+        - name: NDDS_DISCOVERY_PEERS
+          value: "rtps@udpv4://$(RTI_CLOUD_DISCOVERY_SERVICE_SERVICE_HOST):$(RTI_CLOUD_DISCOVERY_SERVICE_SERVICE_PORT)"
+      args:
+        - "com.github.aguther.dds.examples.shape.ShapePublisher"
+        - "--shape"
+        - "$(SHAPE_KIND)"
+        - "--color"
+        - "$(SHAPE_COLOR)"
+      ports:
+        - containerPort: 7400
+          protocol: "UDP"
+          name: "rtps2-disc-mult"
+        - containerPort: 7401
+          protocol: "UDP"
+          name: "rtps2-disc-uni"
+        - containerPort: 7410
+          protocol: "UDP"
+          name: "rtps2-data-mult"
+        - containerPort: 7411
+          protocol: "UDP"
+          name: "rtps2-data-uni"
+  imagePullSecrets:
+    - name: docker-registry-centos-1
+  restartPolicy: Always
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: shape-publisher-triangle-green
+  labels:
+    app: shape-publisher
+    shapeKind: TRIANGLE
+    shapeColor: GREEN
+spec:
+  containers:
+    - name: shape-publisher
+      image: centos-1:5000/dds-examples:latest
+      env:
+        - name: SHAPE_KIND
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.labels['shapeKind']
+        - name: SHAPE_COLOR
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.labels['shapeColor']
+        - name: NDDS_DISCOVERY_PEERS
+          value: "rtps@udpv4://$(RTI_CLOUD_DISCOVERY_SERVICE_SERVICE_HOST):$(RTI_CLOUD_DISCOVERY_SERVICE_SERVICE_PORT)"
+      args:
+        - "com.github.aguther.dds.examples.shape.ShapePublisher"
+        - "--shape"
+        - "$(SHAPE_KIND)"
+        - "--color"
+        - "$(SHAPE_COLOR)"
+      ports:
+        - containerPort: 7400
+          protocol: "UDP"
+          name: "rtps2-disc-mult"
+        - containerPort: 7401
+          protocol: "UDP"
+          name: "rtps2-disc-uni"
+        - containerPort: 7410
+          protocol: "UDP"
+          name: "rtps2-data-mult"
+        - containerPort: 7411
+          protocol: "UDP"
+          name: "rtps2-data-uni"
+  imagePullSecrets:
+    - name: docker-registry-centos-1
+  restartPolicy: Always

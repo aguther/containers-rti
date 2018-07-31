@@ -16,10 +16,14 @@
         {{ item }}
   ignore_errors: yes
   with_items:
-    - shape-publisher-square-blue
-    - shape-subscriber-square
     - rti-routing-service
     - rti-cloud-discovery-service
+    - shape-publisher-square-blue
+    - shape-publisher-circle-red
+    - shape-publisher-triangle-green
+    - shape-subscriber-square
+    - shape-subscriber-circle
+    - shape-subscriber-triangle
 
 - name: create config map for rti-cloud-discovery-service
   include: create-configmap.yml
