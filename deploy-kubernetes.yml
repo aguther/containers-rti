@@ -15,7 +15,6 @@
     - kubernetes
     - kubernetes/reboot-recovery
     - weave/net/kubernetes
-    - cockpit
     - kubernetes/wait-ready
     - kubernetes/dashboard
     - docker/registry/kubernetes/create-secret
