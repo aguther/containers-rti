@@ -116,6 +116,9 @@ vagrant ssh -c "cd /vagrant; ansible-playbook -i /tmp/vagrant-ansible/inventory/
 === Monitoring
 Monitoring can be done using the Kubernetes Dashboard UI. It can be reached on the address `http://<host>:30000`. Additionally you can also access the tool cockpit which can be reached on the address `http://<host>:9090`.
 
+Grafana can be accessed (sometimes has issue with the URL):
+```vagrant ssh -c "kubectl proxy --address=172.30.0.11 --accept-hosts=.*"```
+`http://172.30.0.11:8001/api/v1/namespaces/kube-system/services/http:monitoring-grafana:80/proxy`
 
 == Nomad
 In this scenario the rti-perftest example will be executed on a Nomad cluster using the Docker driver.

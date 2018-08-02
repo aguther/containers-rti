@@ -1,4 +1,34 @@
 ---
+- name: install heapster
+  command: >
+    /usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf
+      create
+        -f {{ item }}
+  with_items:
+    - https://raw.githubusercontent.com/kubernetes/heapster/master/deploy/kube-config/influxdb/influxdb.yaml
+    - https://raw.githubusercontent.com/kubernetes/heapster/master/deploy/kube-config/influxdb/grafana.yaml
+    - https://raw.githubusercontent.com/kubernetes/heapster/master/deploy/kube-config/influxdb/heapster.yaml
+  when: (inventory_hostname == groups['master'][0])
+
+- name: patch heapster to get it working
+  command: >
+    /usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf
+      patch deployment
+        -n kube-system
+        heapster
+        --type='json'
+        --patch='[{ "op": "replace", "path": "/spec/template/spec/containers/0/command/1", "value": "--source=kubernetes:https://kubernetes.default?kubeletPort=10250&kubeletHttps=true&insecure=true" }]'
+  when: (inventory_hostname == groups['master'][0])
+
+- name: create RBAC for heapster
+  command: >
+    /usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf
+      apply
+        -f {{ item }}
+  with_items:
+    - https://raw.githubusercontent.com/kubernetes/heapster/master/deploy/kube-config/rbac/heapster-rbac.yaml
+  when: (inventory_hostname == groups['master'][0])
+
 - name: install dashboard
   command: "/usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v{{ kubernetes_dashboard_version }}/src/deploy/alternative/kubernetes-dashboard.yaml"
   register: dashboard_raw
