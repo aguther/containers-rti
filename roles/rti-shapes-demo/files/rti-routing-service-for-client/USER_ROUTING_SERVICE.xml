@@ -33,7 +33,7 @@
           </transport_builtin>
           <discovery>
             <initial_peers>
-              <element>tcpv4_wan://172.30.0.11:7650</element>
+              <element>tcpv4_wan://172.30.0.11:7400</element>
             </initial_peers>
           </discovery>
           <property>
