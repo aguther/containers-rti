@@ -1,0 +1,6 @@
+---
+- hosts: master
+  var:
+    helm_install_chart: https://github.com/aguther/helm-charts/raw/master/rti-shapes-demo-1.0.0.tgz
+  roles:
+    - helm/install
