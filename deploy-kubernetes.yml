@@ -19,3 +19,8 @@
     - kubernetes/dashboard
     - docker/registry/kubernetes/create-secret
     - helm
+
+- hosts:
+    - master[0]
+  roles:
+    - vagrant/kubernetes/copy-kubectl-config

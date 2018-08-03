@@ -1,0 +1,12 @@
+---
+- name: create target directory
+  file:
+    dest: /vagrant/.kube
+    state: directory
+    remote_src: yes
+
+- name: copy configuration
+  copy:
+    src: /etc/kubernetes/admin.conf
+    dest: /vagrant/.kube/config
+    remote_src: yes
