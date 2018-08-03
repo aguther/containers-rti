@@ -2,7 +2,7 @@
 
 # define vm size and count
 export VM_CPUS=2
-export VM_MEMORY=2048
+export VM_MEMORY=3072
 export VM_INSTANCES=3
 
 # define playbook to run
