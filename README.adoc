@@ -98,7 +98,21 @@ In this scenario the rti-perftest example will be executed on a Kubernetes clust
 
 Weave-Net is used to connect the containers on the different hosts. A network policy is deployed that isolates a pair of publishers/subscribers based on a id. The id is per default 1 but can be changed via Ansible variable (see below).
 
-=== Start
+=== General
+
+==== Monitoring
+Monitoring can be done using the Kubernetes Dashboard UI. It can be reached on the address `http://<host>:30000`. Additionally you can also access the tool cockpit which can be reached on the address `http://<host>:9090`.
+
+Grafana can be accessed (sometimes has issue with the URL):
+[source,bash]
+----
+vagrant ssh -c "kubectl proxy --address=172.30.0.11 --accept-hosts=.*"
+http://172.30.0.11:8001/api/v1/namespaces/kube-system/services/http:monitoring-grafana:80/proxy
+----
+
+=== rti-perftest
+
+==== Start
 [source,bash]
 ----
 export PLAYBOOK=deploy-kubernetes.yml
@@ -107,18 +121,37 @@ vagrant up
 vagrant ssh -c "cd /vagrant; ansible-playbook -i /tmp/vagrant-ansible/inventory/vagrant_ansible_local_inventory -e rti_perftest_id=1 -e rti_perftest_sub_count=2 rti-perftest-kubernetes-start.yml"
 ----
 
-=== Stop
+==== Stop
 [source,bash]
 ----
 vagrant ssh -c "cd /vagrant; ansible-playbook -i /tmp/vagrant-ansible/inventory/vagrant_ansible_local_inventory -e rti_perftest_id=1 -e rti_perftest_sub_count=2 rti-perftest-kubernetes-stop.yml"
 ----
 
-=== Monitoring
-Monitoring can be done using the Kubernetes Dashboard UI. It can be reached on the address `http://<host>:30000`. Additionally you can also access the tool cockpit which can be reached on the address `http://<host>:9090`.
+=== rti-shapes-demo
 
-Grafana can be accessed (sometimes has issue with the URL):
-```vagrant ssh -c "kubectl proxy --address=172.30.0.11 --accept-hosts=.*"```
-`http://172.30.0.11:8001/api/v1/namespaces/kube-system/services/http:monitoring-grafana:80/proxy`
+In order to start this example, you need to put the following docker images into directory `docker-images`:
+
+* `dds-examples--latest.tar.gz`
+* `rti-cloud-discovery-service--5.3.1.tar.gz`
+* `rti-routing-service--5.3.1.tar.gz`
+
+==== Start
+[source,bash]
+----
+# load docker images
+vagrant ssh -c "cd /vagrant; ansible-playbook -i /tmp/vagrant-ansible/inventory/vagrant_ansible_local_inventory load-docker-images.yml"
+
+# install helm chart for rti-shapes-demo
+vagrant ssh -c "cd /vagrant; ansible-playbook -i /tmp/vagrant-ansible/inventory/vagrant_ansible_local_inventory rti-shapes-demo.yml"
+----
+
+==== Stop
+[source,bash]
+----
+# stop rti-shapes-demo
+vagrant ssh -c "helm delete $(helm ls | awk '/rti-shapes-demo/ { print $1 }')"
+----
+
 
 == Nomad
 In this scenario the rti-perftest example will be executed on a Nomad cluster using the Docker driver.
