@@ -13,3 +13,7 @@ vagrant destroy -f
 
 # create and start vms
 vagrant up
+
+# copy kubectl config
+mkdir -p ~/.kube
+cp -f .kube/config ~/.kube/config
