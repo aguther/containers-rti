@@ -5,8 +5,6 @@
     state: directory
     remote_src: yes
 
+# we are using cp command because ansible produces tmp leftovers
 - name: copy configuration
-  copy:
-    src: /etc/kubernetes/admin.conf
-    dest: /vagrant/.kube/config
-    remote_src: yes
+  command: cp -f /etc/kubernetes/admin.conf /vagrant/.kube/config
