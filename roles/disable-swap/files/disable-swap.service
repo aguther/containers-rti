@@ -1,0 +1,9 @@
+[Unit]
+Description=Disable swap during boot
+
+[Service]
+Type=oneshot
+ExecStart=/usr/sbin/swapoff --all
+
+[Install]
+WantedBy=multi-user.target

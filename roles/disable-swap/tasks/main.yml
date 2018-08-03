@@ -1,4 +1,12 @@
 ---
 # ------------------------------------------------------------------------------
-- name: disable
-  command: swapoff --all
+- name: copy service
+  copy:
+    src: disable-swap.service
+    dest: /etc/systemd/system/
+
+- name: start and enable
+  service:
+    name: disable-swap.service
+    state: reloaded
+    enabled: yes
