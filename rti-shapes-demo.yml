@@ -2,6 +2,7 @@
 - hosts:
     - master[0]
   vars:
+    helm_install_namespace: default
     helm_install_chart: https://github.com/aguther/helm-charts/raw/master/rti-shapes-demo-1.1.0.tgz
   roles:
     - helm/install

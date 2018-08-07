@@ -1,3 +1,3 @@
 ---
 - name: install chart
-  command: "/usr/bin/helm install {{ helm_install_chart }}"
+  command: "/usr/bin/helm install --namespace {{ helm_install_namespace }} {{ helm_install_chart }}"
