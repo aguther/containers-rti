@@ -1,11 +1,26 @@
 ---
+- name: create service account
+  command: >
+    /usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf
+      --namespace kube-system
+      create serviceaccount
+      tiller
+
+- name: create cluster role binding
+  command: >
+    /usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf
+      create clusterrolebinding
+      tiller
+      --clusterrole=cluster-admin
+      --serviceaccount=kube-system:tiller
+
 - name: init
-  shell: "{{ helm_bin_directory }}/helm init --wait"
+  shell: "{{ helm_bin_directory }}/helm init --service-account tiller --wait"
   environment:
     HELM_HOME: "/home/{{ helm_user }}/.helm"
     KUBECONFIG: "{{ helm_kubeconfig }}"
 
-- name:
+- name: set permissions
   file:
     path: "/home/{{ helm_user }}/.helm"
     recurse: yes
