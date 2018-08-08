@@ -1,0 +1,38 @@
+---
+- name: deploy rook-ceph
+  include_role:
+    name: helm/install
+  vars:
+    helm_install_namespace: rook-ceph-system
+    helm_install_chart: https://charts.rook.io/master/rook-ceph-v0.8.0-65.g691ec37.tgz
+    helm_install_wait: yes
+
+- name: create namespace
+  include_tasks: create-from-file.yml
+  vars:
+    create_from_file_src: namespace.yml.j2
+    create_from_file_dest: namespace.yml
+
+- name: create service account
+  include_tasks: create-from-file.yml
+  vars:
+    create_from_file_src: serviceaccount.yml.j2
+    create_from_file_dest: serviceaccount.yml
+
+- name: create cluster
+  include_tasks: create-from-file.yml
+  vars:
+    create_from_file_src: cluster.yml.j2
+    create_from_file_dest: cluster.yml
+
+- name: create pool
+  include_tasks: create-from-file.yml
+  vars:
+    create_from_file_src: pool.yml.j2
+    create_from_file_dest: pool.yml
+
+- name: create storageclass
+  include_tasks: create-from-file.yml
+  vars:
+    create_from_file_src: storageclass.yml.j2
+    create_from_file_dest: storageclass.yml
