@@ -1,2 +1,3 @@
 ---
 helm_install_namespace: default
+helm_install_wait: no

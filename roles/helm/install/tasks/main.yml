@@ -1,3 +1,8 @@
 ---
 - name: install chart
   command: "/usr/bin/helm install --namespace {{ helm_install_namespace }} {{ helm_install_chart }}"
+  when: not helm_install_wait
+
+- name: install chart and wait until ready
+  command: "/usr/bin/helm install --namespace {{ helm_install_namespace }} {{ helm_install_chart }} --wait"
+  when: helm_install_wait
