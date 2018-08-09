@@ -3,7 +3,7 @@
 # define vm size and count
 export VM_CPUS=2
 export VM_MEMORY=3072
-export VM_INSTANCES=3
+export VM_INSTANCES=4
 
 # define playbook to run
 export PLAYBOOK=deploy-kubernetes.yml
