@@ -1,8 +1,3 @@
 ---
 - name: install chart
-  command: "/usr/bin/helm install --namespace {{ helm_install_namespace }} {{ helm_install_chart }}"
-  when: not helm_install_wait
-
-- name: install chart and wait until ready
-  command: "/usr/bin/helm install --namespace {{ helm_install_namespace }} {{ helm_install_chart }} --wait"
-  when: helm_install_wait
+  command: "/usr/bin/helm install --namespace {{ helm_install_namespace }} {{ helm_install_chart }}{%if helm_install_wait %} --wait{% endif %}{% if helm_install_set is defined and helm_install_set | length > 0 %} --set {% for pair in helm_install_set %}'{{ pair.key }}'='{{ pair.value }}'{% if loop.index < helm_install_set | length %},{% endif %}{% endfor %}{% endif %}"
