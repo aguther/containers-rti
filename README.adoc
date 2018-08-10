@@ -54,7 +54,7 @@ vagrant up
 === Execution of additional playbooks after provisioning
 [source,bash]
 ----
-vagrant ssh -c "cd /vagrant; ansible-playbook -i /tmp/vagrant-ansible/inventory/vagrant_ansible_local_inventory <playbook>"
+./run-playbook.sh <playbook>
 ----
 
 === Shutdown
@@ -80,13 +80,13 @@ Weave-Net is used to connect the containers on the different hosts.
 export PLAYBOOK=deploy-docker-weave.yml
 vagrant destroy -f
 vagrant up
-vagrant ssh -c "cd /vagrant; ansible-playbook -i /tmp/vagrant-ansible/inventory/vagrant_ansible_local_inventory rti-perftest-docker-start.yml"
+./run-playbook.sh rti-perftest-docker-start.yml
 ----
 
 === Stop
 [source,bash]
 ----
-vagrant ssh -c "cd /vagrant; ansible-playbook -i /tmp/vagrant-ansible/inventory/vagrant_ansible_local_inventory rti-perftest-docker-stop.yml"
+./run-playbook.sh rti-perftest-docker-stop.yml
 ----
 
 === Monitoring
@@ -118,13 +118,13 @@ http://172.30.0.11:8001/api/v1/namespaces/kube-system/services/http:monitoring-g
 export PLAYBOOK=deploy-kubernetes.yml
 vagrant destroy -f
 vagrant up
-vagrant ssh -c "cd /vagrant; ansible-playbook -i /tmp/vagrant-ansible/inventory/vagrant_ansible_local_inventory -e rti_perftest_id=1 -e rti_perftest_sub_count=2 rti-perftest-kubernetes-start.yml"
+./run-playbook.sh -e rti_perftest_id=1 -e rti_perftest_sub_count=2 rti-perftest-kubernetes-start.yml
 ----
 
 ==== Stop
 [source,bash]
 ----
-vagrant ssh -c "cd /vagrant; ansible-playbook -i /tmp/vagrant-ansible/inventory/vagrant_ansible_local_inventory -e rti_perftest_id=1 -e rti_perftest_sub_count=2 rti-perftest-kubernetes-stop.yml"
+./run-playbook.sh -e rti_perftest_id=1 -e rti_perftest_sub_count=2 rti-perftest-kubernetes-stop.yml
 ----
 
 === rti-shapes-demo
@@ -133,16 +133,17 @@ In order to start this example, you need to put the following docker images into
 
 * `dds-examples--latest.tar.gz`
 * `rti-cloud-discovery-service--5.3.1.tar.gz`
+* `rti-persistence-service--5.3.1.tar.gz`
 * `rti-routing-service--5.3.1.tar.gz`
 
 ==== Start
 [source,bash]
 ----
 # load docker images
-vagrant ssh -c "cd /vagrant; ansible-playbook -i /tmp/vagrant-ansible/inventory/vagrant_ansible_local_inventory load-docker-images.yml"
+./run-playbook.sh load-docker-images.yml
 
 # install helm chart for rti-shapes-demo
-vagrant ssh -c "cd /vagrant; ansible-playbook -i /tmp/vagrant-ansible/inventory/vagrant_ansible_local_inventory rti-shapes-demo.yml"
+./run-playbook.sh rti-shapes-demo.yml
 ----
 
 ==== Stop
@@ -162,13 +163,13 @@ In this scenario the rti-perftest example will be executed on a Nomad cluster us
 export PLAYBOOK=deploy-nomad.yml
 vagrant destroy -f
 vagrant up
-vagrant ssh -c "cd /vagrant; ansible-playbook -i /tmp/vagrant-ansible/inventory/vagrant_ansible_local_inventory rti-perftest-nomad-start.yml"
+./run-playbook.sh rti-perftest-nomad-start.yml
 ----
 
 === Stop
 [source,bash]
 ----
-vagrant ssh -c "cd /vagrant; ansible-playbook -i /tmp/vagrant-ansible/inventory/vagrant_ansible_local_inventory rti-perftest-nomad-stop.yml"
+./run-playbook.sh rti-perftest-nomad-stop.yml
 ----
 
 === Monitoring
