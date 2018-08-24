@@ -4,7 +4,7 @@
     name: helm/install
   vars:
     helm_install_namespace: rook-ceph-system
-    helm_install_chart: https://charts.rook.io/master/rook-ceph-v0.8.0-65.g691ec37.tgz
+    helm_install_chart: https://charts.rook.io/beta/rook-ceph-v0.8.1.tgz
     helm_install_wait: yes
 
 - name: create namespace
