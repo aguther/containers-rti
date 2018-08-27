@@ -75,7 +75,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       config.proxy.enabled = true
       config.proxy.http = $vm_proxy_address
       config.proxy.https = $vm_proxy_address
-      config.proxy.no_proxy = "localhost,127.0.0.1,10.0.2.0/24,10.96.0.0/16,172.30.0.0/16"
+      config.proxy.no_proxy = "localhost,127.0.0.1,10.0.2.0/24,10.96.0.0/16,172.30.0.0/16,centos-*"
   end
 
   # create virtual machines
