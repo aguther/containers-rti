@@ -10,3 +10,5 @@ sudo echo "Environment=\"http_proxy=$1\""	>>	$DOCKER_PROXY_CONFIGURATION_FILE
 sudo echo "Environment=\"HTTP_PROXY=$1\""	>>	$DOCKER_PROXY_CONFIGURATION_FILE
 sudo echo "Environment=\"https_proxy=$1\""	>>	$DOCKER_PROXY_CONFIGURATION_FILE
 sudo echo "Environment=\"HTTPS_PROXY=$1\""	>>	$DOCKER_PROXY_CONFIGURATION_FILE
+sudo echo "Environment=\"no_proxy=$2\""	    >>	$DOCKER_PROXY_CONFIGURATION_FILE
+sudo echo "Environment=\"NO_PROXY=$2\""	    >>	$DOCKER_PROXY_CONFIGURATION_FILE

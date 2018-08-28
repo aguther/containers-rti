@@ -43,6 +43,9 @@ if $vm_proxy_enabled = (ENV['VM_PROXY']).to_s != "" ? true : false == true
 
   # this is the proxy address that will be used by the operating system
   $vm_proxy_address = (ENV['VM_PROXY']).to_s
+
+  # define servers that should not use a proxy
+  $vm_no_proxy = "localhost,127.0.0.1,10.0.2.0/24,10.96.0.0/16,172.30.0.0/16,centos-1,centos-2,centos-3,centos-4,centos-5,centos-6,centos-7,centos-8"
 end
 
 # define playbook
@@ -75,7 +78,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       config.proxy.enabled = true
       config.proxy.http = $vm_proxy_address
       config.proxy.https = $vm_proxy_address
-      config.proxy.no_proxy = "localhost,127.0.0.1,10.0.2.0/24,10.96.0.0/16,172.30.0.0/16,centos-*"
+      config.proxy.no_proxy = $vm_no_proxy
   end
 
   # create virtual machines
@@ -118,6 +121,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
           shell.path = "proxy/set-proxy-docker.sh"
           shell.args = [
             $vm_proxy_address,
+            $vm_no_proxy
           ]
         end
       end
