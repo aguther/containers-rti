@@ -5,6 +5,7 @@
     docker_registry_port: 5000
     docker_registry_auth_user: docker-registry
     docker_registry_auth_password: P@ssw0rd
+    kubernetes_self_hosting: no
   roles:
     - chrony
     - disable-selinux
@@ -13,7 +14,6 @@
     - docker/el7
     - docker/registry
     - kubernetes
-    - kubernetes/reboot-recovery
     - weave/net/kubernetes
     - kubernetes/wait-ready
     - kubernetes/dashboard
