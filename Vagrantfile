@@ -45,7 +45,7 @@ if $vm_proxy_enabled = (ENV['VM_PROXY']).to_s != "" ? true : false == true
   $vm_proxy_address = (ENV['VM_PROXY']).to_s
 
   # define servers that should not use a proxy
-  $vm_no_proxy = "localhost,127.0.0.1,10.0.2.0/24,10.96.0.0/16,172.30.0.0/16,centos-1,centos-2,centos-3,centos-4,centos-5,centos-6,centos-7,centos-8"
+  $vm_no_proxy = "localhost,127.0.0.1,10.0.2.0/24,10.96.0.0/16,172.30.0.0/16,*.default,centos-1,centos-2,centos-3,centos-4,centos-5,centos-6,centos-7,centos-8"
 end
 
 # define playbook
