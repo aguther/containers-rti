@@ -11,7 +11,7 @@
   command: "/usr/bin/kubeadm reset --force"
 
 - name: init master
-  command: "/usr/bin/kubeadm init {%if kubernetes_self_hosting %}--feature-gates=SelfHosting=true{% endif %} --token={{ hostvars[groups['master'][0]].kubeadm_token }} --apiserver-advertise-address={{ hostvars[inventory_hostname]['ansible_' + kubernetes_interface].ipv4.address }}"
+  command: "/usr/bin/kubeadm init {%if kubernetes_self_hosting %}--feature-gates=SelfHosting=true{% endif %} --token={{ hostvars[groups['master'][0]].kubeadm_token }} --apiserver-advertise-address={{ kubernetes_host_ipv4_address }}"
   register: kubeadm_init_cmd
 
 - name: make kubectl configuration readable for users

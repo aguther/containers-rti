@@ -1,7 +1,3 @@
 ---
-# this should only be needed on vagrant boxes
-- name: setup route
-  command: "route add 10.96.0.1 gw {{ hostvars[groups['master'][0]]['ansible_' + kubernetes_interface].ipv4.address }}"
-
 - name: join nodes
   command: "/usr/bin/kubeadm join --discovery-token-unsafe-skip-ca-verification --token={{ hostvars[groups['master'][0]].kubeadm_token }} {{ hostvars[groups['master'][0]]['ansible_' + kubernetes_interface].ipv4.address }}:6443"

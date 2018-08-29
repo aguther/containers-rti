@@ -1,0 +1,3 @@
+---
+- name: add route for 10.96.0.0/16
+  command: "ip route add 10.96.0.0/16 dev eth1 src {{ kubernetes_host_ipv4_address }}"

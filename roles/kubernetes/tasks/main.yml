@@ -42,6 +42,8 @@
   set_fact:
     kubeadm_deployed: "{{ kubeadm_config_file.stat.exists }}"
 
+- include: setup-route.yml
+
 - include: init_cluster.yml
   when: (hostvars[groups['master'][0]].kubeadm_deployed == false)
         and (inventory_hostname == groups['master'][0])
