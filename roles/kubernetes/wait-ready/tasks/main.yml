@@ -1,8 +1,9 @@
 ---
 - name: wait until all nodes are ready
   command: /usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf get nodes
+  changed_when: no
   register: kubernetes_get_nodes
   when: (inventory_hostname == groups['master'][0])
-  retries: 5
-  delay: 60
+  retries: 30
+  delay: 10
   until: (kubernetes_get_nodes.stdout.find("Ready") != -1) and (kubernetes_get_nodes.stdout.find("NotReady") == -1)

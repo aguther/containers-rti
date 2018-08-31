@@ -2,3 +2,4 @@ docker-images/
 .kube/
 **/.vagrant
 *.retry
+*.log

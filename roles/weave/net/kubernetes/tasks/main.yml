@@ -1,4 +1,11 @@
 ---
+- name: check if weave is installed
+  shell: "/usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf --namespace=kube-system get pod --no-headers=true --selector name=weave-net | wc -l"
+  changed_when: no
+  register: weave_net_kubernetes_installed
+  when: inventory_hostname == groups['master'][0]
+
 - name: install weave
   shell: "/usr/bin/kubectl apply --kubeconfig=/etc/kubernetes/admin.conf -f \"https://cloud.weave.works/k8s/net.yaml?k8s-version=$(/usr/bin/kubectl version | base64 | tr -d '\n')\""
-  when: inventory_hostname == groups['master'][0]
+  when: (inventory_hostname == groups['master'][0])
+        and (weave_net_kubernetes_installed.stdout | int == 0)

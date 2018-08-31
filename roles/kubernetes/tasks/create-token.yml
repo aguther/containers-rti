@@ -1,0 +1,8 @@
+---
+- name: generate token
+  command: /usr/bin/kubeadm token create
+  register: kubeadm_token_cmd
+
+- name: store token
+  set_fact:
+    kubeadm_token: "{{ kubeadm_token_cmd.stdout_lines[0] }}"

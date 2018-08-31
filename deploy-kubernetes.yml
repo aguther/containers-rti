@@ -1,26 +1,58 @@
 ---
 - hosts:
     - centos
-  vars:
-    docker_registry_port: 5000
-    docker_registry_auth_user: docker-registry
-    docker_registry_auth_password: P@ssw0rd
-    kubernetes_self_hosting: no
   roles:
-    - chrony
-    - disable-selinux
-    - disable-firewall
-    - disable-swap
-    - docker/el7
-    - docker/registry
-    - kubernetes
-    - weave/net/kubernetes
-    - kubernetes/wait-ready
-    - kubernetes/dashboard
-    - docker/registry/kubernetes/create-secret
-    - helm
+    - os/hostname
+    - os/hosts
+    - os/proxy
+    - os/chrony
+    - os/selinux/not-enforcing
+    - os/firewall/disable
+    - os/swap/disable
+  tags:
+    - prepare
 
 - hosts:
-    - master[0]
+    - centos
   roles:
-    - vagrant/kubernetes/copy-kubectl-config
+    - docker/el7
+  tags:
+    - docker
+
+- hosts:
+    - centos
+  roles:
+    - os/proxy/docker
+  tags:
+    - prepare
+
+- hosts:
+    - centos
+  roles:
+    - docker/registry
+  tags:
+    - docker-registry
+
+- hosts:
+    - centos
+  roles:
+    - kubernetes
+    - weave/net/kubernetes
+  tags:
+    - kubernetes
+
+- hosts:
+    - centos
+  roles:
+    - kubernetes/wait-ready
+    - kubernetes/dashboard
+  tags:
+    - kubernetes
+    - dashboard
+
+- hosts:
+    - centos
+  roles:
+    - helm
+  tags:
+    - helm

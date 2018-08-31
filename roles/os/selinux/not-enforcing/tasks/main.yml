@@ -1,0 +1,8 @@
+---
+- name: configure
+  selinux:
+    state: permissive
+    policy: targeted
+  when: (ansible_selinux is defined)
+        and (ansible_selinux != False)
+        and (ansible_selinux.mode == "enforcing")

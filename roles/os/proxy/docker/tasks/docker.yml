@@ -1,0 +1,28 @@
+---
+- name: "proxy : check if docker is installed"
+  command: rpm -q docker
+  args:
+    warn: no
+  register: proxy_docker_check
+  changed_when: no
+  ignore_errors: yes
+
+- name: "proxy : create directory"
+  file:
+    path: /etc/systemd/system/docker.service.d
+    state: directory
+  when: proxy_docker_check.rc == 0
+
+- name: "proxy : docker"
+  template:
+    src: proxy.conf.j2
+    dest: "/etc/systemd/system/docker.service.d/proxy.conf"
+  register: proxy_docker_config
+  when: proxy_docker_check.rc == 0
+
+- name: "proxy : restart daemon"
+  systemd:
+    name: docker
+    state: restarted
+    daemon_reload: yes
+  when: proxy_docker_config.changed

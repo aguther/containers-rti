@@ -1,3 +1,13 @@
 ---
-- name: loading image {{ docker_load_image_image_path | basename }}
-  command: "/usr/bin/docker load --input {{ docker_load_image_image_path }}"
+- name: copy image archive {{ docker_load_image_image_path | basename }}
+  copy:
+    src: "{{ docker_load_image_image_path }}"
+    dest: "/tmp/{{ docker_load_image_image_path | basename }}"
+
+- name: loading image archive {{ docker_load_image_image_path | basename }}
+  command: "/usr/bin/docker load --input /tmp/{{ docker_load_image_image_path | basename }}"
+
+- name: delete image archive {{ docker_load_image_image_path | basename }}
+  file:
+    path: "/tmp/{{ docker_load_image_image_path | basename }}"
+    state: absent

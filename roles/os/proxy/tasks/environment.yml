@@ -1,0 +1,30 @@
+---
+- name: "proxy : environment : http"
+  lineinfile:
+    path: /etc/environment
+    regexp: "^export {{ item }}=.*$"
+    line: "export {{ item }}={{ os_proxy_http_proxy }}"
+  with_items:
+    - http_proxy
+    - HTTP_PROXY
+  when: not((os_proxy_http_proxy is undefined) or (os_proxy_http_proxy is none) or (os_proxy_http_proxy | trim == ''))
+
+- name: "proxy : environment : https"
+  lineinfile:
+    path: /etc/environment
+    regexp: "^export {{ item }}=.*$"
+    line: "export {{ item }}={{ os_proxy_https_proxy }}"
+  with_items:
+    - https_proxy
+    - HTTPS_PROXY
+  when: not((os_proxy_https_proxy is undefined) or (os_proxy_https_proxy is none) or (os_proxy_https_proxy | trim == ''))
+
+- name: "proxy : environment : no proxy"
+  lineinfile:
+    path: /etc/environment
+    regexp: "^export {{ item }}=.*$"
+    line: "export {{ item }}={{ os_proxy_no_proxy }}"
+  with_items:
+    - no_proxy
+    - NO_PROXY
+  when: not((os_proxy_no_proxy is undefined) or (os_proxy_no_proxy is none) or (os_proxy_no_proxy | trim == ''))

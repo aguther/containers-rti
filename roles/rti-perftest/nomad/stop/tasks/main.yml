@@ -1,8 +1,6 @@
 ---
-# ------------------------------------------------------------------------------
 - name: "publisher : stop"
   command: "nomad stop rti-perftest-pub"
 
-# ------------------------------------------------------------------------------
 - name: "subscriber : stop"
   command: "nomad stop rti-perftest-sub"

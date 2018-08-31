@@ -1,0 +1,13 @@
+---
+- name: copy service
+  copy:
+    src: disable-swap.service
+    dest: /etc/systemd/system/
+  register: disable_swap_systemd_unit
+
+- name: start and enable
+  service:
+    name: disable-swap.service
+    state: reloaded
+    enabled: yes
+  when: disable_swap_systemd_unit.changed

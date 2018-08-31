@@ -3,3 +3,5 @@ kubernetes_self_hosting: no
 kubernetes_interface: "{{ ansible_default_ipv4.interface }}"
 kubernetes_host_ipv4_address: "{{ hostvars[inventory_hostname]['ansible_' + kubernetes_interface].ipv4.address }}"
 kubernetes_master_ipv4_address: "{{ hostvars[groups['master'][0]]['ansible_' + kubernetes_interface].ipv4.address }}"
+
+kubernetes_service_cidr: "10.96.0.0/12"

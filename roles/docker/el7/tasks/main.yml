@@ -1,15 +1,16 @@
 ---
-# ------------------------------------------------------------------------------
 - name: install
-  yum:
+  package:
     name: docker
     state: present
 
-- group:
+- name: add group 'docker'
+  group:
     name: docker
     state: present
 
-- user:
+- name: "add users to group 'docker'"
+  user:
     name: "{{ item }}"
     groups: docker
     append: yes

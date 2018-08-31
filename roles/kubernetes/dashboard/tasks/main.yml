@@ -1,49 +1,20 @@
 ---
-- name: install heapster
-  command: >
-    /usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf
-      create
-        -f {{ item }}
-  with_items:
-    - https://raw.githubusercontent.com/kubernetes/heapster/master/deploy/kube-config/influxdb/influxdb.yaml
-    - https://raw.githubusercontent.com/kubernetes/heapster/master/deploy/kube-config/influxdb/grafana.yaml
-    - https://raw.githubusercontent.com/kubernetes/heapster/master/deploy/kube-config/influxdb/heapster.yaml
-  when: (inventory_hostname == groups['master'][0])
+- name: "heapster : check installed"
+  shell: "/usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf --namespace=kube-system get pod --no-headers=true --selector k8s-app=heapster | wc -l"
+  changed_when: no
+  register: kubernetes_dashboard_heapster_installed
+  when: inventory_hostname == groups['master'][0]
 
-- name: patch heapster to get it working
-  command: >
-    /usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf
-      patch deployment
-        -n kube-system
-        heapster
-        --type='json'
-        --patch='[{ "op": "replace", "path": "/spec/template/spec/containers/0/command/1", "value": "--source=kubernetes:https://kubernetes.default?kubeletPort=10250&kubeletHttps=true&insecure=true" }]'
+- include: heapster.yml
   when: (inventory_hostname == groups['master'][0])
+        and (kubernetes_dashboard_heapster_installed.stdout | int == 0)
 
-- name: create RBAC for heapster
-  command: >
-    /usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf
-      apply
-        -f {{ item }}
-  with_items:
-    - https://raw.githubusercontent.com/kubernetes/heapster/master/deploy/kube-config/rbac/heapster-rbac.yaml
-  when: (inventory_hostname == groups['master'][0])
+- name: "dashboard : check installed"
+  shell: "/usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf --namespace=kube-system get pod --no-headers=true --selector k8s-app=kubernetes-dashboard | wc -l"
+  changed_when: no
+  register: kubernetes_dashboard_dashboard_installed
+  when: inventory_hostname == groups['master'][0]
 
-- name: install dashboard
-  command: "/usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v{{ kubernetes_dashboard_version }}/src/deploy/alternative/kubernetes-dashboard.yaml"
-  register: dashboard_raw
+- include: dashboard.yml
   when: (inventory_hostname == groups['master'][0])
-
-- name: create RBAC for dashboard
-  command: /usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf create clusterrolebinding permissive-binding --clusterrole=cluster-admin --user=admin --user=kubelet --group=system:serviceaccounts
-  register: rbac_raw
-  ignore_errors: true
-  when: (inventory_hostname == groups['master'][0])
-
-- name: change service to NodePort
-  command: /usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf patch service kubernetes-dashboard -p '{"spec":{"type":"NodePort"}}' --namespace=kube-system
-  when: (inventory_hostname == groups['master'][0])
-
-- name: set NodePort to fixed value of 30000
-  command: /usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf patch service kubernetes-dashboard -p '{"spec":{"ports":[{"port":80,"nodePort":30000}]}}' --namespace=kube-system
-  when: (inventory_hostname == groups['master'][0])
+        and (kubernetes_dashboard_dashboard_installed.stdout | int == 0)

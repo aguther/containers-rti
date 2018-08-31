@@ -2,18 +2,13 @@
 # # vi: set ft=ruby :
 
 # required vagrant version
-Vagrant.require_version ">= 1.9.2"
-
-# api version to be used
-VAGRANTFILE_API_VERSION = "2"
+Vagrant.require_version ">= 2.1.0"
 
 # required plugins
 require 'ipaddr'
-require 'vagrant-hostmanager'
-require 'vagrant-vbguest'
 
 # define instances
-$vm_instances = (ENV['VM_INSTANCES'] || 3).to_i
+$vm_instances = (ENV['VM_INSTANCES'] || 2).to_i
 # ensure we have at least two instances
 if $vm_instances < 2
   raise "This vagrantfile needs at least 2 instances to function properly. Please increase the value of 'instance_count'."
@@ -56,7 +51,7 @@ if ($playbook != "") & (!File.exists? File.expand_path($playbook))
 end
 
 # configure instances
-Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+Vagrant.configure("2") do |config|
   # ssh configuration
   config.ssh.insert_key = false
   config.ssh.username = 'vagrant'
@@ -144,6 +139,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
           ansible.become = true
           # logging verbosity
           ansible.verbose = false
+          # skip tags
+          ansible.skip_tags = "os-hosts"
           # groups
           ansible.groups = {
             "master" => "%s1" % $vm_hostname_prefix,
@@ -164,7 +161,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
             consul_interface: $vm_ip_interface_name,
             nomad_interface: $vm_ip_interface_name,
             kubernetes_interface: $vm_ip_interface_name,
-            ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
+            ansible_ssh_common_args: '-o StrictHostKeyChecking=no',
+            docker_registry_port: "5000",
+            docker_registry_auth_user: "docker-registry",
+            docker_registry_auth_password: "P@ssw0rd",
+            kubernetes_self_hosting: "no"
           }
         end
       end

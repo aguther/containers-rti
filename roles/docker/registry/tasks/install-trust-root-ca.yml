@@ -21,6 +21,7 @@
   with_items:
     - "/etc/pki/ca-trust/source/anchors/{{ groups['master'][0] }}-{{ docker_registry_certificate_root_filename }}.crt"
     - "/etc/docker/certs.d/{{ groups['master'][0] }}:{{ docker_registry_port }}/{{ docker_registry_certificate_root_filename }}.crt"
+  register: docker_registry_copy_certificates
 
 - name: clean up
   file:
@@ -30,3 +31,4 @@
 
 - name: update trust
   command: "update-ca-trust"
+  when: docker_registry_copy_certificates.changed

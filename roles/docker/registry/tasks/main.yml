@@ -1,4 +1,7 @@
 ---
+- include: install-dependencies.yml
+  when: (inventory_hostname == groups['master'][0])
+
 - include: prepare-directories.yml
   when: (inventory_hostname == groups['master'][0])
 

@@ -1,12 +1,35 @@
 ---
 - name: start docker registry
-  command: >
-    /usr/bin/docker run -d -p 5000:{{ docker_registry_port }} --restart=always --name registry
-      -v {{ docker_registry_storage_auth }}:/{{ docker_registry_storage_postfix_auth }}
-      -e "REGISTRY_AUTH=htpasswd"
-      -e "REGISTRY_AUTH_HTPASSWD_REALM=Registry Realm"
-      -e "REGISTRY_AUTH_HTPASSWD_PATH=/{{ docker_registry_storage_postfix_auth }}/{{ docker_registry_auth_filename }}"
-      -v {{ docker_registry_storage_certs }}:/{{ docker_registry_storage_postfix_certs }}
-      -e "REGISTRY_HTTP_TLS_CERTIFICATE=/{{ docker_registry_storage_postfix_certs }}/{{ docker_registry_certificate_host_filename }}.crt"
-      -e "REGISTRY_HTTP_TLS_KEY=/{{ docker_registry_storage_postfix_certs }}/{{ docker_registry_certificate_host_filename }}.key"
-      registry:2
+  docker_container:
+    recreate: "{{ docker_registry_user_password_configuration.changed }}"
+    restart_policy: always
+    state: started
+    name: registry
+    image: registry:2
+    env:
+      REGISTRY_AUTH: "htpasswd"
+      REGISTRY_AUTH_HTPASSWD_REALM: "Registry Realm"
+      REGISTRY_AUTH_HTPASSWD_PATH: "/{{ docker_registry_storage_postfix_auth }}/{{ docker_registry_auth_filename }}"
+      REGISTRY_HTTP_TLS_CERTIFICATE: "/{{ docker_registry_storage_postfix_certs }}/{{ docker_registry_certificate_host_filename }}.crt"
+      REGISTRY_HTTP_TLS_KEY: "/{{ docker_registry_storage_postfix_certs }}/{{ docker_registry_certificate_host_filename }}.key"
+    volumes:
+      - "{{ docker_registry_storage_auth }}:/{{ docker_registry_storage_postfix_auth }}"
+      - "{{ docker_registry_storage_certs }}:/{{ docker_registry_storage_postfix_certs }}"
+    published_ports:
+      - "5000:{{ docker_registry_port }}"
+
+# - name: start docker registry
+#   command: >
+#     /usr/bin/docker run
+#       --detach
+#       --name registry
+#       --restart=always
+#       --publish 5000:{{ docker_registry_port }}
+#       --env "REGISTRY_AUTH=htpasswd"
+#       --env "REGISTRY_AUTH_HTPASSWD_REALM=Registry Realm"
+#       --env "REGISTRY_AUTH_HTPASSWD_PATH=/{{ docker_registry_storage_postfix_auth }}/{{ docker_registry_auth_filename }}"
+#       --env "REGISTRY_HTTP_TLS_CERTIFICATE=/{{ docker_registry_storage_postfix_certs }}/{{ docker_registry_certificate_host_filename }}.crt"
+#       --env "REGISTRY_HTTP_TLS_KEY=/{{ docker_registry_storage_postfix_certs }}/{{ docker_registry_certificate_host_filename }}.key"
+#       --volume {{ docker_registry_storage_auth }}:/{{ docker_registry_storage_postfix_auth }}
+#       --volume {{ docker_registry_storage_certs }}:/{{ docker_registry_storage_postfix_certs }}
+#       registry:2

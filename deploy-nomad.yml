@@ -3,18 +3,30 @@
     - centos
   vars:
     - weave_group: "centos"
+  roles:
+    - os/hostname
+    - os/hosts
+    - os/proxy
+    - os/chrony
+    - os/selinux/not-enforcing
+    - os/firewall/disable
+    - os/swap/disable
+    - docker/el7
+    - os/proxy/docker
+    - weave/net/docker
+    - os/cockpit
+    - cpuloadgen
+    - iftop
+
+- hosts:
+    - datacenter-1
+  tags:
+    - nomad
+  vars:
     - nomad_group: "datacenter-1"
     - nomad_region: "region-1"
     - nomad_datacenter: "dc-1"
   roles:
-    - chrony
-    - disable-selinux
-    - disable-firewall
-    - docker/el7
-    - weave/net/docker
-    - cockpit
-    - cpuloadgen
-    - iftop
     - nomad
 
 - hosts:

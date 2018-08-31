@@ -1,11 +1,9 @@
 ---
-# ------------------------------------------------------------------------------
 - name: check for binary
   stat:
     path: /usr/local/bin/scope
   register: scope_binary
 
-# ------------------------------------------------------------------------------
 - name: check for docker
   command: which docker
   register: docker_command
@@ -13,12 +11,10 @@
   changed_when: false
   when: scope_binary.stat.exists == true
 
-# ------------------------------------------------------------------------------
 - name: stop scope
   command: "/usr/local/bin/scope stop"
   when: scope_binary.stat.exists == true
 
-# ------------------------------------------------------------------------------
 - name: delete binary
   file:
     path: /usr/local/bin/scope

@@ -1,0 +1,36 @@
+---
+- name: install
+  package:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - cockpit
+    - cockpit-dashboard
+    - cockpit-doc
+    - cockpit-docker
+    - cockpit-pcp
+    - cockpit-shell
+
+- name: enable and start
+  service:
+    name: "{{ item }}"
+    state: started
+    enabled: yes
+  with_items:
+    - pmcd.service
+    - pmlogger.service
+    - cockpit.socket
+
+- name: check firewalld status
+  command: systemctl status firewalld
+  register: service_firewalld_status
+  failed_when: false
+  changed_when: false
+
+- name: add firewall rules
+  firewalld:
+    service: cockpit
+    zone: public
+    state: enabled
+    permanent: true
+  when: service_firewalld_status.rc == 0

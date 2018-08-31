@@ -1,4 +1,3 @@
 ---
-# ------------------------------------------------------------------------------
 - name: start
   command: "docker run --detach=true --net=weave --name rti-perftest-pub guther/rti-perftest -pub -enableTurboMode -dataLen 1024 -sleep 1 -numSubscribers {{ play_hosts | length }}"

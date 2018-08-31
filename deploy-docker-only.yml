@@ -1,9 +1,0 @@
----
-- hosts:
-    - centos
-  roles:
-    - chrony
-    - disable-selinux
-    - disable-firewall
-    - docker/el7
-    - cockpit

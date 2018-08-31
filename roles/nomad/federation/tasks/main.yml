@@ -1,0 +1,20 @@
+---
+- name: wait for service
+  wait_for:
+    port: 8500
+    delay: 1
+
+- name: join datacenter
+  command: "{{ consul_bin_directory }}/consul join -wan {{ item }}"
+  with_items:
+    - "{{ groups[[other_group][0]] }}"
+
+- name: wait for service
+  wait_for:
+    port: 4646
+    delay: 1
+
+- name: join region
+  command: "{{ nomad_bin_directory }}/nomad server-join {{ item }}"
+  with_items:
+    - "{{ groups[[other_group][0]] }}"

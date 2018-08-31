@@ -1,5 +1,4 @@
 ---
-# ------------------------------------------------------------------------------
 - include_tasks: network-policy.yml
 
 - include_tasks: subscriber.yml

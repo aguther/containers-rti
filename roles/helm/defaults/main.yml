@@ -1,7 +1,10 @@
 ---
 helm_version: "2.9.1"
 
+helm_bin_name: "helm"
 helm_bin_directory: "/usr/bin"
+helm_bin_path: "{{ helm_bin_directory }}/{{ helm_bin_name }}"
 helm_kubeconfig: "/etc/kubernetes/admin.conf"
 
 helm_user: "vagrant"
+helm_user_home: "/home/{{ helm_user }}"

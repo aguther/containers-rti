@@ -1,7 +1,7 @@
 ---
 - name: deploy rook-ceph
   include_role:
-    name: helm/install
+    name: helm/install-chart
   vars:
     helm_install_namespace: rook-ceph-system
     helm_install_chart: https://charts.rook.io/beta/rook-ceph-v0.8.1.tgz

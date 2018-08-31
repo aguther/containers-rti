@@ -1,0 +1,17 @@
+---
+- hosts:
+    - centos
+  vars:
+    - weave_group: "centos"
+  roles:
+    - os/hostname
+    - os/hosts
+    - os/proxy
+    - os/chrony
+    - os/selinux/not-enforcing
+    - os/firewall/disable
+    - os/swap/disable
+    - docker/el7
+    - os/proxy/docker
+    - weave/net/docker
+    - os/cockpit

@@ -1,12 +1,10 @@
 ---
-# ------------------------------------------------------------------------------
 - name: check for docker
   command: which docker
   register: docker_command
   failed_when: docker_command.rc != 0
   changed_when: false
 
-# ------------------------------------------------------------------------------
 - name: download binary
   get_url:
     url: https://git.io/weave
@@ -16,14 +14,12 @@
     group: root
     mode: 0755
 
-# ------------------------------------------------------------------------------
 - name: status
   command: "/usr/local/bin/weave status"
   register: weave_status
   failed_when: false
   changed_when: false
 
-# ------------------------------------------------------------------------------
 - name: create directories for CNI plugin
   file:
     path: "{{ item }}"
@@ -40,7 +36,6 @@
   command: "/usr/local/bin/weave setup"
   when: weave_status.rc != 0
 
-# ------------------------------------------------------------------------------
 - name: launch
   command: "/usr/local/bin/weave launch {% for host in groups[weave_group] if host != ansible_host %} {{ host }} {% endfor %}"
   when: weave_status.rc != 0
