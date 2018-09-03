@@ -1,5 +1,4 @@
 ---
-# ------------------------------------------------------------------------------
 - name: log
   command: "docker -H tcp://{{ groups['master'][0] }}:2400 logs --tail 5 rti-perftest-pub-{{ item }}"
   register: docker_log

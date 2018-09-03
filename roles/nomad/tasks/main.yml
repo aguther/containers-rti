@@ -1,7 +1,6 @@
 ---
-# ------------------------------------------------------------------------------
 - name: prerequisites
-  yum:
+  package:
     name: unzip
     state: present
 

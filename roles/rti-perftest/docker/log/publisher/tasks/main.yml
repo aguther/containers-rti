@@ -1,5 +1,4 @@
 ---
-# ------------------------------------------------------------------------------
 - name: log
   command: "docker logs --tail 5 rti-perftest-pub"
   register: docker_log

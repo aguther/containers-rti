@@ -1,0 +1,6 @@
+---
+- hosts:
+    - centos
+  roles:
+    - kubernetes/wait-ready
+    - weave/scope/kubernetes

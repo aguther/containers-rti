@@ -1,4 +1,3 @@
 ---
-# ------------------------------------------------------------------------------
 - name: start
   command: "docker run --detach=true --net=weave --name rti-perftest-pub guther/rti-perftest -pub -numSubscribers {{ groups['nodes'] | length }} -sleep 1000"

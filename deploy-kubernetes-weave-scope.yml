@@ -1,5 +1,0 @@
----
-- hosts:
-    - centos
-  roles:
-    - weave/scope/kubernetes

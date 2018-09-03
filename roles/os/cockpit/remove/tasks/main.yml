@@ -1,0 +1,5 @@
+---
+- name: remove packages
+  package:
+    name: cockpit
+    state: removed

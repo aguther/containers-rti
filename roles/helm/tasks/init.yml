@@ -1,28 +1,61 @@
 ---
-- name: create service account
+- name: "service account : check"
+  shell: >
+    /usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf
+      --namespace=kube-system
+      --no-headers=true
+      get serviceaccount
+      tiller | wc -l
+  changed_when: no
+  register: helm_init_check_service_account
+
+- name: "service account : create"
   command: >
     /usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf
       --namespace kube-system
       create serviceaccount
       tiller
+  when: helm_init_check_service_account.stdout | int == 0
 
-- name: create cluster role binding
+- name: "cluster role binding : check"
+  shell: >
+    /usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf
+      --namespace=kube-system
+      --no-headers=true
+      get clusterrolebinding
+      tiller | wc -l
+  changed_when: no
+  register: helm_init_check_cluster_role_binding
+
+- name: "cluster role binding : create"
   command: >
     /usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf
       create clusterrolebinding
       tiller
       --clusterrole=cluster-admin
       --serviceaccount=kube-system:tiller
+  when: helm_init_check_cluster_role_binding.stdout | int == 0
 
-- name: init
+- name: "tiller : check"
+  shell: >
+    /usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf
+      --namespace=kube-system
+      --no-headers=true
+      get pod
+      --selector app=helm,name=tiller | wc -l
+  changed_when: no
+  register: helm_init_check_tiller
+
+- name: "tiller : init"
   shell: "{{ helm_bin_directory }}/helm init --service-account tiller --wait"
   environment:
-    HELM_HOME: "/home/{{ helm_user }}/.helm"
+    HELM_HOME: "{{ helm_user_home }}/.helm"
     KUBECONFIG: "{{ helm_kubeconfig }}"
+  when: helm_init_check_tiller.stdout | int == 0
 
 - name: set permissions
   file:
-    path: "/home/{{ helm_user }}/.helm"
+    path: "{{ helm_user_home }}/.helm"
     recurse: yes
     owner: "{{ helm_user }}"
     group: "{{ helm_user }}"

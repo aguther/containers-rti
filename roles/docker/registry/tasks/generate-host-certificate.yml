@@ -1,6 +1,8 @@
 ---
 - name: generate host key
   command: "/usr/bin/openssl genrsa -out '{{ docker_registry_storage_certs }}/{{ docker_registry_certificate_host_filename }}.key' {{ docker_registry_certificate_key_length }}"
+  args:
+    creates: "{{ docker_registry_storage_certs }}/{{ docker_registry_certificate_host_filename }}.key"
 
 - name: generate host certificate request
   command: >
@@ -8,7 +10,9 @@
       -new
       -key {{ docker_registry_storage_certs }}/{{ docker_registry_certificate_host_filename }}.key
       -out {{ docker_registry_storage_certs }}/{{ docker_registry_certificate_host_filename }}.csr
-      -subj /C={{ docker_registry_certificate_country }}/L={{ docker_registry_certificate_location }}/O={{ docker_registry_certificate_organization }}/OU={{ docker_registry_certificate_organization_unit }}/CN={{ ansible_host }}
+      -subj /C={{ docker_registry_certificate_country }}/L={{ docker_registry_certificate_location }}/O={{ docker_registry_certificate_organization }}/OU={{ docker_registry_certificate_organization_unit }}/CN={{ inventory_hostname }}
+  args:
+    creates: "{{ docker_registry_storage_certs }}/{{ docker_registry_certificate_host_filename }}.csr"
 
 - name: generate host certificate
   command: >
@@ -20,3 +24,5 @@
       -CAcreateserial
       -out {{ docker_registry_storage_certs }}/{{ docker_registry_certificate_host_filename }}.crt
       -days {{ docker_registry_certificate_validity }}
+  args:
+    creates: "{{ docker_registry_storage_certs }}/{{ docker_registry_certificate_host_filename }}.crt"

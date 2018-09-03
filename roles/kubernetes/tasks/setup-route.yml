@@ -1,3 +1,17 @@
 ---
-- name: add route for 10.96.0.0/16
-  command: "ip route add 10.96.0.0/16 dev eth1 src {{ kubernetes_host_ipv4_address }}"
+- name: get current routes
+  command: "ip route"
+  changed_when: no
+  register: kubernetes_current_routes
+
+- name: "add route for {{ kubernetes_service_cidr }} : session"
+  command: "ip route replace {{ kubernetes_service_cidr }} dev {{ kubernetes_interface }} src {{ kubernetes_host_ipv4_address }}"
+  when: not(kubernetes_current_routes.stdout | regex_search(kubernetes_service_cidr))
+
+- name: "add route for {{ kubernetes_service_cidr }} : permanent"
+  lineinfile:
+    path: "/etc/sysconfig/network-scripts/route-{{ kubernetes_interface }}"
+    regexp: "^.*{{ kubernetes_service_cidr }}.*$"
+    line: "{{ kubernetes_service_cidr }} dev {{ kubernetes_interface }} src {{ kubernetes_host_ipv4_address }}"
+    create: yes
+#  when: not(kubernetes_current_routes.stdout | regex_search(kubernetes_service_cidr))

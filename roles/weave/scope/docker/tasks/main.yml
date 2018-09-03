@@ -1,12 +1,10 @@
 ---
-# ------------------------------------------------------------------------------
 - name: check for docker
   command: which docker
   register: docker_command
   failed_when: docker_command.rc != 0
   changed_when: false
 
-# ------------------------------------------------------------------------------
 - name: download binary
   get_url:
     url: http://git.io/scope
@@ -16,14 +14,12 @@
     group: root
     mode: 0755
 
-# ------------------------------------------------------------------------------
 - name: status
   command: "/usr/local/bin/scope status"
   register: scope_status
   failed_when: false
   changed_when: false
 
-# ------------------------------------------------------------------------------
 - name: launch
   command: "/usr/local/bin/scope launch"
   when: scope_status.rc != 0

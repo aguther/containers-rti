@@ -1,7 +1,6 @@
 ---
-# ------------------------------------------------------------------------------
 - name: remove
-  yum:
+  package:
     name: "{{ item }}"
     state: removed
   with_items:

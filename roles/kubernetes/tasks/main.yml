@@ -3,9 +3,11 @@
   copy:
     src: k8s.conf
     dest: /etc/sysctl.d/k8s.conf
+  register: kubernetes_set_kernel_configuration
 
 - name: reload kernel configuration
   command: /usr/sbin/sysctl --system
+  when: kubernetes_set_kernel_configuration.changed
 
 - name: add repository
   yum_repository:
@@ -18,7 +20,7 @@
     state: present
 
 - name: install packages
-  yum:
+  package:
     name: "{{ item }}"
     state: present
   with_items:
@@ -37,17 +39,31 @@
   stat:
     path: /etc/kubernetes/admin.conf
   register: kubeadm_config_file
+  when: (inventory_hostname == groups['master'][0])
 
 - name: get configuration file status
   set_fact:
     kubeadm_deployed: "{{ kubeadm_config_file.stat.exists }}"
+  when: (inventory_hostname == groups['master'][0])
 
 - include: setup-route.yml
 
-- include: init_cluster.yml
+- include: init-cluster.yml
   when: (hostvars[groups['master'][0]].kubeadm_deployed == false)
         and (inventory_hostname == groups['master'][0])
 
-- include: join_cluster.yml
-  when: (hostvars[groups['master'][0]].kubeadm_deployed == false)
-        and (inventory_hostname in groups['nodes'])
+- include_role:
+    name: kubernetes/get-nodes
+  when: (inventory_hostname == groups['master'][0])
+
+- include: create-token.yml
+  when: (play_hosts | difference(hostvars[groups['master'][0]].kubernetes_nodes))
+        and (inventory_hostname == groups['master'][0])
+
+- include: join-cluster.yml
+  when: (inventory_hostname in groups['nodes'])
+        and not(inventory_hostname in hostvars[groups['master'][0]].kubernetes_nodes)
+
+- include: delete-token.yml
+  when: (play_hosts | difference(hostvars[groups['master'][0]].kubernetes_nodes))
+        and (inventory_hostname == groups['master'][0])

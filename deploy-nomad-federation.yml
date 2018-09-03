@@ -4,12 +4,17 @@
   vars:
     - weave_group: "centos"
   roles:
-    - chrony
-    - disable-selinux
-    - disable-firewall
+    - os/hostname
+    - os/hosts
+    - os/proxy
+    - os/chrony
+    - os/selinux/not-enforcing
+    - os/firewall/disable
+    - os/swap/disable
     - docker/el7
+    - os/proxy/docker
     - weave/net/docker
-    - cockpit
+    - os/cockpit
     - cpuloadgen
     - iftop
 
@@ -45,7 +50,7 @@
     - consul_bin_directory: "/usr/bin"
     - nomad_bin_directory: "/usr/bin"
   roles:
-    - nomad-federation
+    - nomad/federation
 
 - hosts:
     - datacenter-1[0]

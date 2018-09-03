@@ -1,5 +1,4 @@
 ---
-# ------------------------------------------------------------------------------
 - name: "publisher : create job file"
   template:
     src: rti-perftest-pub.nomad.j2
@@ -13,7 +12,6 @@
     path: /tmp/rti-perftest-pub.nomad
     state: absent
 
-# ------------------------------------------------------------------------------
 - name: "subscriber : create job file"
   template:
     src: rti-perftest-sub.nomad.j2

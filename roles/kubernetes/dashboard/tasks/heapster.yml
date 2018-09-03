@@ -1,0 +1,27 @@
+---
+- name: "heapster : install"
+  command: >
+    /usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf
+      create
+        -f {{ item }}
+  with_items:
+    - https://raw.githubusercontent.com/kubernetes/heapster/master/deploy/kube-config/influxdb/influxdb.yaml
+    - https://raw.githubusercontent.com/kubernetes/heapster/master/deploy/kube-config/influxdb/grafana.yaml
+    - https://raw.githubusercontent.com/kubernetes/heapster/master/deploy/kube-config/influxdb/heapster.yaml
+
+- name: "heapster : patch to get it working"
+  command: >
+    /usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf
+      patch deployment
+        -n kube-system
+        heapster
+        --type='json'
+        --patch='[{ "op": "replace", "path": "/spec/template/spec/containers/0/command/1", "value": "--source=kubernetes:https://kubernetes.default?kubeletPort=10250&kubeletHttps=true&insecure=true" }]'
+
+- name: "heapster : create RBAC"
+  command: >
+    /usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf
+      apply
+        -f {{ item }}
+  with_items:
+    - https://raw.githubusercontent.com/kubernetes/heapster/master/deploy/kube-config/rbac/heapster-rbac.yaml

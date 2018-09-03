@@ -1,0 +1,20 @@
+---
+- name: "proxy : yum"
+  lineinfile:
+    path: /etc/yum.conf
+    insertafter: "^[main]$"
+    regexp: "^proxy=.*$"
+    line: "proxy={{ os_proxy_http_proxy }}"
+  register: os_proxy_yum
+
+- name: "proxy : clean yum cache"
+  command: "yum clean all"
+  args:
+    warn: no
+  when: os_proxy_yum.changed
+
+- name: "proxy : clean file cache"
+  file:
+    path: /var/cache/yum
+    state: absent
+  when: os_proxy_yum.changed
