@@ -52,6 +52,8 @@
 
 - hosts:
     - centos
+  vars:
+    - helm_version: 2.9.1
   roles:
     - helm
   tags:
