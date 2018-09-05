@@ -3,7 +3,10 @@
   command: "/usr/bin/kubeadm reset --force"
 
 - name: init master
-  command: "/usr/bin/kubeadm init {%if kubernetes_self_hosting %}--feature-gates=SelfHosting=true{% endif %} --apiserver-advertise-address={{ kubernetes_host_ipv4_address }}"
+  command: >
+    /usr/bin/kubeadm init
+      {%if kubernetes_self_hosting %}--feature-gates=SelfHosting=true{% endif %}
+      --apiserver-advertise-address={{ kubernetes_host_ipv4_address }}
   register: kubeadm_init_cmd
 
 - name: make kubectl configuration readable for users
@@ -17,7 +20,10 @@
     dest: /etc/profile.d/kubernetes.sh
 
 - name: taint master
-  command: "/usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf taint nodes --all node-role.kubernetes.io/master-"
+  command: >
+    /usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf
+      taint nodes
+      --all node-role.kubernetes.io/master-
 
 - include: reboot-recovery.yml
   when: (kubernetes_self_hosting)
