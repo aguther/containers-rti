@@ -26,10 +26,18 @@
     name: "{{ item }}"
     state: present
   with_items:
+    - yum-versionlock
     - bash-completion
-    - kubeadm
-    - kubectl
-    - kubelet
+    - "kubectl{%if kubernetes_version != 'latest' %}-{{ kubernetes_version }}{% endif %}"
+    - "kubelet{%if kubernetes_version != 'latest' %}-{{ kubernetes_version }}{% endif %}"
+    - "kubeadm{%if kubernetes_version != 'latest' %}-{{ kubernetes_version }}{% endif %}"
+  register: kubernetes_install_packages
+
+- name: lock version
+  command: "yum versionlock add kubeadm kubectl kubelet"
+  args:
+    warn: no
+  when: kubernetes_version != 'latest' and kubernetes_install_packages.changed
 
 - name: enable and start
   service:

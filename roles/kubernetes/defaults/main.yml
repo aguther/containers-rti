@@ -1,3 +1,4 @@
+kubernetes_version: "latest"
 kubernetes_self_hosting: no
 
 kubernetes_interface: "{{ ansible_default_ipv4.interface }}"
