@@ -12,7 +12,9 @@
         value: centos-1:5000
       - key: persistenceService.enabled
         value: no
+      - key: routingService.service.type
+        value: LoadBalancer
       - key: routingService.service.ip
-        value: 172.30.0.11
+        value: 172.30.0.100
   roles:
     - helm/install-chart
