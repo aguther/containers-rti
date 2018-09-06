@@ -157,15 +157,15 @@ Vagrant.configure("2") do |config|
           }
           # extra variables to configure roles
           ansible.extra_vars = {
-            docker_group_users: "vagrant",
-            consul_interface: $vm_ip_interface_name,
-            nomad_interface: $vm_ip_interface_name,
-            kubernetes_interface: $vm_ip_interface_name,
             ansible_ssh_common_args: '-o StrictHostKeyChecking=no',
+            docker_group_users: "vagrant",
             docker_registry_port: "5000",
             docker_registry_auth_user: "docker-registry",
             docker_registry_auth_password: "P@ssw0rd",
-            kubernetes_self_hosting: "no"
+            kubernetes_interface: $vm_ip_interface_name,
+            kubernetes_self_hosting: "no",
+            consul_interface: $vm_ip_interface_name,
+            nomad_interface: $vm_ip_interface_name
             metallb_addresses: [
               "172.30.0.100-172.30.0.199"
             ]
