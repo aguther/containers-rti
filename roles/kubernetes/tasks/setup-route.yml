@@ -14,4 +14,3 @@
     regexp: "^.*{{ kubernetes_service_cidr }}.*$"
     line: "{{ kubernetes_service_cidr }} dev {{ kubernetes_interface }} src {{ kubernetes_host_ipv4_address }}"
     create: yes
-#  when: not(kubernetes_current_routes.stdout | regex_search(kubernetes_service_cidr))
