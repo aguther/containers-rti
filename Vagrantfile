@@ -168,7 +168,10 @@ Vagrant.configure("2") do |config|
             nomad_interface: $vm_ip_interface_name
             metallb_addresses: [
               "172.30.0.100-172.30.0.199"
-            ]
+            ],
+            kubernetes_dashboard_service_type: "LoadBalancer",
+            kubernetes_dashboard_service_port: "80",
+            kubernetes_dashboard_service_ip: "172.30.0.100",
           }
         end
       end

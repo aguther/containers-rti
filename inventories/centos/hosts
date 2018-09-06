@@ -41,3 +41,8 @@ helm_user_home=/root
 
 # metallb
 metallb_addresses=["192.168.88.200-192.168.88.209"]
+
+# kubernetes dashboard
+kubernetes_dashboard_service_type=LoadBalancer
+kubernetes_dashboard_service_port=80
+kubernetes_dashboard_service_ip=192.168.88.200

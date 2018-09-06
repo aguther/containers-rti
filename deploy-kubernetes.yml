@@ -38,17 +38,9 @@
   roles:
     - kubernetes
     - weave/net/kubernetes
-  tags:
-    - kubernetes
-
-- hosts:
-    - master[0]
-  roles:
     - kubernetes/wait-ready
-    - kubernetes/dashboard
   tags:
     - kubernetes
-    - dashboard
 
 - hosts:
     - master[0]
@@ -65,3 +57,10 @@
     - metallb
   tags:
     - metallb
+
+- hosts:
+    - master[0]
+  roles:
+    - kubernetes/dashboard
+  tags:
+    - dashboard
