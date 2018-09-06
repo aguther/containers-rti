@@ -42,7 +42,7 @@
     - kubernetes
 
 - hosts:
-    - centos
+    - master[0]
   roles:
     - kubernetes/wait-ready
     - kubernetes/dashboard
@@ -51,7 +51,7 @@
     - dashboard
 
 - hosts:
-    - centos
+    - master[0]
   vars:
     - helm_version: 2.10.0
   roles:
