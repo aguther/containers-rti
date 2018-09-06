@@ -1,3 +1,7 @@
 ---
-helm_install_namespace: default
+# helm_install_namespace:
+# helm_install_name:
+# helm_install_chart:
 helm_install_wait: no
+# helm_install_value_files:
+# helm_install_set:
