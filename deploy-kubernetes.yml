@@ -58,3 +58,10 @@
     - helm
   tags:
     - helm
+
+- hosts:
+    - master[0]
+  roles:
+    - metallb
+  tags:
+    - metallb

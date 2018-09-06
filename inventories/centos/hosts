@@ -5,7 +5,6 @@ centos-1.vm ansible_host=192.168.88.130 ipaddress=192.168.88.130
 centos-2.vm ansible_host=192.168.88.131 ipaddress=192.168.88.131
 centos-3.vm ansible_host=192.168.88.132 ipaddress=192.168.88.132
 
-
 [centos:children]
 master
 nodes
@@ -39,3 +38,6 @@ kubernetes_self_hosting=False
 # helm
 helm_user=root
 helm_user_home=/root
+
+# metallb
+metallb_addresses=["192.168.88.200-192.168.88.209"]
