@@ -151,27 +151,24 @@ Vagrant.configure("2") do |config|
             ],
             "centos:vars" => {
               "ansible_ssh_pass" => config.ssh.username,
+              "ansible_ssh_common_args" => "-o StrictHostKeyChecking=no",
+              "docker_group_users" => "vagrant",
+              "docker_registry_port" => "5000",
+              "docker_registry_auth_user" => "docker-registry",
+              "docker_registry_auth_password" => "P@ssw0rd",
+              "kubernetes_interface" => $vm_ip_interface_name,
+              "kubernetes_self_hosting" => "no",
+              "metallb_addresses" => [
+                "172.30.0.100-172.30.0.199"
+              ],
+              "kubernetes_dashboard_service_type" => "LoadBalancer",
+              "kubernetes_dashboard_service_port" => "80",
+              "kubernetes_dashboard_service_ip" => "172.30.0.100",
+              "consul_interface" => $vm_ip_interface_name,
+              "nomad_interface" => $vm_ip_interface_name,
             },
             "datacenter-1" => "%s[1:%d].vm\n" % [$vm_hostname_prefix, $vm_instances / 2],
             "datacenter-2" => "%s[%d:%d].vm\n" % [$vm_hostname_prefix, $vm_instances / 2 + 1, $vm_instances],
-          }
-          # extra variables to configure roles
-          ansible.extra_vars = {
-            ansible_ssh_common_args: '-o StrictHostKeyChecking=no',
-            docker_group_users: "vagrant",
-            docker_registry_port: "5000",
-            docker_registry_auth_user: "docker-registry",
-            docker_registry_auth_password: "P@ssw0rd",
-            kubernetes_interface: $vm_ip_interface_name,
-            kubernetes_self_hosting: "no",
-            metallb_addresses: [
-              "172.30.0.100-172.30.0.199"
-            ],
-            kubernetes_dashboard_service_type: "LoadBalancer",
-            kubernetes_dashboard_service_port: "80",
-            kubernetes_dashboard_service_ip: "172.30.0.100",
-            consul_interface: $vm_ip_interface_name,
-            nomad_interface: $vm_ip_interface_name
           }
         end
       end
