@@ -9,7 +9,7 @@
     - https://raw.githubusercontent.com/kubernetes/heapster/master/deploy/kube-config/influxdb/grafana.yaml
     - https://raw.githubusercontent.com/kubernetes/heapster/master/deploy/kube-config/influxdb/heapster.yaml
 
-- name: "heapster : patch to get it working"
+- name: "heapster : patch command"
   command: >
     /usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf
       patch deployment
