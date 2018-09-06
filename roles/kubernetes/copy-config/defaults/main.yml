@@ -1,0 +1,3 @@
+---
+kubernetes_copy_config_mode: merge
+kubernetes_copy_config_dest: "~/.kube/config"
