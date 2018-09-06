@@ -1,0 +1,27 @@
+---
+- name: "dashboard : service : nodePort : set name"
+  command: >
+    /usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf
+      patch service
+        kubernetes-dashboard
+        --namespace=kube-system
+        --type=json
+        --patch='[ { "op": "add", "path": "/spec/ports/0/name", "value": "http" } ]'
+
+- name: "dashboard : service : nodePort : change type"
+  command: >
+    /usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf
+      patch service
+        kubernetes-dashboard
+        --namespace=kube-system
+        --type=json
+        --patch='[ { "op": "replace", "path": "/spec/type", "value": {{ kubernetes_dashboard_service_type }} } ]'
+
+- name: "dashboard : service : nodePort : set port"
+  command: >
+    /usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf
+      patch service
+        kubernetes-dashboard
+        --namespace=kube-system
+        --type=json
+        --patch='[ { "op": "replace", "path": "/spec/ports/0/nodePort", "value": {{ kubernetes_dashboard_service_port }} } ]'
