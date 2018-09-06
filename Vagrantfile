@@ -79,7 +79,7 @@ Vagrant.configure("2") do |config|
   # create virtual machines
   ($vm_instances).downto(1) do |id|
     # create hostname
-    hostname = "%s%d" % [$vm_hostname_prefix, id]
+    hostname = "%s%d.vm" % [$vm_hostname_prefix, id]
     # define the virtual machine
     config.vm.define hostname, primary: (id == 1) ? true : false do |instance_config|
       # hostname within virtual machine
@@ -143,8 +143,8 @@ Vagrant.configure("2") do |config|
           ansible.skip_tags = "os-hosts"
           # groups
           ansible.groups = {
-            "master" => "%s1" % $vm_hostname_prefix,
-            "nodes" => "%s[2:%d]" % [$vm_hostname_prefix, $vm_instances],
+            "master" => "%s1.vm" % $vm_hostname_prefix,
+            "nodes" => "%s[2:%d].vm" % [$vm_hostname_prefix, $vm_instances],
             "centos:children" => [
               "master",
               "nodes",
@@ -152,8 +152,8 @@ Vagrant.configure("2") do |config|
             "centos:vars" => {
               "ansible_ssh_pass" => config.ssh.username,
             },
-            "datacenter-1" => "%s[1:%d]\n" % [$vm_hostname_prefix, $vm_instances / 2],
-            "datacenter-2" => "%s[%d:%d]\n" % [$vm_hostname_prefix, $vm_instances / 2 + 1, $vm_instances],
+            "datacenter-1" => "%s[1:%d].vm\n" % [$vm_hostname_prefix, $vm_instances / 2],
+            "datacenter-2" => "%s[%d:%d].vm\n" % [$vm_hostname_prefix, $vm_instances / 2 + 1, $vm_instances],
           }
           # extra variables to configure roles
           ansible.extra_vars = {

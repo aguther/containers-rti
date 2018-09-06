@@ -9,7 +9,7 @@
       - key: imageCredentials.name
         value: docker-registry
       - key: imageCredentials.registry
-        value: centos-1:5000
+        value: centos-1.vm:5000
       - key: persistenceService.enabled
         value: no
       - key: routingService.service.type
