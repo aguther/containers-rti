@@ -87,7 +87,7 @@ Vagrant.configure("2") do |config|
       # define image to be used
       instance_config.vm.box = "bento/centos-7.5"
       # enable synced folder
-      instance_config.vm.synced_folder ".", "/vagrant"
+      instance_config.vm.synced_folder ".", "/vagrant", mount_options: ["dmode=775,fmode=664"]
       # private network for connection between virtual machines
       instance_config.vm.network :private_network,
         ip: $vm_ip_template % (10 + id),
