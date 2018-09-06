@@ -1,0 +1,9 @@
+---
+metallb_version: 0.7.3
+metallb_mode: layer-2
+# metallb_addresses:
+#   - 192.168.0.0/24
+#   - 192.168.1.100-192.168.1.199
+# metallb_bgp_peer_address: 10.0.0.1
+# metallb_bgp_peer_remote_asn: 64501
+# metallb_bgp_peer_local_asn: 64500
