@@ -164,14 +164,14 @@ Vagrant.configure("2") do |config|
             docker_registry_auth_password: "P@ssw0rd",
             kubernetes_interface: $vm_ip_interface_name,
             kubernetes_self_hosting: "no",
-            consul_interface: $vm_ip_interface_name,
-            nomad_interface: $vm_ip_interface_name
             metallb_addresses: [
               "172.30.0.100-172.30.0.199"
             ],
             kubernetes_dashboard_service_type: "LoadBalancer",
             kubernetes_dashboard_service_port: "80",
             kubernetes_dashboard_service_ip: "172.30.0.100",
+            consul_interface: $vm_ip_interface_name,
+            nomad_interface: $vm_ip_interface_name
           }
         end
       end
