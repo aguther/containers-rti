@@ -102,7 +102,7 @@ Weave-Net is used to connect the containers on the different hosts. A network po
 === General
 
 ==== Monitoring
-Monitoring can be done using the Kubernetes Dashboard UI. It can be reached on the address `http://<host>:30000`. Additionally you can also access the tool cockpit which can be reached on the address `http://<host>:9090`.
+Monitoring can be done using the Kubernetes Dashboard UI. It can be reached on the address `http://172.30.0.100`.
 
 Grafana can be accessed (sometimes has issue with the URL):
 [source,bash]
