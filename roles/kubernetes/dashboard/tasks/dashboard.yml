@@ -1,17 +1,26 @@
 ---
 - name: "dashboard : install"
-  command: "/usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v{{ kubernetes_dashboard_version }}/src/deploy/alternative/kubernetes-dashboard.yaml"
+  command: >
+    /usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf
+      apply
+        --filename=https://raw.githubusercontent.com/kubernetes/dashboard/v{{ kubernetes_dashboard_version }}/src/deploy/alternative/kubernetes-dashboard.yaml
   when: (inventory_hostname == groups['master'][0])
 
 - name: "dashboard : create RBAC"
-  command: /usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf create clusterrolebinding permissive-binding --clusterrole=cluster-admin --user=admin --user=kubelet --group=system:serviceaccounts
-  ignore_errors: true
+  command: >
+    /usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf
+      create
+        clusterrolebinding permissive-binding
+        --clusterrole=cluster-admin
+        --user=admin
+        --user=kubelet
+        --group=system:serviceaccounts
   when: (inventory_hostname == groups['master'][0])
 
-- name: "dashboard : change service to NodePort"
-  command: /usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf patch service kubernetes-dashboard -p '{"spec":{"type":"NodePort"}}' --namespace=kube-system
+- include: patch-service-nodePort.yml
   when: (inventory_hostname == groups['master'][0])
+        and (kubernetes_dashboard_service_type | upper == "NODEPORT")
 
-- name: "dashboard : set NodePort to fixed value of 30000"
-  command: /usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf patch service kubernetes-dashboard -p '{"spec":{"ports":[{"port":80,"nodePort":30000}]}}' --namespace=kube-system
+- include: patch-service-loadBalancer.yml
   when: (inventory_hostname == groups['master'][0])
+        and (kubernetes_dashboard_service_type | upper == "LOADBALANCER")

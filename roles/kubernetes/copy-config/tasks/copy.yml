@@ -1,0 +1,6 @@
+---
+- name: copy to destination
+  fetch:
+    src: "{{ kubernetes_copy_config_temp_directory.path }}/cluster.conf"
+    dest: "{{ kubernetes_copy_config_dest }}"
+    flat: yes

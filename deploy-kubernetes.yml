@@ -38,21 +38,29 @@
   roles:
     - kubernetes
     - weave/net/kubernetes
+    - kubernetes/wait-ready
   tags:
     - kubernetes
 
 - hosts:
-    - centos
+    - master[0]
+  vars:
+    - helm_version: 2.10.0
   roles:
-    - kubernetes/wait-ready
+    - helm
+  tags:
+    - helm
+
+- hosts:
+    - master[0]
+  roles:
+    - metallb
+  tags:
+    - metallb
+
+- hosts:
+    - master[0]
+  roles:
     - kubernetes/dashboard
   tags:
-    - kubernetes
     - dashboard
-
-- hosts:
-    - centos
-  roles:
-    - helm
-  tags:
-    - helm

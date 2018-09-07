@@ -1,0 +1,41 @@
+---
+- name: create temporary directory
+  tempfile:
+    state: directory
+    suffix: copy_config
+  register: kubernetes_copy_config_temp_directory
+
+- name: copy config to temp file
+  copy:
+    src: "/etc/kubernetes/admin.conf"
+    dest: "{{ kubernetes_copy_config_temp_directory.path }}/cluster.conf"
+    remote_src: yes
+
+- name: change naming
+  replace:
+    dest: "{{ kubernetes_copy_config_temp_directory.path }}/cluster.conf"
+    regexp: "([@]?)kubernetes"
+    replace: "\\1{{ kubernetes_copy_config_cluster_name | mandatory }}"
+
+- name: change context name
+  replace:
+    dest: "{{ kubernetes_copy_config_temp_directory.path }}/cluster.conf"
+    regexp: "{{ kubernetes_copy_config_cluster_name }}-admin@{{ kubernetes_copy_config_cluster_name }}"
+    replace: "{{ kubernetes_copy_config_cluster_name }}"
+
+- name: copy to destination
+  fetch:
+    src: "{{ kubernetes_copy_config_temp_directory.path }}/cluster.conf"
+    dest: "/tmp/kubernetes_copy_config.conf"
+    flat: yes
+
+- include: merge.yml
+  when: kubernetes_copy_config_mode | upper == "MERGE"
+
+- include: copy.yml
+  when: kubernetes_copy_config_mode | upper == "COPY"
+
+- name: delete temporary directory
+  file:
+    state: absent
+    path: "{{ kubernetes_copy_config_temp_directory.path }}"

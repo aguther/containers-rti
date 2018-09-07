@@ -1,7 +1,7 @@
 ---
 - name: "check deployed"
   stat:
-    path: "{{ helm_bin_path }}"
+    path: "/usr/bin/helm"
   register: helm_check_deployed
   when: (inventory_hostname == groups['master'][0])
 
@@ -10,7 +10,7 @@
         and not(helm_check_deployed.stat.exists)
 
 - name: "check init"
-  shell: "{{ helm_bin_path }} list"
+  shell: "/usr/bin/helm list --kubeconfig=/etc/kubernetes/admin.conf"
   failed_when: no
   changed_when: no
   register: helm_check_init

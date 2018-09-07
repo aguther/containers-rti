@@ -1,13 +1,15 @@
 ---
-- name: set kernel configuration
-  copy:
-    src: k8s.conf
-    dest: /etc/sysctl.d/k8s.conf
-  register: kubernetes_set_kernel_configuration
+- name: "kernel : enable net.bridge.bridge-nf-call-ip6tables"
+  sysctl:
+    name: net.bridge.bridge-nf-call-ip6tables
+    value: "1"
+    state: present
 
-- name: reload kernel configuration
-  command: /usr/sbin/sysctl --system
-  when: kubernetes_set_kernel_configuration.changed
+- name: "kernel : enable net.bridge.bridge-nf-call-iptables"
+  sysctl:
+    name: net.bridge.bridge-nf-call-iptables
+    value: "1"
+    state: present
 
 - name: add repository
   yum_repository:
@@ -24,10 +26,18 @@
     name: "{{ item }}"
     state: present
   with_items:
+    - yum-versionlock
     - bash-completion
-    - kubeadm
-    - kubectl
-    - kubelet
+    - "kubectl{%if kubernetes_version != 'latest' %}-{{ kubernetes_version }}{% endif %}"
+    - "kubelet{%if kubernetes_version != 'latest' %}-{{ kubernetes_version }}{% endif %}"
+    - "kubeadm{%if kubernetes_version != 'latest' %}-{{ kubernetes_version }}{% endif %}"
+  register: kubernetes_install_packages
+
+- name: lock version
+  command: "yum versionlock add kubeadm kubectl kubelet"
+  args:
+    warn: no
+  when: kubernetes_version != 'latest' and kubernetes_install_packages.changed
 
 - name: enable and start
   service:

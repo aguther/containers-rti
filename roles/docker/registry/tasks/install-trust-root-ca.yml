@@ -28,6 +28,7 @@
     state: absent
     path: "/tmp/{{ docker_registry_certificate_root_filename }}.crt"
   when: (inventory_hostname == groups['master'][0])
+  delegate_to: 127.0.0.1
 
 - name: update trust
   command: "update-ca-trust"

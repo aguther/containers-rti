@@ -47,10 +47,9 @@
   register: helm_init_check_tiller
 
 - name: "tiller : init"
-  shell: "{{ helm_bin_directory }}/helm init --service-account tiller --wait"
+  shell: "/usr/bin/helm init --kubeconfig=/etc/kubernetes/admin.conf --service-account tiller --wait"
   environment:
     HELM_HOME: "{{ helm_user_home }}/.helm"
-    KUBECONFIG: "{{ helm_kubeconfig }}"
   when: helm_init_check_tiller.stdout | int == 0
 
 - name: set permissions

@@ -1,0 +1,37 @@
+---
+- name: "dashboard : service : loadBalancer : set name"
+  command: >
+    /usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf
+      patch service
+        kubernetes-dashboard
+        --namespace=kube-system
+        --type=json
+        --patch='[ { "op": "add", "path": "/spec/ports/0/name", "value": "http" } ]'
+
+- name: "dashboard : service : loadBalancer : change type"
+  command: >
+    /usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf
+      patch service
+        kubernetes-dashboard
+        --namespace=kube-system
+        --type=json
+        --patch='[ { "op": "replace", "path": "/spec/type", "value": {{ kubernetes_dashboard_service_type }} } ]'
+
+- name: "dashboard : service : loadBalancer : set port"
+  command: >
+    /usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf
+      patch service
+        kubernetes-dashboard
+        --namespace=kube-system
+        --type=json
+        --patch='[ { "op": "replace", "path": "/spec/ports/0/port", "value": {{ kubernetes_dashboard_service_port }} } ]'
+  when: kubernetes_dashboard_service_port != 80
+
+- name: "dashboard : service : loadBalancer : set address"
+  command: >
+    /usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf
+      patch service
+        kubernetes-dashboard
+        --namespace=kube-system
+        --type=json
+        --patch='[ { "op": "add", "path": "/spec/loadBalancerIP", "value": {{ kubernetes_dashboard_service_ip }} } ]'

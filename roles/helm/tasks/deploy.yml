@@ -18,7 +18,7 @@
 - name: install binary
   copy:
     src: "{{ helm_temp_directory.path }}/linux-amd64/helm"
-    dest: "{{ helm_bin_path }}"
+    dest: "/usr/bin/helm"
     remote_src: yes
     owner: root
     group: root

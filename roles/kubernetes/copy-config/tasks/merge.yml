@@ -1,0 +1,36 @@
+---
+- name: delete context
+  shell: >
+    kubectl config delete-cluster {{ kubernetes_copy_config_cluster_name }}
+  failed_when: no
+  delegate_to: 127.0.0.1
+
+- name: delete cluster
+  shell: >
+    kubectl config delete-context {{ kubernetes_copy_config_cluster_name }}
+  failed_when: no
+  delegate_to: 127.0.0.1
+
+- name: copy to destination
+  fetch:
+    src: "{{ kubernetes_copy_config_temp_directory.path }}/cluster.conf"
+    dest: "/tmp/kubernetes_copy_config.conf"
+    flat: yes
+
+- name: merge configuration files
+  shell: >
+    KUBECONFIG=~/.kube/config:/tmp/kubernetes_copy_config.conf kubectl config view --flatten
+  register: kubernetes_copy_config_merge
+  delegate_to: 127.0.0.1
+
+- name: copy to destination
+  file:
+    dest: "{{ kubernetes_copy_config_dest | dirname }}"
+    state: directory
+  delegate_to: 127.0.0.1
+
+- name: copy to destination
+  copy:
+    content: "{{ kubernetes_copy_config_merge.stdout }}"
+    dest: "{{ kubernetes_copy_config_dest }}"
+  delegate_to: 127.0.0.1

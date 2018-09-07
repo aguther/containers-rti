@@ -79,7 +79,7 @@ Vagrant.configure("2") do |config|
   # create virtual machines
   ($vm_instances).downto(1) do |id|
     # create hostname
-    hostname = "%s%d" % [$vm_hostname_prefix, id]
+    hostname = "%s%d.vm" % [$vm_hostname_prefix, id]
     # define the virtual machine
     config.vm.define hostname, primary: (id == 1) ? true : false do |instance_config|
       # hostname within virtual machine
@@ -87,7 +87,7 @@ Vagrant.configure("2") do |config|
       # define image to be used
       instance_config.vm.box = "bento/centos-7.5"
       # enable synced folder
-      instance_config.vm.synced_folder ".", "/vagrant"
+      instance_config.vm.synced_folder ".", "/vagrant", mount_options: ["dmode=775,fmode=664"]
       # private network for connection between virtual machines
       instance_config.vm.network :private_network,
         ip: $vm_ip_template % (10 + id),
@@ -143,29 +143,32 @@ Vagrant.configure("2") do |config|
           ansible.skip_tags = "os-hosts"
           # groups
           ansible.groups = {
-            "master" => "%s1" % $vm_hostname_prefix,
-            "nodes" => "%s[2:%d]" % [$vm_hostname_prefix, $vm_instances],
+            "master" => "%s1.vm" % $vm_hostname_prefix,
+            "nodes" => "%s[2:%d].vm" % [$vm_hostname_prefix, $vm_instances],
             "centos:children" => [
               "master",
               "nodes",
             ],
             "centos:vars" => {
               "ansible_ssh_pass" => config.ssh.username,
+              "ansible_ssh_common_args" => "-o StrictHostKeyChecking=no",
+              "docker_group_users" => "vagrant",
+              "docker_registry_port" => "5000",
+              "docker_registry_auth_user" => "docker-registry",
+              "docker_registry_auth_password" => "P@ssw0rd",
+              "kubernetes_interface" => $vm_ip_interface_name,
+              "kubernetes_self_hosting" => "no",
+              "metallb_addresses" => [
+                "172.30.0.100-172.30.0.199"
+              ],
+              "kubernetes_dashboard_service_type" => "LoadBalancer",
+              "kubernetes_dashboard_service_port" => "80",
+              "kubernetes_dashboard_service_ip" => "172.30.0.100",
+              "consul_interface" => $vm_ip_interface_name,
+              "nomad_interface" => $vm_ip_interface_name,
             },
-            "datacenter-1" => "%s[1:%d]\n" % [$vm_hostname_prefix, $vm_instances / 2],
-            "datacenter-2" => "%s[%d:%d]\n" % [$vm_hostname_prefix, $vm_instances / 2 + 1, $vm_instances],
-          }
-          # extra variables to configure roles
-          ansible.extra_vars = {
-            docker_group_users: "vagrant",
-            consul_interface: $vm_ip_interface_name,
-            nomad_interface: $vm_ip_interface_name,
-            kubernetes_interface: $vm_ip_interface_name,
-            ansible_ssh_common_args: '-o StrictHostKeyChecking=no',
-            docker_registry_port: "5000",
-            docker_registry_auth_user: "docker-registry",
-            docker_registry_auth_password: "P@ssw0rd",
-            kubernetes_self_hosting: "no"
+            "datacenter-1" => "%s[1:%d].vm\n" % [$vm_hostname_prefix, $vm_instances / 2],
+            "datacenter-2" => "%s[%d:%d].vm\n" % [$vm_hostname_prefix, $vm_instances / 2 + 1, $vm_instances],
           }
         end
       end

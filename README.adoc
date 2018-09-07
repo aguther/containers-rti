@@ -44,23 +44,26 @@ Thanks to vagrant the deployment of the virtual machines is really easy. The con
 The virtual machines can be deployed with the following commands:
 [source,bash]
 ----
-# optional, default = 3
-export VM_INSTANCES=4
-# optional, default = none
-export PLAYBOOK=deploy-kubernetes.yml
-vagrant up
+./vagrant-deploy.sh --help
+./vagrant-deploy.sh --instances=4 --cpu=3 --memory=4096 --playbook=deploy-kubernetes.yml
 ----
 
 === Execution of additional playbooks after provisioning
 [source,bash]
 ----
-./run-playbook.sh <playbook>
+./vagrant-playbook.sh <playbook>
 ----
 
 === Shutdown
 [source,bash]
 ----
 vagrant halt
+----
+
+=== Startup
+[source,bash]
+----
+vagrant up
 ----
 
 === Destroy
@@ -77,16 +80,14 @@ Weave-Net is used to connect the containers on the different hosts.
 === Start
 [source,bash]
 ----
-export PLAYBOOK=deploy-docker-weave.yml
-vagrant destroy -f
-vagrant up
-./run-playbook.sh rti-perftest-docker-start.yml
+./vagrant-deploy.sh --playbook=deploy-docker-weave.yml
+./vagrant-playbook.sh rti-perftest-docker-start.yml
 ----
 
 === Stop
 [source,bash]
 ----
-./run-playbook.sh rti-perftest-docker-stop.yml
+./vagrant-playbook.sh rti-perftest-docker-stop.yml
 ----
 
 === Monitoring
@@ -101,7 +102,7 @@ Weave-Net is used to connect the containers on the different hosts. A network po
 === General
 
 ==== Monitoring
-Monitoring can be done using the Kubernetes Dashboard UI. It can be reached on the address `http://<host>:30000`. Additionally you can also access the tool cockpit which can be reached on the address `http://<host>:9090`.
+Monitoring can be done using the Kubernetes Dashboard UI. It can be reached on the address `http://172.30.0.100`.
 
 Grafana can be accessed (sometimes has issue with the URL):
 [source,bash]
@@ -110,21 +111,25 @@ vagrant ssh -c "kubectl proxy --address=172.30.0.11 --accept-hosts=.*"
 http://172.30.0.11:8001/api/v1/namespaces/kube-system/services/http:monitoring-grafana:80/proxy
 ----
 
+=== rook-cluster
+[source,bash]
+----
+./vagrant-playbook.sh kubernetes-rook-cluster.yml
+----
+
 === rti-perftest
 
 ==== Start
 [source,bash]
 ----
-export PLAYBOOK=deploy-kubernetes.yml
-vagrant destroy -f
-vagrant up
-./run-playbook.sh -e rti_perftest_id=1 -e rti_perftest_sub_count=2 rti-perftest-kubernetes-start.yml
+./vagrant-deploy.sh
+./vagrant-playbook.sh -e rti_perftest_id=1 -e rti_perftest_sub_count=2 rti-perftest-kubernetes-start.yml
 ----
 
 ==== Stop
 [source,bash]
 ----
-./run-playbook.sh -e rti_perftest_id=1 -e rti_perftest_sub_count=2 rti-perftest-kubernetes-stop.yml
+./vagrant-playbook.sh -e rti_perftest_id=1 -e rti_perftest_sub_count=2 rti-perftest-kubernetes-stop.yml
 ----
 
 === rti-shapes-demo
@@ -140,10 +145,10 @@ In order to start this example, you need to put the following docker images into
 [source,bash]
 ----
 # load docker images
-./run-playbook.sh load-docker-images.yml
+./vagrant-playbook.sh load-docker-images.yml
 
 # install helm chart for rti-shapes-demo
-./run-playbook.sh rti-shapes-demo.yml
+./vagrant-playbook.sh rti-shapes-demo.yml
 ----
 
 ==== Stop
@@ -160,16 +165,14 @@ In this scenario the rti-perftest example will be executed on a Nomad cluster us
 === Start
 [source,bash]
 ----
-export PLAYBOOK=deploy-nomad.yml
-vagrant destroy -f
-vagrant up
-./run-playbook.sh rti-perftest-nomad-start.yml
+./vagrant-deploy.sh --playbook=deploy-nomad.yml
+./vagrant-playbook.sh rti-perftest-nomad-start.yml
 ----
 
 === Stop
 [source,bash]
 ----
-./run-playbook.sh rti-perftest-nomad-stop.yml
+./vagrant-playbook.sh rti-perftest-nomad-stop.yml
 ----
 
 === Monitoring
