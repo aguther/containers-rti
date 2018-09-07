@@ -2,6 +2,7 @@
 - name: install chart
   command: >
     /usr/bin/helm install
+      --kubeconfig=/etc/kubernetes/admin.conf
       {% if helm_install_namespace is defined %} --namespace {{ helm_install_namespace }}{% endif %}
       {% if helm_install_name is defined %} --name {{ helm_install_name }}{% endif %}
       {{ helm_install_chart }}

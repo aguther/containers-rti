@@ -1,9 +1,6 @@
 ---
 - name: "check deployed"
-  command: >
-    /usr/bin/helm list
-      --short
-      metallb
+  command: "/usr/bin/helm list --kubeconfig=/etc/kubernetes/admin.conf --short metallb"
   changed_when: no
   register: metallb_check_deployed
   when: (inventory_hostname == groups['master'][0])
