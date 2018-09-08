@@ -58,7 +58,7 @@
 
 - include: setup-route.yml
 
-- include: init-cluster.yml
+- include: init-single-master.yml
   when: (hostvars[groups['master'][0]].kubeadm_deployed == false)
         and (inventory_hostname == groups['master'][0])
 
@@ -70,7 +70,7 @@
   when: (play_hosts | difference(hostvars[groups['master'][0]].kubernetes_nodes))
         and (inventory_hostname == groups['master'][0])
 
-- include: join-cluster.yml
+- include: join-nodes.yml
   when: (inventory_hostname in groups['nodes'])
         and not(inventory_hostname in hostvars[groups['master'][0]].kubernetes_nodes)
 
