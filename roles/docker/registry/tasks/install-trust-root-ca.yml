@@ -31,5 +31,5 @@
   delegate_to: 127.0.0.1
 
 - name: update trust
-  command: "update-ca-trust"
+  command: "/usr/bin/update-ca-trust"
   when: docker_registry_copy_certificates.changed

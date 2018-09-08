@@ -1,0 +1,15 @@
+---
+- include_role:
+    name: kubernetes/keepalived
+
+- include: init-multi-master-first.yml
+  when: inventory_hostname == groups['master'][0]
+
+- include: init-multi-master-pki.yml
+
+- name: "wait until first master is ready"
+  pause:
+    minutes: 1
+
+- include: init-multi-master-others.yml
+  when: inventory_hostname != groups['master'][0]

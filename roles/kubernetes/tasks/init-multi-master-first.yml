@@ -1,0 +1,25 @@
+---
+- name: "kubeadm : get version"
+  command: "/usr/bin/kubeadm version --output short"
+  register: kubernetes_kubeadm_get_version
+
+- name: "kubeadm : set version fact"
+  set_fact:
+    kubernetes_kubeadm_version: "{{ kubernetes_kubeadm_get_version.stdout }}"
+  when: kubernetes_kubeadm_get_version.stdout | regex_search('^v\d+.\d+.\d+$')
+
+- name: "kubeadm : configuration"
+  template:
+    src: kubeadm-config.yml.j2
+    dest: /tmp/kubeadm-config.yml
+    owner: root
+    group: root
+    mode: 0644
+
+- name: "kubeadm : init first master"
+  command: /usr/bin/kubeadm init --config /tmp/kubeadm-config.yml
+
+- name: "kubeadm : clean up"
+  file:
+    dest: /tmp/kubeadm-config.yml
+    state: absent

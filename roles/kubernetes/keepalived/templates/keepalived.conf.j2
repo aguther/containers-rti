@@ -29,7 +29,7 @@ vrrp_instance VI_1 {
         auth_pass {{ kubernetes_keepalived_auth_pass }}
     }
     virtual_ipaddress {
-        {{ kubernetes_keepalived_virtual_ip }}
+        {{ kubernetes_load_balancer_ip }}
     }
     track_script {
         check_apiserver

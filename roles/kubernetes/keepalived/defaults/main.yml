@@ -1,5 +1,5 @@
 ---
-# kubernetes_keepalived_virtual_ip: 
+# kubernetes_load_balancer_ip: 
 kubernetes_keepalived_virtual_router_id: 1
 kubernetes_keepalived_priority_master: 101
 kubernetes_keepalived_priority_backup: 100

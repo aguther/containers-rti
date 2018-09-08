@@ -21,6 +21,9 @@
     gpgcheck: false
     state: present
 
+- name: update trust
+  command: "/usr/bin/update-ca-trust"
+
 - name: install packages
   package:
     name: "{{ item }}"
@@ -60,7 +63,13 @@
 
 - include: init-single-master.yml
   when: (hostvars[groups['master'][0]].kubeadm_deployed == false)
+        and (groups['master'] | length == 1)
         and (inventory_hostname == groups['master'][0])
+
+- include: init-multi-master.yml
+  when: (hostvars[groups['master'][0]].kubeadm_deployed == false)
+        and (groups['master'] | length > 1)
+        and ('master' in group_names)
 
 - include_role:
     name: kubernetes/get-nodes

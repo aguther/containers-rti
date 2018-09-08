@@ -1,0 +1,25 @@
+apiVersion: kubeadm.k8s.io/v1alpha2
+kind: MasterConfiguration
+kubernetesVersion: {{ kubernetes_kubeadm_version }}
+apiServerCertSANs:
+- "{{ kubernetes_load_balancer }}"
+- "{{ kubernetes_load_balancer_ip }}"
+api:
+    controlPlaneEndpoint: "{{ kubernetes_load_balancer }}:{{ kubernetes_load_balancer_port }}"
+etcd:
+  local:
+    extraArgs:
+      listen-client-urls: "https://127.0.0.1:2379,https://{{ kubernetes_host_ipv4_address }}:2379"
+      advertise-client-urls: "https://{{ kubernetes_host_ipv4_address }}:2379"
+      listen-peer-urls: "https://{{ kubernetes_host_ipv4_address }}:2380"
+      initial-advertise-peer-urls: "https://{{ kubernetes_host_ipv4_address }}:2380"
+      initial-cluster: "{%- for host in groups['master'] -%}{{ host }}=https://{{ hostvars[host]['ansible_' + kubernetes_interface].ipv4.address }}:2380{%- if host == inventory_hostname -%}{%- break -%}{%- endif -%}{%- if loop.index < groups['master'] | length -%},{%- endif -%}{%- endfor -%}"
+{% if inventory_hostname != groups['master'][0] %}
+      initial-cluster-state: existing
+{% endif %}
+    serverCertSANs:
+      - {{ inventory_hostname }}
+      - {{ kubernetes_host_ipv4_address }}
+    peerCertSANs:
+      - {{ inventory_hostname }}
+      - {{ kubernetes_host_ipv4_address }}
