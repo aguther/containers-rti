@@ -14,6 +14,7 @@
     owner: root
     group: root
     mode: 0644
+  register: kubernetes_keepalived_configuration_service
   when: "'master' in group_names"
 
 - name: "configuration : health check script"
@@ -23,6 +24,7 @@
     owner: root
     group: root
     mode: 0755
+  register: kubernetes_keepalived_configuration_health_check_script
   when: "'master' in group_names"
 
 - name: "service : enable and start"
@@ -31,3 +33,11 @@
     state: started
     enabled: yes
   when: "'master' in group_names"
+
+- name: "service : restart"
+  service:
+    name: "keepalived.service"
+    state: restarted
+  when: ("'master' in group_names")
+        and ((kubernetes_keepalived_configuration_service.changed
+             or kubernetes_keepalived_configuration_health_check_script.changed))
