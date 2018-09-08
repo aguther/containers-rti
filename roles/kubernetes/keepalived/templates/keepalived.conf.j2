@@ -1,0 +1,37 @@
+! Configuration File for keepalived
+global_defs {
+  router_id LVS_DEVEL
+}
+
+vrrp_script check_apiserver {
+  script "/etc/keepalived/check_apiserver.sh"
+  interval 3
+  weight -2
+  fall 10
+  rise 2
+}
+
+vrrp_instance VI_1 {
+{% if inventory_hostname == groups['master'][0] %}
+    state MASTER
+{% else %}
+    state BACKUP
+{% endif %}
+    interface {{ kubernetes_interface }}
+    virtual_router_id {{ kubernetes_keepalived_virtual_router_id }}
+{% if inventory_hostname == groups['master'][0] %}
+    priority {{ kubernetes_keepalived_priority_master }}
+{% else %}
+    priority {{ kubernetes_keepalived_priority_backup }}
+{% endif %}
+    authentication {
+        auth_type PASS
+        auth_pass {{ kubernetes_keepalived_auth_pass }}
+    }
+    virtual_ipaddress {
+        {{ kubernetes_keepalived_virtual_ip }}
+    }
+    track_script {
+        check_apiserver
+    }
+}

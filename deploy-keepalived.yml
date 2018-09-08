@@ -1,0 +1,20 @@
+---
+- hosts:
+    - centos
+  roles:
+    - os/hostname
+    - os/hosts
+    - os/proxy
+    - os/chrony
+    - os/selinux/not-enforcing
+    - os/firewall/disable
+    - os/swap/disable
+  tags:
+    - prepare
+
+- hosts:
+    - centos
+  roles:
+    - kubernetes/keepalived
+  tags:
+    - keepalived

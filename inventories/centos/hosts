@@ -1,8 +1,9 @@
 [master]
 centos-1.vm ansible_host=192.168.88.128 ipaddress=192.168.88.128
+centos-2.vm ansible_host=192.168.88.129 ipaddress=192.168.88.129
 
 [nodes]
-centos-2.vm ansible_host=192.168.88.129 ipaddress=192.168.88.129
+centos-3.vm ansible_host=192.168.88.131 ipaddress=192.168.88.131
 
 [centos:children]
 master
@@ -33,6 +34,7 @@ docker_registry_auth_password=P@ssw0rd
 # kubernetes
 kubernetes_interface=ens33
 kubernetes_self_hosting=False
+kubernetes_keepalived_virtual_ip=192.168.88.100
 
 # helm
 helm_user=root

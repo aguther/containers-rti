@@ -1,0 +1,33 @@
+---
+- name: "install"
+  package:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - keepalived
+  when: "'master' in group_names"
+
+- name: "configuration : service"
+  template:
+    src: keepalived.conf.j2
+    dest: /etc/keepalived/keepalived.conf
+    owner: root
+    group: root
+    mode: 0644
+  when: "'master' in group_names"
+
+- name: "configuration : health check script"
+  template:
+    src: check_apiserver.sh.j2
+    dest: /etc/keepalived/check_apiserver.sh
+    owner: root
+    group: root
+    mode: 0755
+  when: "'master' in group_names"
+
+- name: "service : enable and start"
+  service:
+    name: "keepalived.service"
+    state: started
+    enabled: yes
+  when: "'master' in group_names"
