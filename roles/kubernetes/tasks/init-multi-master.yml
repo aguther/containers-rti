@@ -13,3 +13,9 @@
 
 - include: init-multi-master-others.yml
   when: inventory_hostname != groups['master'][0]
+
+- name: taint master
+  command: >
+    /usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf
+      taint nodes
+      --all node-role.kubernetes.io/master-
