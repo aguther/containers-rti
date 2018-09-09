@@ -19,3 +19,4 @@
     /usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf
       taint nodes
       --all node-role.kubernetes.io/master-
+  when: inventory_hostname == groups['master'][0]
