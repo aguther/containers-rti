@@ -1,9 +1,10 @@
 [master]
 centos-1.vm ansible_host=192.168.88.128 ipaddress=192.168.88.128
-centos-2.vm ansible_host=192.168.88.129 ipaddress=192.168.88.129
-centos-3.vm ansible_host=192.168.88.131 ipaddress=192.168.88.131
 
 [nodes]
+centos-2.vm ansible_host=192.168.88.129 ipaddress=192.168.88.129
+#centos-3.vm ansible_host=192.168.88.131 ipaddress=192.168.88.131
+#centos-4.vm ansible_host=192.168.88.132 ipaddress=192.168.88.132
 
 [centos:children]
 master
