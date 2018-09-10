@@ -1,0 +1,12 @@
+---
+- name: install
+  package:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - yum-versionlock
+
+- name: lock version
+  command: "yum versionlock add docker"
+  args:
+    warn: no
