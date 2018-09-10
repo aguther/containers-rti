@@ -1,0 +1,9 @@
+---
+- name: get configuration file status
+  stat:
+    path: /etc/kubernetes/admin.conf
+  register: kubeadm_config_file
+
+- name: get configuration file status
+  set_fact:
+    kubeadm_deployed: "{{ kubeadm_config_file.stat.exists }}"

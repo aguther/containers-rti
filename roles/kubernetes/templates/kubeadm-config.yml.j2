@@ -13,10 +13,8 @@ etcd:
       advertise-client-urls: "https://{{ kubernetes_host_ipv4_address }}:2379"
       listen-peer-urls: "https://{{ kubernetes_host_ipv4_address }}:2380"
       initial-advertise-peer-urls: "https://{{ kubernetes_host_ipv4_address }}:2380"
-      initial-cluster: "{%- for host in groups['master'] -%}{{ host }}=https://{{ hostvars[host]['ansible_' + kubernetes_interface].ipv4.address }}:2380{%- if host == inventory_hostname -%}{%- break -%}{%- endif -%}{%- if loop.index < groups['master'] | length -%},{%- endif -%}{%- endfor -%}"
-{% if inventory_hostname != groups['master'][0] %}
-      initial-cluster-state: existing
-{% endif %}
+      initial-cluster: "{%- for host in groups['master'] -%}{{ host }}=https://{{ hostvars[host]['ansible_' + kubernetes_interface].ipv4.address }}:2380{%- if loop.index < groups['master'] | length -%},{%- endif -%}{%- endfor -%}"
+      initial-cluster-state: new
     serverCertSANs:
       - {{ inventory_hostname }}
       - {{ kubernetes_host_ipv4_address }}

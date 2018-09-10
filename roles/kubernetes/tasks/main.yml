@@ -1,88 +1,22 @@
 ---
-- name: "kernel : enable net.bridge.bridge-nf-call-ip6tables"
-  sysctl:
-    name: net.bridge.bridge-nf-call-ip6tables
-    value: "1"
-    state: present
+- include: prepare.yml
+  tags:
+    - kubernetes
+    - kubernetes-prepare
 
-- name: "kernel : enable net.bridge.bridge-nf-call-iptables"
-  sysctl:
-    name: net.bridge.bridge-nf-call-iptables
-    value: "1"
-    state: present
-
-- name: add repository
-  yum_repository:
-    file: kubernetes
-    name: Kubernetes
-    description: Kubernetes
-    baseurl: https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
-    enabled: true
-    gpgcheck: false
-    state: present
-
-- name: update trust
-  command: "/usr/bin/update-ca-trust"
-
-- name: install packages
-  package:
-    name: "{{ item }}"
-    state: present
-  with_items:
-    - yum-versionlock
-    - bash-completion
-    - "kubectl{%if kubernetes_version != 'latest' %}-{{ kubernetes_version }}{% endif %}"
-    - "kubelet{%if kubernetes_version != 'latest' %}-{{ kubernetes_version }}{% endif %}"
-    - "kubeadm{%if kubernetes_version != 'latest' %}-{{ kubernetes_version }}{% endif %}"
-  register: kubernetes_install_packages
-
-- name: lock version
-  command: "yum versionlock add kubeadm kubectl kubelet"
-  args:
-    warn: no
-  when: kubernetes_version != 'latest' and kubernetes_install_packages.changed
-
-- name: enable and start
-  service:
-    name: kubelet.service
-    state: started
-    enabled: yes
-
-- name: get configuration file status
-  stat:
-    path: /etc/kubernetes/admin.conf
-  register: kubeadm_config_file
+- include: get-status.yml
   when: (inventory_hostname == groups['master'][0])
+  tags:
+    - kubernetes
+    - kubernetes-init
 
-- name: get configuration file status
-  set_fact:
-    kubeadm_deployed: "{{ kubeadm_config_file.stat.exists }}"
-  when: (inventory_hostname == groups['master'][0])
-
-- include: setup-route.yml
-
-- include: init-single-master.yml
+- include: init.yml
   when: (hostvars[groups['master'][0]].kubeadm_deployed == false)
-        and (groups['master'] | length == 1)
-        and (inventory_hostname == groups['master'][0])
+  tags:
+    - kubernetes
+    - kubernetes-init
 
-- include: init-multi-master.yml
-  when: (hostvars[groups['master'][0]].kubeadm_deployed == false)
-        and (groups['master'] | length > 1)
-        and ('master' in group_names)
-
-- include_role:
-    name: kubernetes/get-nodes
-  when: (inventory_hostname == groups['master'][0])
-
-- include: create-token.yml
-  when: (play_hosts | difference(hostvars[groups['master'][0]].kubernetes_nodes))
-        and (inventory_hostname == groups['master'][0])
-
-- include: join-nodes.yml
-  when: (inventory_hostname in groups['nodes'])
-        and not(inventory_hostname in hostvars[groups['master'][0]].kubernetes_nodes)
-
-- include: delete-token.yml
-  when: (play_hosts | difference(hostvars[groups['master'][0]].kubernetes_nodes))
-        and (inventory_hostname == groups['master'][0])
+- include: join.yml
+  tags:
+    - kubernetes
+    - kubernetes-join

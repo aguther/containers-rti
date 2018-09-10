@@ -1,0 +1,8 @@
+---
+- include: init-single-master.yml
+  when: (groups['master'] | length == 1)
+        and (inventory_hostname == groups['master'][0])
+
+- include: init-multi-master.yml
+  when: (groups['master'] | length > 1)
+        and ('master' in group_names)

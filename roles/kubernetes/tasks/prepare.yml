@@ -1,0 +1,47 @@
+---
+- name: "kernel : enable net.bridge.bridge-nf-call-ip6tables"
+  sysctl:
+    name: net.bridge.bridge-nf-call-ip6tables
+    value: "1"
+    state: present
+
+- name: "kernel : enable net.bridge.bridge-nf-call-iptables"
+  sysctl:
+    name: net.bridge.bridge-nf-call-iptables
+    value: "1"
+    state: present
+
+- name: add repository
+  yum_repository:
+    file: kubernetes
+    name: Kubernetes
+    description: Kubernetes
+    baseurl: https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+    enabled: true
+    gpgcheck: false
+    state: present
+
+- name: update trust
+  command: "/usr/bin/update-ca-trust"
+
+- name: install packages
+  package:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - bash-completion
+    - "kubectl{%if kubernetes_version != 'latest' %}-{{ kubernetes_version }}{% endif %}"
+    - "kubelet{%if kubernetes_version != 'latest' %}-{{ kubernetes_version }}{% endif %}"
+    - "kubeadm{%if kubernetes_version != 'latest' %}-{{ kubernetes_version }}{% endif %}"
+  register: kubernetes_install_packages
+
+- include: prepare-lock-version.yml
+  when: kubernetes_version != 'latest' and kubernetes_install_packages.changed
+
+- name: enable and start
+  service:
+    name: kubelet.service
+    state: started
+    enabled: yes
+
+- include: setup-route.yml
