@@ -1,6 +1,5 @@
 ---
 kubernetes_version: "latest"
-kubernetes_self_hosting: no
 
 kubernetes_interface: "{{ ansible_default_ipv4.interface }}"
 kubernetes_host_ipv4_address: "{{ hostvars[inventory_hostname]['ansible_' + kubernetes_interface].ipv4.address }}"

@@ -1,20 +1,20 @@
 ---
-- include: install-dependencies.yml
+- include_tasks: install-dependencies.yml
   when: (inventory_hostname == groups['master'][0])
 
-- include: prepare-directories.yml
+- include_tasks: prepare-directories.yml
   when: (inventory_hostname == groups['master'][0])
 
-- include: create-root-ca.yml
+- include_tasks: create-root-ca.yml
   when: (inventory_hostname == groups['master'][0])
 
-- include: install-trust-root-ca.yml
+- include_tasks: install-trust-root-ca.yml
 
-- include: generate-host-certificate.yml
+- include_tasks: generate-host-certificate.yml
   when: (inventory_hostname == groups['master'][0])
 
-- include: create-user-password-configuration.yml
+- include_tasks: create-user-password-configuration.yml
   when: (inventory_hostname == groups['master'][0])
 
-- include: start-registry.yml
+- include_tasks: start-registry.yml
   when: (inventory_hostname == groups['master'][0])

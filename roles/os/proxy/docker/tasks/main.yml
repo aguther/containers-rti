@@ -1,4 +1,4 @@
 ---
-- include: docker.yml
+- include_tasks: docker.yml
   when: not((os_proxy_http_proxy is undefined) or (os_proxy_http_proxy is none) or (os_proxy_http_proxy | trim == ''))
         or not((os_proxy_https_proxy is undefined) or (os_proxy_https_proxy is none) or (os_proxy_https_proxy | trim == ''))

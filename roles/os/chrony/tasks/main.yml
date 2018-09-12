@@ -1,6 +1,6 @@
 ---
 - name: install
-  package:
+  yum:
     name: chrony
     state: present
 

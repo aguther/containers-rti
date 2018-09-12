@@ -6,16 +6,6 @@
   delegate_to: 127.0.0.1
   when: inventory_hostname == groups['master'][0]
 
-- name: "fetch : certificates : etcd"
-  fetch:
-    src: "/etc/kubernetes/pki/etcd/{{ item }}"
-    dest: "/tmp/kubernetes-certificates/pki/etcd/"
-    flat: yes
-  with_items:
-    - ca.crt
-    - ca.key
-  when: inventory_hostname == groups['master'][0]
-
 - name: "fetch : certificates : cluster"
   fetch:
     src: "/etc/kubernetes/pki/{{ item }}"
@@ -30,31 +20,12 @@
     - front-proxy-ca.key
   when: inventory_hostname == groups['master'][0]
 
-- name: "fetch : access configuration"
-  fetch:
-    src: "{{ item }}"
-    dest: "/tmp/kubernetes-certificates/"
-    flat: yes
-  with_items:
-    - /etc/kubernetes/admin.conf
-  when: inventory_hostname == groups['master'][0]
-
 - name: "ensure directories are created"
   file:
     dest: "{{ item }}"
     state: directory
   with_items:
     - /etc/kubernetes/pki
-    - /etc/kubernetes/pki/etcd
-  when: inventory_hostname != groups['master'][0]
-
-- name: "copy : certificates : etcd"
-  copy:
-    src: "/tmp/kubernetes-certificates/pki/etcd/{{ item }}"
-    dest: "/etc/kubernetes/pki/etcd/{{ item }}"
-  with_items:
-    - ca.crt
-    - ca.key
   when: inventory_hostname != groups['master'][0]
 
 - name: "copy : certificates : cluster"
@@ -68,14 +39,6 @@
     - sa.pub
     - front-proxy-ca.crt
     - front-proxy-ca.key
-  when: inventory_hostname != groups['master'][0]
-
-- name: "copy : access configuration"
-  copy:
-    src: "/tmp/kubernetes-certificates/{{ item }}"
-    dest: "/etc/kubernetes/{{ item }}"
-  with_items:
-    - admin.conf
   when: inventory_hostname != groups['master'][0]
 
 - name: "temp : delete"

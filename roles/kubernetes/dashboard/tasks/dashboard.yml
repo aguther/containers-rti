@@ -17,10 +17,10 @@
         --group=system:serviceaccounts
   when: (inventory_hostname == groups['master'][0])
 
-- include: patch-service-nodePort.yml
+- include_tasks: patch-service-nodePort.yml
   when: (inventory_hostname == groups['master'][0])
         and (kubernetes_dashboard_service_type | upper == "NODEPORT")
 
-- include: patch-service-loadBalancer.yml
+- include_tasks: patch-service-loadBalancer.yml
   when: (inventory_hostname == groups['master'][0])
         and (kubernetes_dashboard_service_type | upper == "LOADBALANCER")

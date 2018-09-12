@@ -1,6 +1,6 @@
 ---
 - name: "reboot recovery : install unzip"
-  package:
+  yum:
     name: "{{ item }}"
     state: present
   with_items:

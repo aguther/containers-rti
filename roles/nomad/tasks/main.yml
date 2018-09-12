@@ -1,6 +1,6 @@
 ---
 - name: prerequisites
-  package:
+  yum:
     name: unzip
     state: present
 

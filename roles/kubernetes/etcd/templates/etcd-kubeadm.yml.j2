@@ -1,0 +1,10 @@
+apiVersion: kubeadm.k8s.io/v1alpha2
+kind: MasterConfiguration
+etcd:
+  local:
+    serverCertSANs:
+    - {{ inventory_hostname }}
+    - {{ hostvars[inventory_hostname]['ansible_' + kubernetes_interface].ipv4.address }}
+    peerCertSANs:
+    - {{ inventory_hostname }}
+    - {{ hostvars[inventory_hostname]['ansible_' + kubernetes_interface].ipv4.address }}

@@ -1,8 +1,20 @@
 ---
-- include: init-single-master.yml
-  when: (groups['master'] | length == 1)
-        and (inventory_hostname == groups['master'][0])
+- include_role:
+    name: kubernetes/etcd
+  when: ('master' in group_names)
 
-- include: init-multi-master.yml
-  when: (groups['master'] | length > 1)
+- include_role:
+    name: kubernetes/keepalived
+  when: ('master' in group_names)
+
+- include_tasks: init-master.yml
+  when: (inventory_hostname == groups['master'][0])
+        and (hostvars[inventory_hostname].kubeadm_deployed == false)
+
+- include_tasks: init-pki.yml
+  when: ('master' in group_names)
+
+- include_tasks: init-master.yml
+  when: inventory_hostname != groups['master'][0]
         and ('master' in group_names)
+        and (hostvars[inventory_hostname].kubeadm_deployed == false)

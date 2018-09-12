@@ -5,6 +5,6 @@
   register: metallb_check_deployed
   when: (inventory_hostname == groups['master'][0])
 
-- include: deploy.yml
+- include_tasks: deploy.yml
   when: (inventory_hostname == groups['master'][0])
         and (metallb_check_deployed.stdout.find('metallb') == -1)

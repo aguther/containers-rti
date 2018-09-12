@@ -1,22 +1,23 @@
 ---
-- include: prepare.yml
+- include_tasks: prepare.yml
   tags:
     - kubernetes
     - kubernetes-prepare
 
-- include: get-status.yml
-  when: (inventory_hostname == groups['master'][0])
+- include_tasks: get-status.yml
   tags:
     - kubernetes
     - kubernetes-init
 
-- include: init.yml
-  when: (hostvars[groups['master'][0]].kubeadm_deployed == false)
+- include_tasks: init.yml
+  when: ('master' in group_names)
   tags:
     - kubernetes
     - kubernetes-init
 
-- include: join.yml
+- include_tasks: join.yml
+  when: ('nodes' in group_names)
+        or (inventory_hostname == groups['master'][0])
   tags:
     - kubernetes
     - kubernetes-join

@@ -29,10 +29,10 @@
     dest: "/tmp/kubernetes_copy_config.conf"
     flat: yes
 
-- include: merge.yml
+- include_tasks: merge.yml
   when: kubernetes_copy_config_mode | upper == "MERGE"
 
-- include: copy.yml
+- include_tasks: copy.yml
   when: kubernetes_copy_config_mode | upper == "COPY"
 
 - name: delete temporary directory

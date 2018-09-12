@@ -1,13 +1,13 @@
 ---
 - name: install
-  package:
+  yum:
     name: "{{ item }}"
     state: present
   with_items:
     - "docker{%if docker_version != 'latest' %}-{{ docker_version }}{% endif %}"
   register: docker_install_packages
 
-- include: lock-version.yml
+- include_tasks: lock-version.yml
   when: docker_version != 'latest' and docker_install_packages.changed
 
 - name: add group 'docker'

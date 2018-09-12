@@ -1,13 +1,13 @@
 ---
 - name: install epel-release
-  package:
+  yum:
     name: "{{ item }}"
     state: present
   with_items:
     - epel-release
 
 - name: install package dependencies
-  package:
+  yum:
     name: "{{ item }}"
     state: present
   with_items:

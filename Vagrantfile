@@ -157,7 +157,6 @@ Vagrant.configure("2") do |config|
               "docker_registry_auth_user" => "docker-registry",
               "docker_registry_auth_password" => "P@ssw0rd",
               "kubernetes_interface" => $vm_ip_interface_name,
-              "kubernetes_self_hosting" => "False",
               "metallb_addresses" => [
                 "172.30.0.100-172.30.0.199"
               ],

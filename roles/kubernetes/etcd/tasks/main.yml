@@ -1,0 +1,90 @@
+---
+- include_tasks: prepare.yml
+
+# -----------------------------------------------------------------------------
+
+- include_tasks: pki-config-create.yml
+  when: inventory_hostname == groups['master'][0]
+
+- include_tasks: pki-create-root.yml
+  when: inventory_hostname == groups['master'][0]
+
+- include_tasks: pki-create-client.yml
+  when: inventory_hostname == groups['master'][0]
+
+- include_tasks: pki-config-delete.yml
+  when: inventory_hostname == groups['master'][0]
+
+- name: "configure"
+  template:
+    src: etcd.conf.first.j2
+    dest: /etc/etcd/etcd.conf
+    owner: root
+    group: root
+    mode: 0644
+  when: inventory_hostname == groups['master'][0]
+
+- name: "start"
+  service:
+    name: etcd.service
+    state: started
+    enabled: yes
+  when: inventory_hostname == groups['master'][0]
+
+# -----------------------------------------------------------------------------
+
+- include_tasks: pki-config-create.yml
+  when: inventory_hostname != groups['master'][0]
+
+- include_tasks: pki-distribute.yml
+
+- include_tasks: pki-create-client.yml
+  when: inventory_hostname != groups['master'][0]
+
+- include_tasks: pki-config-delete.yml
+  when: inventory_hostname != groups['master'][0]
+
+- name: "configure"
+  template:
+    src: etcd.conf.other.j2
+    dest: /etc/etcd/etcd.conf
+    owner: root
+    group: root
+    mode: 0644
+  register: etcd_configure
+  when: inventory_hostname != groups['master'][0]
+
+# -----------------------------------------------------------------------------
+
+- name: "get members"
+  shell: /usr/bin/etcdctl --ca-file /etc/kubernetes/pki/etcd/ca.crt --cert-file /etc/kubernetes/pki/etcd/server.crt --key-file /etc/kubernetes/pki/etcd/server.key --endpoints https://{{ hostvars[groups['master'][0]]['ansible_' + kubernetes_interface].ipv4.address }}:2379 member list | awk '{ print $2 }' | awk 'BEGIN { FS = "=" } ; { print "-",$2 }'
+  register: etcd_get_members
+  changed_when: no
+  when: (inventory_hostname == groups['master'][0])
+
+- name: "identify missing members"
+  set_fact:
+    etcd_missing_members: "{{ groups['master'] | difference(etcd_get_members.stdout) }}"
+  when: (inventory_hostname == groups['master'][0])
+        and (etcd_get_members.rc == 0)
+
+- name: "add missing members"
+  shell: "/usr/bin/etcdctl --ca-file /etc/kubernetes/pki/etcd/ca.crt --cert-file /etc/kubernetes/pki/etcd/server.crt --key-file /etc/kubernetes/pki/etcd/server.key --endpoints https://{{ hostvars[groups['master'][0]]['ansible_' + kubernetes_interface].ipv4.address }}:2379 member add {{ inventory_hostname }} https://{{ hostvars[item]['ansible_' + kubernetes_interface].ipv4.address }}:2380"
+  when: (inventory_hostname == groups['master'][0])
+  loop: "{{ etcd_missing_members }}"
+
+# -----------------------------------------------------------------------------
+
+- name: "start"
+  service:
+    name: etcd.service
+    state: started
+    enabled: yes
+  when: inventory_hostname != groups['master'][0]
+
+# -----------------------------------------------------------------------------
+
+- name: set configuration for etcdctl
+  copy:
+    src: etcdctl.sh
+    dest: /etc/profile.d/etcdctl.sh

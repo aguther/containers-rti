@@ -1,7 +1,7 @@
 ---
-- include: environment.yml
+- include_tasks: environment.yml
   when: not((os_proxy_http_proxy is undefined) or (os_proxy_http_proxy is none) or (os_proxy_http_proxy | trim == ''))
         or not((os_proxy_https_proxy is undefined) or (os_proxy_https_proxy is none) or (os_proxy_https_proxy | trim == ''))
 
-- include: yum.yml
+- include_tasks: yum.yml
   when: not((os_proxy_http_proxy is undefined) or (os_proxy_http_proxy is none) or (os_proxy_http_proxy | trim == ''))

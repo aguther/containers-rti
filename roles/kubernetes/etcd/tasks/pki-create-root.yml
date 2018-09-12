@@ -1,0 +1,7 @@
+---
+- name: "pki : create etcd-ca"
+  command: >
+    /usr/bin/kubeadm alpha phase certs etcd-ca
+  args:
+    creates: /etc/kubernetes/pki/etcd/ca.*
+  when: inventory_hostname == groups['master'][0]

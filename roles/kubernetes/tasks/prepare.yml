@@ -25,7 +25,7 @@
   command: "/usr/bin/update-ca-trust"
 
 - name: install packages
-  package:
+  yum:
     name: "{{ item }}"
     state: present
   with_items:
@@ -35,7 +35,7 @@
     - "kubeadm{%if kubernetes_version != 'latest' %}-{{ kubernetes_version }}{% endif %}"
   register: kubernetes_install_packages
 
-- include: prepare-lock-version.yml
+- include_tasks: prepare-lock-version.yml
   when: kubernetes_version != 'latest' and kubernetes_install_packages.changed
 
 - name: enable and start
@@ -44,4 +44,4 @@
     state: started
     enabled: yes
 
-- include: setup-route.yml
+- include_tasks: setup-route.yml

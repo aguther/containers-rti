@@ -5,7 +5,7 @@
   register: kubernetes_dashboard_heapster_installed
   when: inventory_hostname == groups['master'][0]
 
-- include: heapster.yml
+- include_tasks: heapster.yml
   when: (inventory_hostname == groups['master'][0])
         and (kubernetes_dashboard_heapster_installed.stdout | int == 0)
 
@@ -15,6 +15,6 @@
   register: kubernetes_dashboard_dashboard_installed
   when: inventory_hostname == groups['master'][0]
 
-- include: dashboard.yml
+- include_tasks: dashboard.yml
   when: (inventory_hostname == groups['master'][0])
         and (kubernetes_dashboard_dashboard_installed.stdout | int == 0)
