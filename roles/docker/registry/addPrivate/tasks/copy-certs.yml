@@ -20,7 +20,7 @@
 
 - name: copy certificate
   copy:
-    src: "{{ docker_private_repo_local_cert_path }}/*.crt"
+    src: "{{ docker_private_repo_local_cert_path }}/"
     dest: "/etc/docker/certs.d/{{ docker_private_registry_url }}:{{ docker_private_registry_port }}/"
   when:
     docker_private_registry_port is defined
