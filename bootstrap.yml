@@ -1,0 +1,22 @@
+---
+- hosts:
+    - localhost
+  vars:
+    - ansible_become: no
+    - ansible_connection: local
+  roles:
+    - ssh/create-key
+
+- hosts:
+    - centos
+  vars:
+    - ansible_connection: ssh
+    - ansible_ssh_user: root
+    - ansible_ssh_pass: root
+  roles:
+    - ssh/distribute
+
+- hosts:
+    - centos
+  roles:
+    - test

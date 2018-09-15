@@ -1,0 +1,24 @@
+---
+- name: "create folder for ssh key"
+  file:
+    dest: .ssh
+    state: directory
+  run_once: yes
+  delegate_to: localhost
+
+- name: "generate ssh key"
+  command: "/usr/bin/ssh-keygen -b 2048 -t rsa -P '' -f .ssh/ansible"
+  args:
+    creates: .ssh/ansible*
+  run_once: yes
+  delegate_to: localhost
+
+- name: "set permissions"
+  file:
+    dest: ".ssh/{{ item }}"
+    mode: 0600
+  with_items:
+    - "ansible"
+    - "ansible.pub"
+  run_once: yes
+  delegate_to: localhost
