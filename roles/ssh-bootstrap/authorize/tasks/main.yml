@@ -1,0 +1,6 @@
+---
+- name: authorize key
+  authorized_key:
+    user: "{{ ssh_bootstrap_authorize_user }}"
+    state: present
+    key: "{{ lookup('file', '{{ ssh_bootstrap_authorize_public_key_file }}') }}"

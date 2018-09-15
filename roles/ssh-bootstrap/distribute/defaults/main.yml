@@ -1,0 +1,6 @@
+---
+ssh_bootstrap_distribute_src_key_file: "{{ playbook_dir }}/.ssh/ansible"
+ssh_bootstrap_distribute_src_public_key_file: "{{ ssh_bootstrap_distribute_src_key_file }}.pub"
+
+ssh_bootstrap_distribute_dst_key_file: "~/.ssh/id_rsa"
+ssh_bootstrap_distribute_dst_public_key_file: "{{ ssh_bootstrap_distribute_dst_key_file }}.pub"

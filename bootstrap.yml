@@ -1,22 +1,18 @@
 ---
 - hosts:
-    - localhost
+    - 127.0.0.1
   vars:
     - ansible_become: no
     - ansible_connection: local
   roles:
-    - ssh/create-key
+    - ssh-bootstrap/create-key
 
 - hosts:
     - centos
   vars:
     - ansible_connection: ssh
-    - ansible_ssh_user: root
-    - ansible_ssh_pass: root
+    - ansible_ssh_user: "{{ ssh_bootstrap_user }}"
+    - ansible_ssh_pass: "{{ ssh_bootstrap_password }}"
   roles:
-    - ssh/distribute
-
-- hosts:
-    - centos
-  roles:
-    - test
+    - ssh-bootstrap/authorize
+    - ssh-bootstrap/distribute

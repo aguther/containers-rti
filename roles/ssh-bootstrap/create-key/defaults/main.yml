@@ -1,0 +1,3 @@
+---
+ssh_bootstrap_create_key_directory: "{{ playbook_dir }}/.ssh"
+ssh_bootstrap_create_key_filename: "ansible"

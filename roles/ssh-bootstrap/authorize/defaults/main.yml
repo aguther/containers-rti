@@ -1,0 +1,3 @@
+---
+ssh_bootstrap_authorize_user: root
+ssh_bootstrap_authorize_public_key_file: "{{ playbook_dir }}/.ssh/ansible.pub"

@@ -1,6 +1,0 @@
----
-- name: authorize key
-  authorized_key:
-    user: root
-    state: present
-    key: "{{ lookup('file', '.ssh/ansible.pub') }}"

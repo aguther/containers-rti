@@ -1,0 +1,12 @@
+---
+- name: copy key
+  copy:
+    src: "{{ ssh_bootstrap_distribute_src_key_file }}"
+    dest: "{{ ssh_bootstrap_distribute_dst_key_file }}"
+    mode: 0600
+
+- name: copy public key
+  copy:
+    src: "{{ ssh_bootstrap_distribute_src_public_key_file }}"
+    dest: "{{ ssh_bootstrap_distribute_dst_public_key_file }}"
+    mode: 0600

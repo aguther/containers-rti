@@ -1,0 +1,24 @@
+---
+- name: "create folder for ssh key"
+  file:
+    dest: "{{ ssh_bootstrap_create_key_directory }}"
+    state: directory
+  run_once: yes
+  delegate_to: 127.0.0.1
+
+- name: "generate ssh key"
+  command: "/usr/bin/ssh-keygen -b 2048 -t rsa -P '' -f {{ ssh_bootstrap_create_key_directory }}/{{ ssh_bootstrap_create_key_filename }}"
+  args:
+    creates: "{{ ssh_bootstrap_create_key_directory }}/{{ ssh_bootstrap_create_key_filename }}*"
+  run_once: yes
+  delegate_to: 127.0.0.1
+
+- name: "set permissions"
+  file:
+    dest: "{{ ssh_bootstrap_create_key_directory }}/{{ item }}"
+    mode: 0600
+  with_items:
+    - "{{ ssh_bootstrap_create_key_filename }}"
+    - "{{ ssh_bootstrap_create_key_filename }}.pub"
+  run_once: yes
+  delegate_to: 127.0.0.1
