@@ -3,6 +3,7 @@
   file:
     dest: "/tmp/kubernetes-certificates"
     state: directory
+    mode: 0777
   delegate_to: 127.0.0.1
   when: inventory_hostname == groups['master'][0]
 
