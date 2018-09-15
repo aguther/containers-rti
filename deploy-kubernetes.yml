@@ -1,6 +1,7 @@
 ---
 - hosts:
     - centos
+  any_errors_fatal: true
   roles:
     - os/hostname
     - os/hosts
@@ -14,6 +15,7 @@
 
 - hosts:
     - centos
+  any_errors_fatal: true
   roles:
     - docker/el7
   tags:
@@ -21,6 +23,7 @@
 
 - hosts:
     - centos
+  any_errors_fatal: true
   roles:
     - os/proxy/docker
   tags:
@@ -28,6 +31,7 @@
 
 - hosts:
     - centos
+  any_errors_fatal: true
   roles:
     - docker/registry
   tags:
@@ -35,6 +39,7 @@
 
 - hosts:
     - centos
+  any_errors_fatal: true
   roles:
     - kubernetes
     - weave/net/kubernetes
@@ -44,6 +49,7 @@
 
 - hosts:
     - master[0]
+  any_errors_fatal: true
   vars:
     - helm_version: "2.11.0-rc.2"
   roles:
@@ -53,6 +59,7 @@
 
 - hosts:
     - master[0]
+  any_errors_fatal: true
   roles:
     - metallb
   tags:
@@ -60,6 +67,7 @@
 
 - hosts:
     - master[0]
+  any_errors_fatal: true
   roles:
     - kubernetes/dashboard
   tags:
