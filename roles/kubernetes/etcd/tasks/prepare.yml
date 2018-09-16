@@ -1,5 +1,0 @@
----
-- name: "install : etcd"
-  yum:
-    name: etcd
-    state: present

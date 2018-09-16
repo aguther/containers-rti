@@ -1,99 +1,88 @@
 ---
-- include_tasks: prepare.yml
+- name: "get members"
+  command: /usr/bin/etcdctl --ca-file /etc/kubernetes/pki/etcd/ca.crt --cert-file /etc/kubernetes/pki/etcd/server.crt --key-file /etc/kubernetes/pki/etcd/server.key --endpoints https://{{ hostvars[groups['master'][0]].ipaddress }}:2379 member list
+  register: etcd_get_members
+  when: (inventory_hostname != groups['master'][0])
+  delegate_to: "{{ groups['master'][0] }}"
+  changed_when: no
+
+- name: "get members : print stdout"
+  debug:
+    msg: "{{ etcd_get_members.stdout }}"
+  when: (inventory_hostname != groups['master'][0])
+
+- name: "add missing members"
+  command: "/usr/bin/etcdctl --ca-file /etc/kubernetes/pki/etcd/ca.crt --cert-file /etc/kubernetes/pki/etcd/server.crt --key-file /etc/kubernetes/pki/etcd/server.key --endpoints https://{{ hostvars[groups['master'][0]].ipaddress }}:2379 member add {{ inventory_hostname }} https://{{ hostvars[inventory_hostname].ipaddress }}:2380"
+  register: etcd_add_member
+  when: (inventory_hostname != groups['master'][0])
+        and not(etcd_get_members.stdout is search(inventory_hostname))
+  delegate_to: "{{ groups['master'][0] }}"
+
+- name: "add member : print stdout"
+  debug:
+    msg: "{{ etcd_add_member.stdout }}"
+  when: (inventory_hostname != groups['master'][0])
+        and (etcd_add_member.changed)
 
 # -----------------------------------------------------------------------------
 
-- include_tasks: pki-config-create.yml
-  when: inventory_hostname == groups['master'][0]
+- name: "get members : set initial cluster"
+  set_fact:
+    etcd_add_member_initial_cluster: |
+      {{ inventory_hostname }}=https://{{ hostvars[inventory_hostname].ipaddress }}:2380
+  when: (inventory_hostname == groups['master'][0])
+        or not(etcd_add_member.changed)
 
-- include_tasks: pki-create-root.yml
-  when: inventory_hostname == groups['master'][0]
+- name: "get members : set initial cluster"
+  set_fact:
+    etcd_add_member_initial_cluster: "{{ etcd_add_member.stdout | regex_search('ETCD_INITIAL_CLUSTER=\"(.*)\"', '\\1') | list | first }}"
+  when: (inventory_hostname != groups['master'][0])
+        and (etcd_add_member.changed)
 
-- include_tasks: pki-create-client.yml
-  when: inventory_hostname == groups['master'][0]
-
-- name: "configure"
-  template:
-    src: etcd.conf.first.j2
-    dest: /etc/etcd/etcd.conf
-    owner: root
-    group: root
-    mode: 0644
-  when: inventory_hostname == groups['master'][0]
-
-- name: "start"
-  service:
-    name: etcd.service
-    state: started
-    enabled: yes
-  when: inventory_hostname == groups['master'][0]
+- name: "get members : print initial cluster"
+  debug:
+    msg: "{{ etcd_add_member_initial_cluster }}"
 
 # -----------------------------------------------------------------------------
 
-- include_tasks: pki-config-create.yml
-  when: inventory_hostname != groups['master'][0]
+- name: "get members : set initial cluster state"
+  set_fact:
+    etcd_add_member_initial_cluster_state: new
+  when: (inventory_hostname == groups['master'][0])
+        or not(etcd_add_member.changed)
 
-- include_tasks: pki-distribute.yml
+- name: "get members : set initial cluster state"
+  set_fact:
+    etcd_add_member_initial_cluster_state: "{{ etcd_add_member.stdout | regex_search('ETCD_INITIAL_CLUSTER_STATE=\"(.*)\"', '\\1') | list | first }}"
+  when: (inventory_hostname != groups['master'][0])
+        and (etcd_add_member.changed)
 
-- include_tasks: pki-create-client.yml
-  when: inventory_hostname != groups['master'][0]
+- name: "get members : print initial cluster state"
+  debug:
+    msg: "{{ etcd_add_member_initial_cluster_state }}"
+
+# -----------------------------------------------------------------------------
 
 - name: "configure"
   template:
-    src: etcd.conf.other.j2
+    src: etcd.conf.j2
     dest: /etc/etcd/etcd.conf
     owner: root
     group: root
     mode: 0644
   register: etcd_configure
-  when: inventory_hostname != groups['master'][0]
-
-# -----------------------------------------------------------------------------
-
-- name: "get members"
-  shell: /usr/bin/etcdctl --ca-file /etc/kubernetes/pki/etcd/ca.crt --cert-file /etc/kubernetes/pki/etcd/server.crt --key-file /etc/kubernetes/pki/etcd/server.key --endpoints https://{{ hostvars[groups['master'][0]].ipaddress }}:2379 member list | awk '{ print $2 }' | awk 'BEGIN { FS = "=" } ; { print "-",$2 }'
-  register: etcd_get_members
-  changed_when: no
   when: (inventory_hostname == groups['master'][0])
-
-- name: "get members : print stdout"
-  debug:
-    msg: "{{ etcd_get_members.stdout }}"
-  when: (inventory_hostname == groups['master'][0])
-
-- name: "get members : print stderr"
-  debug:
-    msg: "{{ etcd_get_members.stderr }}"
-  when: (inventory_hostname == groups['master'][0])
-
-- name: "identify missing members"
-  set_fact:
-    etcd_missing_members: "{{ groups['master'] | difference(etcd_get_members.stdout) }}"
-  when: (inventory_hostname == groups['master'][0])
-        and (etcd_get_members.rc == 0)
-
-- name: "identify missing members : print"
-  debug:
-    msg: "{{ etcd_missing_members }}"
-  when: (inventory_hostname == groups['master'][0])
-
-- name: "add missing members"
-  shell: "/usr/bin/etcdctl --ca-file /etc/kubernetes/pki/etcd/ca.crt --cert-file /etc/kubernetes/pki/etcd/server.crt --key-file /etc/kubernetes/pki/etcd/server.key --endpoints https://{{ hostvars[groups['master'][0]].ipaddress }}:2379 member add {{ item }} https://{{ hostvars[item].ipaddress }}:2380"
-  when: (inventory_hostname == groups['master'][0])
-  loop: "{{ etcd_missing_members }}"
-
-# -----------------------------------------------------------------------------
+        or (etcd_add_member.changed)
 
 - name: "start"
   service:
     name: etcd.service
     state: started
     enabled: yes
-  when: inventory_hostname != groups['master'][0]
 
 # -----------------------------------------------------------------------------
 
-- name: set configuration for etcdctl
-  copy:
-    src: etcdctl.sh
-    dest: /etc/profile.d/etcdctl.sh
+- name: "wait for cluster to be ready"
+  pause:
+    seconds: 15
+  when: (etcd_add_member.changed)

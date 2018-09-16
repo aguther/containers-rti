@@ -65,16 +65,17 @@
   any_errors_fatal: true
   roles:
     - kubernetes/prepare
+    - kubernetes/keepalived
+    - kubernetes/etcd/prepare
   tags:
     - kubernetes
 
 - hosts:
     - master
   any_errors_fatal: true
-  #serial: 1
+  serial: 1
   roles:
     - kubernetes/etcd
-    - kubernetes/keepalived
   tags:
     - kubernetes
 

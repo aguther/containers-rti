@@ -23,9 +23,9 @@ ETCD_ADVERTISE_CLIENT_URLS="https://{{ hostvars[inventory_hostname].ipaddress }}
 #ETCD_DISCOVERY_FALLBACK="proxy"
 #ETCD_DISCOVERY_PROXY=""
 #ETCD_DISCOVERY_SRV=""
-ETCD_INITIAL_CLUSTER="{%- for host in groups['master'] -%}{{ host }}=https://{{ hostvars[host].ipaddress }}:2380{%- if loop.index < groups['master'] | length -%},{%- endif -%}{%- endfor -%}"
+ETCD_INITIAL_CLUSTER="{{ etcd_add_member_initial_cluster }}"
 ETCD_INITIAL_CLUSTER_TOKEN="etcd-cluster"
-ETCD_INITIAL_CLUSTER_STATE="existing"
+ETCD_INITIAL_CLUSTER_STATE="{{ etcd_add_member_initial_cluster_state }}"
 #ETCD_STRICT_RECONFIG_CHECK="true"
 #ETCD_ENABLE_V2="true"
 #
