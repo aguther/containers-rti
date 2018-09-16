@@ -1,13 +1,19 @@
 ---
 - name: delete context
   shell: >
-    kubectl config delete-cluster {{ kubernetes_copy_config_cluster_name }}
+    kubectl config unset clusters.{{ kubernetes_copy_config_cluster_name }}
   failed_when: no
   delegate_to: 127.0.0.1
 
 - name: delete cluster
   shell: >
-    kubectl config delete-context {{ kubernetes_copy_config_cluster_name }}
+    kubectl config unset contexts.{{ kubernetes_copy_config_cluster_name }}
+  failed_when: no
+  delegate_to: 127.0.0.1
+
+- name: delete user
+  shell: >
+    kubectl config unset users.{{ kubernetes_copy_config_cluster_name }}-admin
   failed_when: no
   delegate_to: 127.0.0.1
 

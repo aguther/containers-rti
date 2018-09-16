@@ -20,9 +20,11 @@
     enabled: true
     gpgcheck: false
     state: present
+  register: kubernetes_add_repository
 
 - name: update trust
   command: "/usr/bin/update-ca-trust"
+  when: kubernetes_add_repository.changed
 
 - name: install packages
   yum:

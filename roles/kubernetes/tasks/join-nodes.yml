@@ -4,4 +4,4 @@
     /usr/bin/kubeadm join
       --discovery-token-unsafe-skip-ca-verification
       --token={{ hostvars[groups['master'][0]].kubeadm_token }}
-      {{ hostvars[groups['master'][0]]['ansible_' + kubernetes_interface].ipv4.address }}:6443
+      {{ hostvars[groups['master'][0]].ipaddress }}:6443

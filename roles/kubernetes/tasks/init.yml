@@ -1,12 +1,4 @@
 ---
-- include_role:
-    name: kubernetes/etcd
-  when: ('master' in group_names)
-
-- include_role:
-    name: kubernetes/keepalived
-  when: ('master' in group_names)
-
 - include_tasks: init-master.yml
   when: (inventory_hostname == groups['master'][0])
         and (hostvars[inventory_hostname].kubeadm_deployed == false)

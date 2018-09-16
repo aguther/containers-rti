@@ -2,7 +2,7 @@
 - name: "pki : create config"
   template:
     src: etcd-kubeadm.yml.j2
-    dest: /tmp/etcd-kubeadm.yml
+    dest: /etc/kubernetes/kubeadm-etcd.yml
     owner: root
     group: root
     mode: 0644

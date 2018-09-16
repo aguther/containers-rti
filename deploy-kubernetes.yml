@@ -1,5 +1,27 @@
 ---
 - hosts:
+    - 127.0.0.1
+  vars:
+    - ansible_become: no
+    - ansible_connection: local
+  roles:
+    - ssh-bootstrap/create-key
+  tags:
+    - ssh
+
+- hosts:
+    - centos
+  vars:
+    - ansible_connection: ssh
+    - ansible_ssh_user: "{{ ssh_bootstrap_user }}"
+    - ansible_ssh_pass: "{{ ssh_bootstrap_password }}"
+  roles:
+    - ssh-bootstrap/authorize
+    - ssh-bootstrap/distribute
+  tags:
+    - ssh
+
+- hosts:
     - centos
   any_errors_fatal: true
   roles:
@@ -10,6 +32,7 @@
     - os/selinux/not-enforcing
     - os/firewall/disable
     - os/swap/disable
+    - os/rsync
   tags:
     - prepare
 
@@ -36,6 +59,24 @@
     - docker/registry
   tags:
     - docker-registry
+
+- hosts:
+    - centos
+  any_errors_fatal: true
+  roles:
+    - kubernetes/prepare
+  tags:
+    - kubernetes
+
+- hosts:
+    - master
+  any_errors_fatal: true
+  #serial: 1
+  roles:
+    - kubernetes/etcd
+    - kubernetes/keepalived
+  tags:
+    - kubernetes
 
 - hosts:
     - centos

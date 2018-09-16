@@ -1,5 +1,6 @@
 docker-images/
 .kube/
+.ssh/
 **/.vagrant
 *.retry
 *.log

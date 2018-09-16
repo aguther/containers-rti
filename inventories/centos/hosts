@@ -1,10 +1,10 @@
 [master]
-centos-1.vm ansible_host=192.168.88.128 ipaddress=192.168.88.128
-centos-2.vm ansible_host=192.168.88.129 ipaddress=192.168.88.129
+centos-1.vm ansible_host=192.168.88.201 ipaddress=192.168.88.201
+centos-2.vm ansible_host=192.168.88.202 ipaddress=192.168.88.202
+#centos-3.vm ansible_host=192.168.88.203 ipaddress=192.168.88.203
 
 [nodes]
-centos-3.vm ansible_host=192.168.88.131 ipaddress=192.168.88.131
-centos-4.vm ansible_host=192.168.88.132 ipaddress=192.168.88.132
+centos-4.vm ansible_host=192.168.88.204 ipaddress=192.168.88.204
 
 [centos:children]
 master
@@ -17,8 +17,12 @@ ansible_become_method=sudo
 ansible_become_user=root
 ansible_connection=ssh
 ansible_ssh_user=root
-ansible_ssh_pass=root
-#ansible_ssh_private_key_file=.ssh/ansible
+#ansible_ssh_pass=root
+ansible_ssh_private_key_file=.ssh/ansible
+
+# ssh bootstrap
+ssh_bootstrap_user=root
+ssh_bootstrap_password=root
 
 # proxy
 #os_proxy_http_proxy='http://X:3128'
@@ -35,8 +39,8 @@ docker_registry_auth_password=P@ssw0rd
 
 # kubernetes
 kubernetes_interface=ens33
-kubernetes_load_balancer=192.168.88.100
-kubernetes_load_balancer_ip=192.168.88.100
+kubernetes_load_balancer=192.168.88.200
+kubernetes_load_balancer_ip=192.168.88.200
 kubernetes_load_balancer_port=6443
 
 # helm
@@ -44,9 +48,9 @@ helm_user=root
 helm_user_home=/root
 
 # metallb
-metallb_addresses=["192.168.88.200-192.168.88.209"]
+metallb_addresses=["192.168.88.220-192.168.88.254"]
 
 # kubernetes dashboard
 kubernetes_dashboard_service_type=LoadBalancer
 kubernetes_dashboard_service_port=80
-kubernetes_dashboard_service_ip=192.168.88.200
+kubernetes_dashboard_service_ip=192.168.88.220

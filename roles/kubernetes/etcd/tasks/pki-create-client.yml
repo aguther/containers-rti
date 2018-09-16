@@ -2,28 +2,28 @@
 - name: "create etcd-server"
   command: >
     /usr/bin/kubeadm alpha phase certs etcd-server
-      --config=/tmp/etcd-kubeadm.yml
+      --config=/etc/kubernetes/kubeadm-etcd.yml
   args:
     creates: /etc/kubernetes/pki/etcd/server.*
 
 - name: "create etcd-peer"
   command: >
     /usr/bin/kubeadm alpha phase certs etcd-peer
-      --config=/tmp/etcd-kubeadm.yml
+      --config=/etc/kubernetes/kubeadm-etcd.yml
   args:
     creates: /etc/kubernetes/pki/etcd/peer.*
 
 - name: "create etcd-healthcheck-client"
   command: >
     /usr/bin/kubeadm alpha phase certs etcd-healthcheck-client
-      --config=/tmp/etcd-kubeadm.yml
+      --config=/etc/kubernetes/kubeadm-etcd.yml
   args:
     creates: /etc/kubernetes/pki/etcd/healthcheck-client.*
 
 - name: "create apiserver-etcd-client"
   command: >
     /usr/bin/kubeadm alpha phase certs apiserver-etcd-client
-      --config=/tmp/etcd-kubeadm.yml
+      --config=/etc/kubernetes/kubeadm-etcd.yml
   args:
     creates: /etc/kubernetes/pki/apiserver-etcd-client.*
 

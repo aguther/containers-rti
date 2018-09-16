@@ -1,26 +1,4 @@
 ---
-- name: "temp : create"
-  file:
-    dest: "/tmp/kubernetes-certificates"
-    state: directory
-    mode: 0777
-  delegate_to: 127.0.0.1
-  when: inventory_hostname == groups['master'][0]
-
-- name: "fetch : certificates : cluster"
-  fetch:
-    src: "/etc/kubernetes/pki/{{ item }}"
-    dest: "/tmp/kubernetes-certificates/pki/"
-    flat: yes
-  with_items:
-    - ca.crt
-    - ca.key
-    - sa.key
-    - sa.pub
-    - front-proxy-ca.crt
-    - front-proxy-ca.key
-  when: inventory_hostname == groups['master'][0]
-
 - name: "ensure directories are created"
   file:
     dest: "{{ item }}"
@@ -30,8 +8,8 @@
   when: inventory_hostname != groups['master'][0]
 
 - name: "copy : certificates : cluster"
-  copy:
-    src: "/tmp/kubernetes-certificates/pki/{{ item }}"
+  synchronize:
+    src: "/etc/kubernetes/pki/{{ item }}"
     dest: "/etc/kubernetes/pki/{{ item }}"
   with_items:
     - ca.crt
@@ -41,10 +19,4 @@
     - front-proxy-ca.crt
     - front-proxy-ca.key
   when: inventory_hostname != groups['master'][0]
-
-- name: "temp : delete"
-  file:
-    dest: "/tmp/kubernetes-certificates"
-    state: absent
-  delegate_to: 127.0.0.1
-  when: inventory_hostname == groups['master'][0]
+  delegate_to: "{{ groups['master'][0] }}"

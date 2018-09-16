@@ -4,7 +4,7 @@ etcd:
   local:
     serverCertSANs:
     - {{ inventory_hostname }}
-    - {{ hostvars[inventory_hostname]['ansible_' + kubernetes_interface].ipv4.address }}
+    - {{ hostvars[inventory_hostname].ipaddress }}
     peerCertSANs:
     - {{ inventory_hostname }}
-    - {{ hostvars[inventory_hostname]['ansible_' + kubernetes_interface].ipv4.address }}
+    - {{ hostvars[inventory_hostname].ipaddress }}

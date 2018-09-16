@@ -1,22 +1,4 @@
 ---
-- name: "temp : create"
-  file:
-    dest: "/tmp/kubernetes-etcd"
-    state: directory
-    mode: 0777
-  delegate_to: 127.0.0.1
-  when: inventory_hostname == groups['master'][0]
-
-- name: "fetch : certificates : etcd"
-  fetch:
-    src: "/etc/kubernetes/pki/etcd/{{ item }}"
-    dest: "/tmp/kubernetes-etcd/pki/etcd/"
-    flat: yes
-  with_items:
-    - ca.crt
-    - ca.key
-  when: inventory_hostname == groups['master'][0]
-
 - name: "ensure directories are created"
   file:
     dest: "{{ item }}"
@@ -26,17 +8,11 @@
   when: inventory_hostname != groups['master'][0]
 
 - name: "copy : certificates : etcd"
-  copy:
-    src: "/tmp/kubernetes-etcd/pki/etcd/{{ item }}"
+  synchronize:
+    src: "/etc/kubernetes/pki/etcd/{{ item }}"
     dest: "/etc/kubernetes/pki/etcd/{{ item }}"
   with_items:
     - ca.crt
     - ca.key
   when: inventory_hostname != groups['master'][0]
-
-- name: "temp : delete"
-  file:
-    dest: "/tmp/kubernetes-etcd"
-    state: absent
-  delegate_to: 127.0.0.1
-  when: inventory_hostname == groups['master'][0]
+  delegate_to: "{{ groups['master'][0] }}"

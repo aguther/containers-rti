@@ -23,7 +23,7 @@
     regexp: "{{ kubernetes_copy_config_cluster_name }}-admin@{{ kubernetes_copy_config_cluster_name }}"
     replace: "{{ kubernetes_copy_config_cluster_name }}"
 
-- name: copy to destination
+- name: fetch configuration
   fetch:
     src: "{{ kubernetes_copy_config_temp_directory.path }}/cluster.conf"
     dest: "/tmp/kubernetes_copy_config.conf"

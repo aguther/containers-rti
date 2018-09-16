@@ -12,9 +12,6 @@
 - include_tasks: pki-create-client.yml
   when: inventory_hostname == groups['master'][0]
 
-- include_tasks: pki-config-delete.yml
-  when: inventory_hostname == groups['master'][0]
-
 - name: "configure"
   template:
     src: etcd.conf.first.j2
@@ -41,9 +38,6 @@
 - include_tasks: pki-create-client.yml
   when: inventory_hostname != groups['master'][0]
 
-- include_tasks: pki-config-delete.yml
-  when: inventory_hostname != groups['master'][0]
-
 - name: "configure"
   template:
     src: etcd.conf.other.j2
@@ -57,9 +51,19 @@
 # -----------------------------------------------------------------------------
 
 - name: "get members"
-  shell: /usr/bin/etcdctl --ca-file /etc/kubernetes/pki/etcd/ca.crt --cert-file /etc/kubernetes/pki/etcd/server.crt --key-file /etc/kubernetes/pki/etcd/server.key --endpoints https://{{ hostvars[groups['master'][0]]['ansible_' + kubernetes_interface].ipv4.address }}:2379 member list | awk '{ print $2 }' | awk 'BEGIN { FS = "=" } ; { print "-",$2 }'
+  shell: /usr/bin/etcdctl --ca-file /etc/kubernetes/pki/etcd/ca.crt --cert-file /etc/kubernetes/pki/etcd/server.crt --key-file /etc/kubernetes/pki/etcd/server.key --endpoints https://{{ hostvars[groups['master'][0]].ipaddress }}:2379 member list | awk '{ print $2 }' | awk 'BEGIN { FS = "=" } ; { print "-",$2 }'
   register: etcd_get_members
   changed_when: no
+  when: (inventory_hostname == groups['master'][0])
+
+- name: "get members : print stdout"
+  debug:
+    msg: "{{ etcd_get_members.stdout }}"
+  when: (inventory_hostname == groups['master'][0])
+
+- name: "get members : print stderr"
+  debug:
+    msg: "{{ etcd_get_members.stderr }}"
   when: (inventory_hostname == groups['master'][0])
 
 - name: "identify missing members"
@@ -68,8 +72,13 @@
   when: (inventory_hostname == groups['master'][0])
         and (etcd_get_members.rc == 0)
 
+- name: "identify missing members : print"
+  debug:
+    msg: "{{ etcd_missing_members }}"
+  when: (inventory_hostname == groups['master'][0])
+
 - name: "add missing members"
-  shell: "/usr/bin/etcdctl --ca-file /etc/kubernetes/pki/etcd/ca.crt --cert-file /etc/kubernetes/pki/etcd/server.crt --key-file /etc/kubernetes/pki/etcd/server.key --endpoints https://{{ hostvars[groups['master'][0]]['ansible_' + kubernetes_interface].ipv4.address }}:2379 member add {{ inventory_hostname }} https://{{ hostvars[item]['ansible_' + kubernetes_interface].ipv4.address }}:2380"
+  shell: "/usr/bin/etcdctl --ca-file /etc/kubernetes/pki/etcd/ca.crt --cert-file /etc/kubernetes/pki/etcd/server.crt --key-file /etc/kubernetes/pki/etcd/server.key --endpoints https://{{ hostvars[groups['master'][0]].ipaddress }}:2379 member add {{ inventory_hostname }} https://{{ hostvars[item].ipaddress }}:2380"
   when: (inventory_hostname == groups['master'][0])
   loop: "{{ etcd_missing_members }}"
 

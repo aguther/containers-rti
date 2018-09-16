@@ -1,5 +1,0 @@
----
-- name: "pki : config clean up"
-  file:
-    dest: /tmp/etcd-kubeadm.yml
-    state: absent

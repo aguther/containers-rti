@@ -1,10 +1,6 @@
 ---
-- include_tasks: prepare.yml
-  tags:
-    - kubernetes
-    - kubernetes-prepare
-
-- include_tasks: get-status.yml
+- include_role:
+    name: kubernetes/get-status
   tags:
     - kubernetes
     - kubernetes-init

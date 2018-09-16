@@ -11,13 +11,13 @@
 - name: "kubeadm : configuration"
   template:
     src: kubeadm-config.yml.j2
-    dest: /tmp/kubeadm-config.yml
+    dest: /etc/kubernetes/kubeadm.yml
     owner: root
     group: root
     mode: 0644
 
 - name: "kubeadm : init"
-  command: /usr/bin/kubeadm init --config /tmp/kubeadm-config.yml
+  command: /usr/bin/kubeadm init --config /etc/kubernetes/kubeadm.yml
 
 - name: "kubectl : allow users to read configuration"
   file:
@@ -28,11 +28,6 @@
   copy:
     src: kubernetes.sh
     dest: /etc/profile.d/kubernetes.sh
-
-- name: "kubeadm : clean up"
-  file:
-    dest: /tmp/kubeadm-config.yml
-    state: absent
 
 - name: "node : remove master taint"
   command: >
