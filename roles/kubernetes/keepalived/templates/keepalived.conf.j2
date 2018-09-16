@@ -1,6 +1,6 @@
 ! Configuration File for keepalived
 global_defs {
-  router_id LVS_DEVEL
+  router_id {{ inventory_hostname }}
 }
 
 vrrp_script check_apiserver {
