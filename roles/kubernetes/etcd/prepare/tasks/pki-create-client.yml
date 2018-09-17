@@ -36,8 +36,6 @@
   with_items:
     - apiserver-etcd-client.crt
     - apiserver-etcd-client.key
-    - etcd/ca.crt
-    - etcd/ca.key
     - etcd/healthcheck-client.crt
     - etcd/healthcheck-client.key
     - etcd/peer.crt
