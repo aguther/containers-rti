@@ -77,7 +77,7 @@ Vagrant.configure("2") do |config|
   end
 
   # map for ansible host variables
-  $ansible_hosts = Hash.new(0)
+  $ansible_host_vars = Hash.new
 
   # create virtual machines
   ($vm_instances).downto(1) do |id|
@@ -130,7 +130,7 @@ Vagrant.configure("2") do |config|
         inline: "usermod -a -G wheel %s" % config.ssh.username
 
       # add current virtual machine to ansible host variables
-      $ansible_hosts[hostname] = { "ipaddress" => $vm_ip_template % (10 + id) }
+      $ansible_host_vars[hostname] = { "ipaddress" => $vm_ip_template % (10 + id) }
 
       # provision using ansible, but only once and not for every instance
       if ($playbook != "") & (id == 1)
@@ -145,10 +145,8 @@ Vagrant.configure("2") do |config|
           ansible.become = true
           # logging verbosity
           ansible.verbose = false
-          # skip tags
-          #ansible.skip_tags = "os-hosts"
           # hosts
-          ansible.host_vars = $ansible_hosts
+          ansible.host_vars = $ansible_host_vars
           # groups
           ansible.groups = {
             "master" => "%s1.vm" % $vm_hostname_prefix,
@@ -158,9 +156,16 @@ Vagrant.configure("2") do |config|
               "nodes",
             ],
             "centos:vars" => {
+              "ansible_become" => "True",
+              "ansible_become_method" => "sudo",
               "ansible_ssh_user" => "root",
-              "ansible_ssh_pass" => config.ssh.username,
+              "ansible_ssh_private_key_file" => "/tmp/.ssh/ansible",
               "ansible_ssh_common_args" => "-o StrictHostKeyChecking=no",
+              "ssh_bootstrap_user" => "root",
+              "ssh_bootstrap_password" => "vagrant",
+              "ssh_bootstrap_create_key_directory" => "/tmp/.ssh",
+              "ssh_bootstrap_distribute_src_key_file" => "/tmp/.ssh/ansible",
+              "ssh_bootstrap_authorize_public_key_file" => "/tmp/.ssh/ansible.pub",
               "docker_group_users" => "vagrant",
               "docker_registry_port" => "5000",
               "docker_registry_auth_user" => "docker-registry",
