@@ -76,6 +76,9 @@ Vagrant.configure("2") do |config|
       config.proxy.no_proxy = $vm_no_proxy
   end
 
+  # map for ansible host variables
+  $ansible_hosts = Hash.new(0)
+
   # create virtual machines
   ($vm_instances).downto(1) do |id|
     # create hostname
@@ -126,6 +129,9 @@ Vagrant.configure("2") do |config|
         privileged: true,
         inline: "usermod -a -G wheel %s" % config.ssh.username
 
+      # add current virtual machine to ansible host variables
+      $ansible_hosts[hostname] = { "ipaddress" => $vm_ip_template % (10 + id) }
+
       # provision using ansible, but only once and not for every instance
       if ($playbook != "") & (id == 1)
         instance_config.vm.provision :ansible_local do |ansible|
@@ -140,7 +146,9 @@ Vagrant.configure("2") do |config|
           # logging verbosity
           ansible.verbose = false
           # skip tags
-          ansible.skip_tags = "os-hosts"
+          #ansible.skip_tags = "os-hosts"
+          # hosts
+          ansible.host_vars = $ansible_hosts
           # groups
           ansible.groups = {
             "master" => "%s1.vm" % $vm_hostname_prefix,
@@ -159,13 +167,13 @@ Vagrant.configure("2") do |config|
               "docker_registry_auth_password" => "P@ssw0rd",
               "kubernetes_interface" => $vm_ip_interface_name,
               "metallb_addresses" => [
-                "172.30.0.200-172.30.0.249"
+                "172.30.0.100-172.30.0.199"
               ],
-              "kubernetes_load_balancer" => "172.30.0.100",
-              "kubernetes_load_balancer_ip" => "172.30.0.100",
+              "kubernetes_load_balancer" => "172.30.0.10",
+              "kubernetes_load_balancer_ip" => "172.30.0.10",
               "kubernetes_dashboard_service_type" => "LoadBalancer",
               "kubernetes_dashboard_service_port" => "80",
-              "kubernetes_dashboard_service_ip" => "172.30.0.200",
+              "kubernetes_dashboard_service_ip" => "172.30.0.100",
               "consul_interface" => $vm_ip_interface_name,
               "nomad_interface" => $vm_ip_interface_name,
             },
