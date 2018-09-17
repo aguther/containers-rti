@@ -6,23 +6,12 @@
   delegate_to: "{{ groups['master'][0] }}"
   changed_when: no
 
-- name: "get members : print stdout"
-  debug:
-    msg: "{{ etcd_get_members.stdout }}"
-  when: (inventory_hostname != groups['master'][0])
-
 - name: "add missing members"
   command: "/usr/bin/etcdctl --ca-file /etc/kubernetes/pki/etcd/ca.crt --cert-file /etc/kubernetes/pki/etcd/server.crt --key-file /etc/kubernetes/pki/etcd/server.key --endpoints https://{{ hostvars[groups['master'][0]].ipaddress }}:2379 member add {{ inventory_hostname }} https://{{ hostvars[inventory_hostname].ipaddress }}:2380"
   register: etcd_add_member
   when: (inventory_hostname != groups['master'][0])
         and not(etcd_get_members.stdout is search(inventory_hostname))
   delegate_to: "{{ groups['master'][0] }}"
-
-- name: "add member : print stdout"
-  debug:
-    msg: "{{ etcd_add_member.stdout }}"
-  when: (inventory_hostname != groups['master'][0])
-        and (etcd_add_member.changed)
 
 # -----------------------------------------------------------------------------
 
@@ -39,10 +28,6 @@
   when: (inventory_hostname != groups['master'][0])
         and (etcd_add_member.changed)
 
-- name: "get members : print initial cluster"
-  debug:
-    msg: "{{ etcd_add_member_initial_cluster }}"
-
 # -----------------------------------------------------------------------------
 
 - name: "get members : set initial cluster state"
@@ -56,10 +41,6 @@
     etcd_add_member_initial_cluster_state: "{{ etcd_add_member.stdout | regex_search('ETCD_INITIAL_CLUSTER_STATE=\"(.*)\"', '\\1') | list | first }}"
   when: (inventory_hostname != groups['master'][0])
         and (etcd_add_member.changed)
-
-- name: "get members : print initial cluster state"
-  debug:
-    msg: "{{ etcd_add_member_initial_cluster_state }}"
 
 # -----------------------------------------------------------------------------
 
