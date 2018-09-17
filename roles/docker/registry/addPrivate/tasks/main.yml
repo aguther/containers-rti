@@ -7,7 +7,8 @@
     name: docker/registry/kubernetes/create-secret
   vars:
     docker_registry_url: "{{ docker_private_registry_url }}"
-    docker_registry_port: "{{ docker_private_registry_port }}"
+    docker_registry_port: "{% if docker_private_registry_port is defined %}{{ docker_private_registry_port }}{% else %} null {% endif %}"
     docker_registry_auth_user: "{{ docker_private_registry_auth_user }}"
     docker_registry_auth_password: "{{ docker_private_registry_auth_password }}"
+
     

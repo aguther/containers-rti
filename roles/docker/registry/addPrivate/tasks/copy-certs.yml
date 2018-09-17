@@ -1,36 +1,15 @@
 ---
-#TODO: find smarter way to handle docker_private_registry_port
 - name: ensure directories are created
   file:
     state: directory
     path: "{{ item }}"
   with_items:
-    - "/etc/docker/certs.d/{{ docker_private_registry_url }}:{{ docker_private_registry_port }}/"
-  when:
-    docker_private_registry_port is defined
-
-- name: ensure directories are created
-  file:
-    state: directory
-    path: "{{ item }}"
-  with_items:
-    - "/etc/docker/certs.d/{{ docker_private_registry_url }}/"
-  when:
-    docker_private_registry_port is not defined
-
+    - "/etc/docker/certs.d/{{ docker_private_registry_url }}{%- if docker_private_registry_port is defined -%}:{{ docker_private_registry_port }}{%- endif -%}/"
+ 
 - name: copy certificate
   copy:
     src: "{{ docker_private_repo_local_cert_path }}/"
-    dest: "/etc/docker/certs.d/{{ docker_private_registry_url }}:{{ docker_private_registry_port }}/"
-  when:
-    docker_private_registry_port is defined
-
-- name: copy certificate
-  copy:
-    src: "{{ docker_private_repo_local_cert_path }}/"
-    dest: "/etc/docker/certs.d/{{ docker_private_registry_url }}/"
-  when:
-    docker_private_registry_port is not defined
+    dest: "/etc/docker/certs.d/{{ docker_private_registry_url }}{%- if docker_private_registry_port is defined -%}:{{ docker_private_registry_port }}{%- endif -%}/"
  
 - name: update trust
   command: "update-ca-trust"
