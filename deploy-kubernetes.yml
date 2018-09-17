@@ -1,6 +1,6 @@
 ---
 - hosts:
-    - 127.0.0.1
+    - centos
   vars:
     - ansible_become: no
     - ansible_connection: local
