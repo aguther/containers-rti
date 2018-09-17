@@ -8,11 +8,7 @@ Vagrant.require_version ">= 2.1.0"
 require 'ipaddr'
 
 # define instances
-$vm_instances = (ENV['VM_INSTANCES'] || 2).to_i
-# ensure we have at least two instances
-if $vm_instances < 2
-  raise "This vagrantfile needs at least 2 instances to function properly. Please increase the value of 'instance_count'."
-end
+$vm_instances = (ENV['VM_INSTANCES'] || 1).to_i
 
 # define hostnames
 $vm_hostname_prefix = (ENV['VM_HOSTNAME_PREFIX'] || "centos-").to_sym
