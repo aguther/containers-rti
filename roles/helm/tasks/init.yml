@@ -1,10 +1,10 @@
 ---
 - name: "service account : check"
   shell: >
-    /usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf
-      --namespace=kube-system
-      --no-headers=true
-      get serviceaccount
+    /usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf \
+      --namespace=kube-system \
+      --no-headers=true \
+      get serviceaccount \
       tiller | wc -l
   changed_when: no
   register: helm_init_check_service_account
@@ -19,10 +19,10 @@
 
 - name: "cluster role binding : check"
   shell: >
-    /usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf
-      --namespace=kube-system
-      --no-headers=true
-      get clusterrolebinding
+    /usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf \
+      --namespace=kube-system \
+      --no-headers=true \
+      get clusterrolebinding \
       tiller | wc -l
   changed_when: no
   register: helm_init_check_cluster_role_binding
@@ -38,19 +38,18 @@
 
 - name: "tiller : check"
   shell: >
-    /usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf
-      --namespace=kube-system
-      --no-headers=true
-      get pod
+    /usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf \
+      --namespace=kube-system \
+      --no-headers=true \
+      get pod \
       --selector app=helm,name=tiller | wc -l
   changed_when: no
   register: helm_init_check_tiller
 
 - name: "tiller : init"
-  shell: "/usr/bin/helm init --kubeconfig=/etc/kubernetes/admin.conf --service-account tiller --wait"
+  shell: "/usr/bin/helm init --kubeconfig=/etc/kubernetes/admin.conf --service-account tiller {% if helm_init_check_tiller.stdout | int > 0 -%}--upgrade{%- endif %} --wait"
   environment:
     HELM_HOME: "{{ helm_user_home }}/.helm"
-  when: helm_init_check_tiller.stdout | int == 0
 
 - name: set permissions
   file:
