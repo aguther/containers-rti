@@ -6,7 +6,7 @@
 - name: "kubeadm : set version fact"
   set_fact:
     kubernetes_kubeadm_version: "{{ kubernetes_kubeadm_get_version.stdout }}"
-  when: kubernetes_kubeadm_get_version.stdout | regex_search('^v\d+.\d+.\d+$')
+  when: kubernetes_kubeadm_get_version.stdout | regex_search('^v\d+.\d+.\d+(-\w+\.\d+)?$')
 
 - name: "kubeadm : configuration"
   template:
