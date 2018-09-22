@@ -3,25 +3,25 @@
   stat:
     path: "/usr/bin/helm"
   register: helm_check_deployed
-  when: (inventory_hostname == groups['master'][0])
+  when: (inventory_hostname == groups['masters'][0])
 
 - name: "check client version"
   command: "/usr/bin/helm version --client --short"
   changed_when: no
   register: helm_check_client_version
-  when: (inventory_hostname == groups['master'][0])
+  when: (inventory_hostname == groups['masters'][0])
         and (helm_check_deployed.stat.exists)
 
 - name: "store client version"
   set_fact:
     helm_client_version: "{{ helm_check_client_version.stdout | regex_replace('^(Client): v(\\d+.\\d+.\\d+(-\\w+\\.\\d+)?).*$', '\\2') }}"
   changed_when: no
-  when: (inventory_hostname == groups['master'][0])
+  when: (inventory_hostname == groups['masters'][0])
         and (helm_check_deployed.stat.exists)
         and (helm_check_client_version.rc == 0)
 
 - include_tasks: deploy.yml
-  when: (inventory_hostname == groups['master'][0])
+  when: (inventory_hostname == groups['masters'][0])
         and (not(helm_check_deployed.stat.exists)
             or (helm_version != helm_client_version))
 
@@ -30,24 +30,24 @@
   failed_when: no
   changed_when: no
   register: helm_check_init
-  when: inventory_hostname == groups['master'][0]
+  when: inventory_hostname == groups['masters'][0]
 
 - name: "check server version"
   command: "/usr/bin/helm version --server --short"
   changed_when: no
   register: helm_check_server_version
-  when: (inventory_hostname == groups['master'][0])
+  when: (inventory_hostname == groups['masters'][0])
         and (helm_check_init.rc == 0)
 
 - name: "store server version"
   set_fact:
     helm_server_version: "{{ helm_check_server_version.stdout | regex_replace('^(Server): v(\\d+.\\d+.\\d+(-\\w+\\.\\d+)?).*$', '\\2') }}"
   changed_when: no
-  when: (inventory_hostname == groups['master'][0])
+  when: (inventory_hostname == groups['masters'][0])
         and (helm_check_init.rc == 0)
         and (helm_check_server_version.rc == 0)
 
 - include_tasks: init.yml
-  when: (inventory_hostname == groups['master'][0])
+  when: (inventory_hostname == groups['masters'][0])
         and ((helm_check_init.rc != 0)
              or (helm_version != helm_server_version))

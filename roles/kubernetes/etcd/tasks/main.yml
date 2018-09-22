@@ -1,17 +1,17 @@
 ---
 - name: "get members"
-  command: /usr/bin/etcdctl --ca-file /etc/kubernetes/pki/etcd/ca.crt --cert-file /etc/kubernetes/pki/etcd/server.crt --key-file /etc/kubernetes/pki/etcd/server.key --endpoints https://{{ hostvars[groups['master'][0]].ipaddress }}:2379 member list
+  command: /usr/bin/etcdctl --ca-file /etc/kubernetes/pki/etcd/ca.crt --cert-file /etc/kubernetes/pki/etcd/server.crt --key-file /etc/kubernetes/pki/etcd/server.key --endpoints https://{{ hostvars[groups['masters'][0]].ipaddress }}:2379 member list
   register: etcd_get_members
-  when: (inventory_hostname != groups['master'][0])
-  delegate_to: "{{ groups['master'][0] }}"
+  when: (inventory_hostname != groups['masters'][0])
+  delegate_to: "{{ groups['masters'][0] }}"
   changed_when: no
 
 - name: "add missing members"
-  command: "/usr/bin/etcdctl --ca-file /etc/kubernetes/pki/etcd/ca.crt --cert-file /etc/kubernetes/pki/etcd/server.crt --key-file /etc/kubernetes/pki/etcd/server.key --endpoints https://{{ hostvars[groups['master'][0]].ipaddress }}:2379 member add {{ inventory_hostname }} https://{{ hostvars[inventory_hostname].ipaddress }}:2380"
+  command: "/usr/bin/etcdctl --ca-file /etc/kubernetes/pki/etcd/ca.crt --cert-file /etc/kubernetes/pki/etcd/server.crt --key-file /etc/kubernetes/pki/etcd/server.key --endpoints https://{{ hostvars[groups['masters'][0]].ipaddress }}:2379 member add {{ inventory_hostname }} https://{{ hostvars[inventory_hostname].ipaddress }}:2380"
   register: etcd_add_member
-  when: (inventory_hostname != groups['master'][0])
+  when: (inventory_hostname != groups['masters'][0])
         and not(etcd_get_members.stdout is search(inventory_hostname))
-  delegate_to: "{{ groups['master'][0] }}"
+  delegate_to: "{{ groups['masters'][0] }}"
 
 # -----------------------------------------------------------------------------
 
@@ -19,13 +19,13 @@
   set_fact:
     etcd_add_member_initial_cluster: |
       {{ inventory_hostname }}=https://{{ hostvars[inventory_hostname].ipaddress }}:2380
-  when: (inventory_hostname == groups['master'][0])
+  when: (inventory_hostname == groups['masters'][0])
         or not(etcd_add_member.changed)
 
 - name: "get members : set initial cluster"
   set_fact:
     etcd_add_member_initial_cluster: "{{ etcd_add_member.stdout | regex_search('ETCD_INITIAL_CLUSTER=\"(.*)\"', '\\1') | list | first }}"
-  when: (inventory_hostname != groups['master'][0])
+  when: (inventory_hostname != groups['masters'][0])
         and (etcd_add_member.changed)
 
 # -----------------------------------------------------------------------------
@@ -33,13 +33,13 @@
 - name: "get members : set initial cluster state"
   set_fact:
     etcd_add_member_initial_cluster_state: new
-  when: (inventory_hostname == groups['master'][0])
+  when: (inventory_hostname == groups['masters'][0])
         or not(etcd_add_member.changed)
 
 - name: "get members : set initial cluster state"
   set_fact:
     etcd_add_member_initial_cluster_state: "{{ etcd_add_member.stdout | regex_search('ETCD_INITIAL_CLUSTER_STATE=\"(.*)\"', '\\1') | list | first }}"
-  when: (inventory_hostname != groups['master'][0])
+  when: (inventory_hostname != groups['masters'][0])
         and (etcd_add_member.changed)
 
 # -----------------------------------------------------------------------------
@@ -52,7 +52,7 @@
     group: root
     mode: 0644
   register: etcd_configure
-  when: (inventory_hostname == groups['master'][0])
+  when: (inventory_hostname == groups['masters'][0])
         or (etcd_add_member.changed)
 
 - name: "start"

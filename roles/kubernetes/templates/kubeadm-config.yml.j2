@@ -12,7 +12,7 @@ apiServerExtraArgs:
 etcd:
   external:
     endpoints:
-{% for host in groups['master'] %}
+{% for host in groups['masters'] %}
     - https://{{ hostvars[host].ipaddress }}:2379
 {% endfor %}
     caFile: /etc/kubernetes/pki/etcd/ca.crt

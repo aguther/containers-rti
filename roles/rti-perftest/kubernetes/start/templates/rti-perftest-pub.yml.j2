@@ -8,7 +8,7 @@ metadata:
     role: pub
     id: "{{ rti_perftest_id }}"
 spec:
-  replicas: {{ groups['master'] | length }}
+  replicas: {{ groups['masters'] | length }}
   selector:
     matchLabels:
       app: rti-perftest

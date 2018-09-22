@@ -12,14 +12,14 @@ vrrp_script check_apiserver {
 }
 
 vrrp_instance VI_1 {
-{% if inventory_hostname == groups['master'][0] %}
+{% if inventory_hostname == groups['masters'][0] %}
     state MASTER
 {% else %}
     state BACKUP
 {% endif %}
     interface {{ kubernetes_interface }}
     virtual_router_id {{ kubernetes_keepalived_virtual_router_id }}
-{% if inventory_hostname == groups['master'][0] %}
+{% if inventory_hostname == groups['masters'][0] %}
     priority {{ kubernetes_keepalived_priority_master }}
 {% else %}
     priority {{ kubernetes_keepalived_priority_backup }}

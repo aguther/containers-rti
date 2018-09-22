@@ -1,4 +1,4 @@
 ---
 - name: start
-  command: "docker -H tcp://{{ groups['master'][0] }}:2400 run --detach=true --net=weave --env='reschedule:on-node-failure' --name rti-perftest-pub-{{ item }} guther/rti-perftest -pub -enableTurboMode -dataLen 1024 -sleep 1 -numSubscribers {{ play_hosts | length }}"
-  with_sequence: start=1 end={{ groups['master'] | length }}
+  command: "docker -H tcp://{{ groups['masters'][0] }}:2400 run --detach=true --net=weave --env='reschedule:on-node-failure' --name rti-perftest-pub-{{ item }} guther/rti-perftest -pub -enableTurboMode -dataLen 1024 -sleep 1 -numSubscribers {{ play_hosts | length }}"
+  with_sequence: start=1 end={{ groups['masters'] | length }}

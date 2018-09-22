@@ -1,5 +1,5 @@
 ---
 - hosts:
-    - master[0]
+    - masters[0]
   roles:
     - rook-cluster

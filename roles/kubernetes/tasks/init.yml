@@ -1,12 +1,12 @@
 ---
 - include_tasks: init-master.yml
-  when: (inventory_hostname == groups['master'][0])
+  when: (inventory_hostname == groups['masters'][0])
         and (hostvars[inventory_hostname].kubeadm_deployed == false)
 
 - include_tasks: init-pki.yml
-  when: ('master' in group_names)
+  when: ('masters' in group_names)
 
 - include_tasks: init-master.yml
-  when: inventory_hostname != groups['master'][0]
-        and ('master' in group_names)
+  when: inventory_hostname != groups['masters'][0]
+        and ('masters' in group_names)
         and (hostvars[inventory_hostname].kubeadm_deployed == false)

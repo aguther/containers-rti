@@ -1,6 +1,6 @@
 ---
 - hosts:
-    - master[0]
+    - masters[0]
   vars:
     - kubernetes_copy_config_cluster_name: on-premise-cluster
   roles:
