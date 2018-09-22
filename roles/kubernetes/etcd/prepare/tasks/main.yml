@@ -3,18 +3,23 @@
   yum:
     name: etcd
     state: present
+  when: ('masters' in group_names)
 
 - include_tasks: pki-config-create.yml
+  when: ('masters' in group_names)
 
 - include_tasks: pki-create-root.yml
-  when: inventory_hostname == groups['masters'][0]
+  when: (inventory_hostname == groups['masters'][0])
 
 - include_tasks: pki-distribute.yml
-  when: inventory_hostname != groups['masters'][0]
+  when: ('masters' in group_names)
+        and (inventory_hostname != groups['masters'][0])
 
 - include_tasks: pki-create-client.yml
+  when: ('masters' in group_names)
 
 - name: set configuration for etcdctl
   copy:
     src: etcdctl.sh
     dest: /etc/profile.d/etcdctl.sh
+  when: ('masters' in group_names)
