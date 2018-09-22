@@ -5,7 +5,7 @@
     state: directory
   with_items:
     - /etc/kubernetes/pki/etcd
-  when: inventory_hostname != groups['master'][0]
+  when: inventory_hostname != groups['masters'][0]
 
 - name: "copy : certificates : etcd"
   synchronize:
@@ -14,5 +14,5 @@
   with_items:
     - ca.crt
     - ca.key
-  when: inventory_hostname != groups['master'][0]
-  delegate_to: "{{ groups['master'][0] }}"
+  when: inventory_hostname != groups['masters'][0]
+  delegate_to: "{{ groups['masters'][0] }}"

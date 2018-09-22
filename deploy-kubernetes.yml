@@ -71,7 +71,7 @@
     - kubernetes
 
 - hosts:
-    - master
+    - masters
   any_errors_fatal: true
   serial: 1
   roles:
@@ -90,7 +90,7 @@
     - kubernetes
 
 - hosts:
-    - master[0]
+    - masters[0]
   any_errors_fatal: true
   vars:
     - helm_version: "2.11.0-rc.4"
@@ -100,7 +100,7 @@
     - helm
 
 - hosts:
-    - master[0]
+    - masters[0]
   any_errors_fatal: true
   roles:
     - metallb
@@ -108,7 +108,7 @@
     - metallb
 
 - hosts:
-    - master[0]
+    - masters[0]
   any_errors_fatal: true
   roles:
     - kubernetes/dashboard

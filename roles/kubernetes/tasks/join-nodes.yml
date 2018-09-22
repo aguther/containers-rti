@@ -3,5 +3,5 @@
   command: >
     /usr/bin/kubeadm join
       --discovery-token-unsafe-skip-ca-verification
-      --token={{ hostvars[groups['master'][0]].kubeadm_token }}
-      {{ hostvars[groups['master'][0]].ipaddress }}:6443
+      --token={{ hostvars[groups['masters'][0]].kubeadm_token }}
+      {{ hostvars[groups['masters'][0]].ipaddress }}:6443

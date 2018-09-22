@@ -1,5 +1,5 @@
 ---
-- hosts: master
+- hosts: masters
   roles:
     - rti-perftest/docker/log/publisher
 

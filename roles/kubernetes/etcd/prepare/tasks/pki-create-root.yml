@@ -4,7 +4,7 @@
     /usr/bin/kubeadm alpha phase certs etcd-ca
   args:
     creates: /etc/kubernetes/pki/etcd/ca.*
-  when: inventory_hostname == groups['master'][0]
+  when: inventory_hostname == groups['masters'][0]
 
 - name: "correct permissions"
   file:

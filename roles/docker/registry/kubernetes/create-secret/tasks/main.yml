@@ -6,4 +6,4 @@
       --docker-server={{ ansible_host }}:{{ docker_registry_port }}
       --docker-username={{ docker_registry_auth_user }}
       --docker-password={{ docker_registry_auth_password }}
-  when: (inventory_hostname == groups['master'][0])
+  when: (inventory_hostname == groups['masters'][0])

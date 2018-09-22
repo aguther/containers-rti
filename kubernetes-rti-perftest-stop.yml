@@ -1,4 +1,4 @@
 ---
-- hosts: master
+- hosts: masters
   roles:
     - rti-perftest/kubernetes/stop

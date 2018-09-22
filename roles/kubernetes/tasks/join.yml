@@ -1,14 +1,14 @@
 ---
 - include_role:
     name: kubernetes/get-nodes
-  when: (inventory_hostname == groups['master'][0])
+  when: (inventory_hostname == groups['masters'][0])
 
 - include_tasks: create-token.yml
-  when: (inventory_hostname == groups['master'][0])
+  when: (inventory_hostname == groups['masters'][0])
 
 - include_tasks: join-nodes.yml
   when: (inventory_hostname in groups['nodes'])
-        and not(inventory_hostname in hostvars[groups['master'][0]].kubernetes_nodes)
+        and not(inventory_hostname in hostvars[groups['masters'][0]].kubernetes_nodes)
 
 - include_tasks: delete-token.yml
-  when: (inventory_hostname == groups['master'][0])
+  when: (inventory_hostname == groups['masters'][0])

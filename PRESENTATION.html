@@ -157,10 +157,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
           ansible.verbose = false
           # groups
           ansible.groups = {
-            "master" =&gt; "%s1" % $vm_hostname_prefix,
+            "masters" =&gt; "%s1" % $vm_hostname_prefix,
             "nodes" =&gt; "%s[2:%d]" % [$vm_hostname_prefix, $vm_instances],
             "centos:children" =&gt; [
-              "master",
+              "masters",
               "nodes",
             ],
             "centos:vars" =&gt; {
@@ -237,7 +237,7 @@ kind: Deployment
 metadata:
   name: rti-perftest-pub
 spec:
-  replicas: {{ groups['master'] | length }}
+  replicas: {{ groups['masters'] | length }}
   template:
     metadata:
       labels:

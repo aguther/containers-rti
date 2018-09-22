@@ -3,9 +3,9 @@
   shell: "/usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf get nodes -o=jsonpath=\"{range .items[*]}- {.metadata.name}{'\\n'}\""
   register: kubernetes_get_nodes
   changed_when: no
-  when: (inventory_hostname == groups['master'][0])
+  when: (inventory_hostname == groups['masters'][0])
 
 - name: set fact
   set_fact:
     kubernetes_nodes: "{{ kubernetes_get_nodes.stdout }}"
-  when: (inventory_hostname == groups['master'][0])
+  when: (inventory_hostname == groups['masters'][0])
