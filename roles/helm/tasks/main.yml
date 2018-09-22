@@ -17,6 +17,7 @@
     helm_client_version: "{{ helm_check_client_version.stdout | regex_replace('^(Client): v(\\d+.\\d+.\\d+(-\\w+\\.\\d+)?).*$', '\\2') }}"
   changed_when: no
   when: (inventory_hostname == groups['master'][0])
+        and (helm_check_deployed.stat.exists)
         and (helm_check_client_version.rc == 0)
 
 - include_tasks: deploy.yml
@@ -43,6 +44,7 @@
     helm_server_version: "{{ helm_check_server_version.stdout | regex_replace('^(Server): v(\\d+.\\d+.\\d+(-\\w+\\.\\d+)?).*$', '\\2') }}"
   changed_when: no
   when: (inventory_hostname == groups['master'][0])
+        and (helm_check_init.rc == 0)
         and (helm_check_server_version.rc == 0)
 
 - include_tasks: init.yml
