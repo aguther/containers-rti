@@ -5,7 +5,7 @@ apiServerCertSANs:
 - {{ kubernetes_load_balancer }}
 - {{ kubernetes_load_balancer_ip }}
 api:
-  # advertiseAddress: {{ kubernetes_host_ipv4_address }}
+  advertiseAddress: "{{ kubernetes_load_balancer_ip }}"
   controlPlaneEndpoint: "{{ kubernetes_load_balancer_ip }}"
 apiServerExtraArgs:
   endpoint-reconciler-type: lease
@@ -19,5 +19,4 @@ etcd:
     certFile: /etc/kubernetes/pki/apiserver-etcd-client.crt
     keyFile: /etc/kubernetes/pki/apiserver-etcd-client.key
 networking:
-  podSubnet: {{ kubernetes_pod_cidr }}
   serviceSubnet: {{ kubernetes_service_cidr }}
