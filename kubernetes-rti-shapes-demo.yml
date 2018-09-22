@@ -4,7 +4,7 @@
   vars:
     helm_install_namespace: rti-shapes-demo
     helm_install_chart: https://github.com/aguther/helm-charts/raw/master/rti-shapes-demo-1.6.0.tgz
-    helm_install_wait: no
+    helm_install_wait: yes
     helm_install_set:
       - key: imageCredentials.name
         value: docker-registry
@@ -12,9 +12,11 @@
         value: centos-1.vm:5000
       - key: persistenceService.enabled
         value: no
+      - key: persistenceService.storage.className
+        value: rook-ceph-block
       - key: routingService.service.type
         value: LoadBalancer
       - key: routingService.service.ip
-        value: 172.30.0.100
+        value: 172.30.0.101
   roles:
     - helm/install-chart
