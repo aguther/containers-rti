@@ -45,6 +45,9 @@ while [ "$1" != "" ]; do
         --proxy)
             VM_PROXY=$VALUE
             ;;
+        -d | --destroy-only)
+            DESTROY_ONLY=TRUE
+            ;;
         *)
             echo "ERROR: unknown parameter \"$PARAM\""
             usage
@@ -74,6 +77,11 @@ if [ $? -ne 0 ]; then
     echo "[ERROR] vagrant destroy failed"
     echo
     exit 1
+fi
+
+# check if user only wanted destroy of vms
+if [ $DESTROY_ONLY = "TRUE" ]; then
+    exit 0
 fi
 
 # create and start vms
