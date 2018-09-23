@@ -175,6 +175,8 @@ Vagrant.configure("2") do |config|
               "kubernetes_dashboard_service_type" => "LoadBalancer",
               "kubernetes_dashboard_service_port" => "80",
               "kubernetes_dashboard_service_ip" => "172.30.0.100",
+              "kubernetes_copy_config_cluster_name" => "vagrant",
+              "kubernetes_copy_config_dest" => "/vagrant/.kube/config",
               "consul_interface" => $vm_ip_interface_name,
               "nomad_interface" => $vm_ip_interface_name,
             },

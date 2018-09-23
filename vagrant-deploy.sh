@@ -93,7 +93,13 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-# copy kubectl config
-./vagrant-playbook.sh vagrant-copy-kubectl-config.yml \
-    && mkdir -p ~/.kube \
-    && cp -f .kube/config ~/.kube/config
+# copy existing kubectl config (so we can merge)
+mkdir -p .kube
+cp -f ~/.kube/config .kube/config
+
+# get cluster config and merge it with ours
+./vagrant-playbook.sh kubernetes-copy-config.yml
+
+# copy config back
+mkdir -p ~/.kube
+cp -f .kube/config ~/.kube/config

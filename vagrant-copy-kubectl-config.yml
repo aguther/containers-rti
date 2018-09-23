@@ -1,5 +1,0 @@
----
-- hosts:
-    - masters[0]
-  roles:
-    - vagrant/kubernetes/copy-kubectl-config
