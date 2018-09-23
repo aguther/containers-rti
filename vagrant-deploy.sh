@@ -93,13 +93,29 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-# copy existing kubectl config (so we can merge)
-mkdir -p .kube
-cp -f ~/.kube/config .kube/config
-
+# copy existing kubectl config
+if [ -f ~/.kube/config ]; then
+    mkdir -p .kube && cp -f ~/.kube/config .kube/config
+    if [ $? -ne 0 ]; then
+        echo
+        echo "[ERROR] failed to merge kubectl config"
+        echo
+        exit 1
+    fi
+fi
 # get cluster config and merge it with ours
 ./vagrant-playbook.sh kubernetes-copy-config.yml
-
+if [ $? -ne 0 ]; then
+    echo
+    echo "[ERROR] failed to merge kubectl config"
+    echo
+    exit 1
+fi
 # copy config back
-mkdir -p ~/.kube
-cp -f .kube/config ~/.kube/config
+mkdir -p ~/.kube && cp -f .kube/config ~/.kube/config
+if [ $? -ne 0 ]; then
+    echo
+    echo "[ERROR] failed to merge kubectl config"
+    echo
+    exit 1
+fi
