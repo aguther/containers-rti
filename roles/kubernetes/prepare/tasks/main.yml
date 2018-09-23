@@ -47,7 +47,7 @@
     - "kubeadm{%if kubernetes_version != 'latest' %}-{{ kubernetes_version }}{% endif %}"
   register: kubernetes_install_packages
 
-- include_tasks: prepare-lock-version.yml
+- include_tasks: lock-version.yml
   when: kubernetes_version != 'latest' and kubernetes_install_packages.changed
 
 - name: enable and start
