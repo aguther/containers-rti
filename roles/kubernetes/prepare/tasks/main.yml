@@ -26,6 +26,16 @@
   command: "/usr/bin/update-ca-trust"
   when: kubernetes_add_repository.changed
 
+- name: "get version : setup url"
+  set_fact:
+    kubernetes_version_url: "https://storage.googleapis.com/kubernetes-release/release/stable{% if kubernetes_release != 'latest' %}-{{ kubernetes_release }}{% endif %}.txt"
+  when: (kubernetes_version == 'latest')
+
+- name: "get version : fetch latest version of release"
+  set_fact:
+    kubernetes_version: "{{ lookup('url', '{{ kubernetes_version_url }}') | regex_replace('v(.*)', '\\1') }}"
+  when: (kubernetes_version == 'latest')
+
 - name: install packages
   yum:
     name: "{{ item }}"

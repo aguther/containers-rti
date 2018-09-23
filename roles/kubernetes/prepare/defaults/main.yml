@@ -1,4 +1,5 @@
 ---
+kubernetes_release: "latest"
 kubernetes_version: "latest"
 
 kubernetes_interface: "{{ ansible_default_ipv4.interface }}"
