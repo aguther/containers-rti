@@ -4,7 +4,7 @@
     name: helm/install-chart
   vars:
     helm_install_namespace: rook-ceph-system
-    helm_install_chart: https://charts.rook.io/beta/rook-ceph-v0.8.1.tgz
+    helm_install_chart: "https://charts.rook.io/{{ rook_cluster_chart_repo }}/rook-ceph-v{{ rook_cluster_chart_version }}.tgz"
     helm_install_wait: yes
 
 - name: create namespace
