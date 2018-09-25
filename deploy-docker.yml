@@ -33,7 +33,7 @@
     - os/selinux/not-enforcing
     - os/firewall/disable
     - os/swap/disable
-    - docker/el7
+    - docker/ce
     - os/proxy/docker
     - weave/net/docker
     - os/cockpit

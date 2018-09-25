@@ -40,7 +40,7 @@
     - centos
   any_errors_fatal: true
   roles:
-    - docker/el7
+    - docker/ce
   tags:
     - docker
 
