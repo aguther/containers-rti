@@ -2,6 +2,28 @@
 - hosts:
     - centos
   vars:
+    - ansible_become: no
+    - ansible_connection: local
+  roles:
+    - ssh-bootstrap/create-key
+  tags:
+    - ssh
+
+- hosts:
+    - centos
+  vars:
+    - ansible_connection: ssh
+    - ansible_ssh_user: "{{ ssh_bootstrap_user }}"
+    - ansible_ssh_pass: "{{ ssh_bootstrap_password }}"
+  roles:
+    - ssh-bootstrap/authorize
+    - ssh-bootstrap/distribute
+  tags:
+    - ssh
+
+- hosts:
+    - centos
+  vars:
     - weave_group: "centos"
   roles:
     - os/hostname
