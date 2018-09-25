@@ -1,0 +1,47 @@
+---
+- name: ensure CentOS repo version is absent
+  yum:
+    name: "{{ item }}"
+    state: absent
+  with_items:
+    - docker
+    - docker-client
+    - docker-client-latest
+    - docker-common
+    - docker-latest
+    - docker-latest-logrotate
+    - docker-logrotate
+    - docker-engine
+
+- name: add repository
+  get_url:
+    url: https://download.docker.com/linux/centos/docker-ce.repo
+    dest: /etc/yum.repos.d/docker-ce.repo
+    mode: 0644
+
+- name: install
+  yum:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - yum-utils
+    - device-mapper-persistent-data
+    - lvm2
+    - "docker-ce{%if docker_version != 'latest' %}-{{ docker_version }}{% endif %}"
+  register: docker_install_packages
+
+- include_tasks: lock-version.yml
+  when: docker_version != 'latest' and docker_install_packages.changed
+
+- name: "add users to group 'docker'"
+  user:
+    name: "{{ item }}"
+    groups: docker
+    append: yes
+  with_items: "{{ docker_group_users }}"
+
+- name: enable and start
+  service:
+    name: docker.service
+    state: started
+    enabled: yes
