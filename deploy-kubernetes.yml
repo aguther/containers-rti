@@ -56,6 +56,14 @@
     - centos
   any_errors_fatal: true
   roles:
+    - os/cockpit
+  tags:
+    - cockpit
+
+- hosts:
+    - centos
+  any_errors_fatal: true
+  roles:
     - docker/registry
   tags:
     - docker-registry
