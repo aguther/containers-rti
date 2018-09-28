@@ -5,13 +5,6 @@
     suffix: metallb
   register: metallb_temp_directory
 
-- name: download and unarchive
-  unarchive:
-    src: "https://github.com/google/metallb/archive/v{{ metallb_version }}.tar.gz"
-    dest: "{{ metallb_temp_directory.path }}"
-    remote_src: yes
-    validate_certs: no
-
 - name: "create configuration : layer 2"
   template:
     src: layer-2.yaml.j2
@@ -30,7 +23,7 @@
   vars:
     helm_install_namespace: metallb
     helm_install_name: metallb
-    helm_install_chart: "{{ metallb_temp_directory.path }}/metallb-{{ metallb_version }}/helm-chart"
+    helm_install_chart: "stable/metallb"
     helm_install_value_files:
       - "{{ metallb_temp_directory.path }}/ansible_metallb_configuration.yaml"
 
