@@ -1,7 +1,7 @@
 [masters]
 centos-1.vm ansible_host=192.168.88.201 ipaddress=192.168.88.201
 centos-2.vm ansible_host=192.168.88.202 ipaddress=192.168.88.202
-#centos-3.vm ansible_host=192.168.88.203 ipaddress=192.168.88.203
+centos-3.vm ansible_host=192.168.88.203 ipaddress=192.168.88.203
 
 [nodes]
 centos-4.vm ansible_host=192.168.88.204 ipaddress=192.168.88.204
