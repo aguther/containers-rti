@@ -1,0 +1,12 @@
+---
+- import_playbook: kubernetes-rook-cluster.yml
+
+- hosts:
+    - centos
+  any_errors_fatal: true
+  roles:
+    - docker/registry/kubernetes
+  tags:
+    - docker-registry
+
+- import_playbook: docker-load-images.yml

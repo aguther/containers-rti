@@ -3,3 +3,9 @@
     - masters[0]
   roles:
     - rook-cluster
+  tasks:
+    - name:
+      pause:
+        minutes: 5
+  tags:
+    - rook-ceph
