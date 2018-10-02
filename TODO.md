@@ -7,6 +7,4 @@
 
 ## Multiple Execution Issues
 
-* docker/registry: add hostname to certificates to support multiple registries
-* keepalived: sometimes it seems that network configuration gets corrupted
-  -> check health check script again
+* rook-cluster role cannot be executed multiple times
