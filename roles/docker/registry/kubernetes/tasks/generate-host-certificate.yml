@@ -1,0 +1,38 @@
+---
+- name: generate host key
+  command: "/usr/bin/openssl genrsa -out '{{ docker_registry_storage_certs }}/{{ docker_registry_certificate_host_filename }}.key' {{ docker_registry_certificate_key_length }}"
+  args:
+    creates: "{{ docker_registry_storage_certs }}/{{ docker_registry_certificate_host_filename }}.key"
+
+- name: create extension file
+  template:
+    src: host.cnf.j2
+    dest: "{{ docker_registry_storage_certs }}/{{ docker_registry_certificate_host_filename }}.cnf"
+    mode: 0644
+
+- name: generate host certificate request
+  command: >
+    /usr/bin/openssl req
+      -new
+      -key {{ docker_registry_storage_certs }}/{{ docker_registry_certificate_host_filename }}.key
+      -out {{ docker_registry_storage_certs }}/{{ docker_registry_certificate_host_filename }}.csr
+      -config {{ docker_registry_storage_certs }}/{{ docker_registry_certificate_host_filename }}.cnf
+      -subj /CN={{ inventory_hostname }}
+      -reqexts extension_san
+  args:
+    creates: "{{ docker_registry_storage_certs }}/{{ docker_registry_certificate_host_filename }}.csr"
+
+- name: generate host certificate
+  command: >
+    /usr/bin/openssl x509
+      -req
+      -in {{ docker_registry_storage_certs }}/{{ docker_registry_certificate_host_filename }}.csr
+      -CA {{ docker_registry_storage_certs }}/{{ docker_registry_certificate_root_filename }}.crt
+      -CAkey {{ docker_registry_storage_certs }}/{{ docker_registry_certificate_root_filename }}.key
+      -CAcreateserial
+      -out {{ docker_registry_storage_certs }}/{{ docker_registry_certificate_host_filename }}.crt
+      -days {{ docker_registry_certificate_validity }}
+      -extensions extension_san
+      -extfile {{ docker_registry_storage_certs }}/{{ docker_registry_certificate_host_filename }}.cnf
+  args:
+    creates: "{{ docker_registry_storage_certs }}/{{ docker_registry_certificate_host_filename }}.crt"

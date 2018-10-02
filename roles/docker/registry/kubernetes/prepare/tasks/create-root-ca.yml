@@ -1,0 +1,18 @@
+---
+- name: generate root ca key
+  command: "/usr/bin/openssl genrsa -out '{{ docker_registry_storage_certs }}/{{ docker_registry_certificate_root_filename }}.key' {{ docker_registry_certificate_key_length }}"
+  args:
+    creates: "{{ docker_registry_storage_certs }}/{{ docker_registry_certificate_root_filename }}.key"
+
+- name: generate root ca certificate
+  command: >
+    /usr/bin/openssl req
+      -x509
+      -new
+      -nodes
+      -key {{ docker_registry_storage_certs }}/{{ docker_registry_certificate_root_filename }}.key
+      -days {{ docker_registry_certificate_validity }}
+      -out {{ docker_registry_storage_certs }}/{{ docker_registry_certificate_root_filename }}.crt
+      -subj /C={{ docker_registry_certificate_country }}/L={{ docker_registry_certificate_location }}/O={{ docker_registry_certificate_organization }}/OU={{ docker_registry_certificate_organization_unit }}
+  args:
+    creates: "{{ docker_registry_storage_certs }}/{{ docker_registry_certificate_root_filename }}.crt"

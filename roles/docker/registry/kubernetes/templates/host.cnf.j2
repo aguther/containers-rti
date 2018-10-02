@@ -1,0 +1,31 @@
+[req]
+distinguished_name = req_distinguished_name
+req_extensions = extension_san
+
+[req_distinguished_name]
+countryName = {{ docker_registry_certificate_country }}
+localityName = {{ docker_registry_certificate_location }}
+organizationName = {{ docker_registry_certificate_organization }}
+organizationalUnitName = {{ docker_registry_certificate_organization_unit }}
+commonName = {{ inventory_hostname }}
+commonName_max = 64
+
+[extension_san]
+subjectAltName = @san
+
+[san]
+{% set docker_registry_certificate_dns_count = [1] %}
+{% if docker_registry_san_dns is defined and docker_registry_san_dns | length > 0 %}
+{% for san in docker_registry_san_dns %}
+DNS.{{ docker_registry_certificate_dns_count[0] }}={{ san }}
+{% if docker_registry_certificate_dns_count.append(docker_registry_certificate_dns_count.pop() + 1) %}{% endif %}
+{% endfor %}
+{% endif %}
+
+{% set docker_registry_certificate_ip_count = [1] %}
+{% if docker_registry_san_ip is defined and docker_registry_san_ip | length > 0 %}
+{% for san in docker_registry_san_ip %}
+IP.{{ docker_registry_certificate_ip_count[0] }}={{ san }}
+{% if docker_registry_certificate_ip_count.append(docker_registry_certificate_ip_count.pop() + 1) %}{% endif %}
+{% endfor %}
+{% endif %}

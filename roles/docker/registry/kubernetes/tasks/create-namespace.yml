@@ -1,0 +1,14 @@
+---
+- name: check if created
+  command: >
+    /usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf
+    get namespace docker-registry
+  changed_when: no
+  failed_when: no
+  register: docker_registry_check_namespace
+
+- name: create namespace
+  command: >
+    /usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf
+    create namespace docker-registry
+  when: (docker_registry_check_namespace.rc != 0)

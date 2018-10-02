@@ -1,0 +1,33 @@
+---
+- name: "check deployed"
+  command: "/usr/bin/helm list --kubeconfig=/etc/kubernetes/admin.conf --short docker-registry"
+  failed_when: no
+  changed_when: no
+  register: docker_registry_check_deployed
+
+- name: deploy registry using helm/install-chart
+  include_role:
+      name: helm/install-chart
+  vars:
+    helm_install_namespace: docker-registry
+    helm_install_name: docker-registry
+    helm_install_chart: "stable/docker-registry"
+    helm_install_wait: yes
+    helm_install_set:
+      - key: persistence.enabled
+        value: True
+      - key: persistence.size
+        value: 2Gi
+      - key: persistence.storageClass
+        value: rook-ceph-block
+      - key: replicaCount
+        value: 1
+      - key: secrets.htpasswd
+        value: "{{ docker_registry_user_password_configuration.content | b64decode }}"
+      - key: service.port
+        value: "{{ docker_registry_port }}"
+      - key: service.type
+        value: LoadBalancer
+      - key: tlsSecretName
+        value: docker-registry-tls
+  when: (docker_registry_check_deployed.stdout.find('docker-registry') == -1)

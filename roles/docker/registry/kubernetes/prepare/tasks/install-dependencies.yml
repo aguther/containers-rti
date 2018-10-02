@@ -1,0 +1,16 @@
+---
+- name: install epel-release
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - epel-release
+
+- name: install package dependencies
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - python-docker-py
+    - python-passlib
+    - python-bcrypt

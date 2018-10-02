@@ -1,0 +1,9 @@
+---
+- name: create directory structure
+  file:
+    state: directory
+    path: "{{ item }}"
+  with_items:
+    - "{{ docker_registry_storage_auth }}"
+    - "{{ docker_registry_storage_certs }}"
+    - "{{ docker_registry_storage_data }}"

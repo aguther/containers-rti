@@ -1,0 +1,19 @@
+---
+docker_registry_storage: /etc/opt/docker/registry
+
+docker_registry_storage_postfix_auth: auth
+docker_registry_storage_postfix_certs: certs
+docker_registry_storage_postfix_data: data
+
+docker_registry_storage_auth:  "{{ docker_registry_storage }}/{{ docker_registry_storage_postfix_auth }}"
+docker_registry_storage_certs: "{{ docker_registry_storage }}/{{ docker_registry_storage_postfix_certs }}"
+docker_registry_storage_data:  "{{ docker_registry_storage }}/{{ docker_registry_storage_postfix_data }}"
+
+docker_registry_certificate_root_filename: rootCA
+
+docker_registry_certificate_country: DE
+docker_registry_certificate_location: Local
+docker_registry_certificate_organization: Docker
+docker_registry_certificate_organization_unit: Registry
+docker_registry_certificate_validity: 1825
+docker_registry_certificate_key_length: 2048
