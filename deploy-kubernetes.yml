@@ -64,7 +64,7 @@
     - centos
   any_errors_fatal: true
   roles:
-    - docker/registry
+    - docker/registry/kubernetes/prepare
   tags:
     - docker-registry
 

@@ -36,6 +36,13 @@ docker_group_users=user
 docker_registry_port=5000
 docker_registry_auth_user=docker-registry
 docker_registry_auth_password=P@ssw0rd
+docker_registry_san_ip=["192.168.88.221"]
+
+# docker registry - load images
+docker_load_push_images_path=docker-images
+docker_load_push_images_registry_url=192.168.88.221:5000
+docker_load_push_images_registry_username=docker-registry
+docker_load_push_images_registry_password=P@ssw0rd
 
 # kubernetes
 kubernetes_interface=ens33

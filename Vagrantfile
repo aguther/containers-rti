@@ -166,6 +166,11 @@ Vagrant.configure("2") do |config|
               "docker_registry_port" => "5000",
               "docker_registry_auth_user" => "docker-registry",
               "docker_registry_auth_password" => "P@ssw0rd",
+              "docker_registry_san_ip" => ["172.30.0.101"],
+              "docker_load_push_images_path" => "docker-images",
+              "docker_load_push_images_registry_url" => "172.30.0.101:5000",
+              "docker_load_push_images_registry_username" => "docker-registry",
+              "docker_load_push_images_registry_password" => "P@ssw0rd",
               "kubernetes_interface" => $vm_ip_interface_name,
               "metallb_addresses" => [
                 "172.30.0.100-172.30.0.199"
