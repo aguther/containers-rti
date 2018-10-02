@@ -2,6 +2,8 @@
 - hosts:
     - masters[0]
   vars:
+    routingService_service_ip: 192.168.88.222
+    imageCredentials_registry: "{{ docker_load_push_images_registry_url }}"
     helm_install_namespace: rti-shapes-demo
     helm_install_chart: https://github.com/aguther/helm-charts/raw/master/rti-shapes-demo-1.6.0.tgz
     helm_install_wait: yes
@@ -9,14 +11,14 @@
       - key: imageCredentials.name
         value: docker-registry
       - key: imageCredentials.registry
-        value: centos-1.vm:5000
+        value: "{{ imageCredentials_registry }}"
       - key: persistenceService.enabled
-        value: no
+        value: yes
       - key: persistenceService.storage.className
         value: rook-ceph-block
       - key: routingService.service.type
         value: LoadBalancer
       - key: routingService.service.ip
-        value: 172.30.0.101
+        value: "{{ routingService_service_ip }}"
   roles:
     - helm/install-chart
