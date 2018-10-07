@@ -5,6 +5,7 @@
     routingService_service_ip: 192.168.88.222
     imageCredentials_registry: "{{ docker_load_push_images_registry_url }}"
     helm_install_namespace: rti-shapes-demo
+    helm_install_name: rti-shapes-demo
     helm_install_chart: https://github.com/aguther/helm-charts/raw/master/rti-shapes-demo-1.6.0.tgz
     helm_install_wait: yes
     helm_install_set:
