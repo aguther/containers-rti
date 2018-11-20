@@ -2,8 +2,8 @@
 - name: create secret for docker registry
   command: >
     /usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf create secret docker-registry
-      docker-registry-{{ ansible_host }}
-      --docker-server={{ ansible_host }}:{{ docker_registry_port }}
+      docker-registry-{{ docker_registry_url }}
+      --docker-server={{ docker_registry_url }}{%- if docker_registry_port is defined -%}:{{ docker_registry_port }}{%- endif -%}
       --docker-username={{ docker_registry_auth_user }}
       --docker-password={{ docker_registry_auth_password }}
   when: (inventory_hostname == groups['masters'][0])

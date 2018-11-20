@@ -1,0 +1,11 @@
+---
+- include: copy.yml
+  vars:
+    docker_add_registry_certificate: "{{ item | from_yaml }}"
+  with_items: "{{ docker_add_registry_certificates }}"
+  when: docker_add_registry_certificates is defined
+  register: docker_add_registry_certificate_copy
+
+- name: update CA trust
+  command: "update-ca-trust"
+  when: docker_add_registry_certificates is defined and docker_add_registry_certificate_copy.changed

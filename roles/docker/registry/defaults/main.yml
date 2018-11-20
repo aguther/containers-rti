@@ -19,6 +19,7 @@ docker_registry_certificate_organization_unit: Registry
 docker_registry_certificate_validity: 1825
 docker_registry_certificate_key_length: 2048
 
+docker_registry_url: "{{ ansible_host }}"
 docker_registry_port: 5000
 
 docker_registry_auth_filename: htpasswd

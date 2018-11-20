@@ -72,6 +72,14 @@
     - centos
   any_errors_fatal: true
   roles:
+    - docker/add-registry-certificates
+  tags:
+    - docker-registry-certificates
+
+- hosts:
+    - centos
+  any_errors_fatal: true
+  roles:
     - kubernetes/prepare
     - kubernetes/keepalived
     - kubernetes/etcd/prepare
