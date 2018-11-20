@@ -1,7 +1,0 @@
----
-- hosts:
-    - centos
-  roles:
-    - docker/registry/addPrivate
-  tags:
-    - docker-registry

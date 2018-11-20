@@ -1,0 +1,3 @@
+---
+- include: copy-certs.yml
+  when: docker_add_registry_certificates is defined

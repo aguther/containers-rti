@@ -44,6 +44,9 @@ docker_load_push_images_registry_url=192.168.88.221:5000
 docker_load_push_images_registry_username=docker-registry
 docker_load_push_images_registry_password=P@ssw0rd
 
+# docker add registry certificates
+docker_add_registry_certificates=[""]
+
 # kubernetes
 kubernetes_interface=ens33
 kubernetes_load_balancer=192.168.88.200

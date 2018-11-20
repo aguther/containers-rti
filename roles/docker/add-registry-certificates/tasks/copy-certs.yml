@@ -1,0 +1,15 @@
+---
+- name: ensure directories are created
+  file:
+    state: directory
+    path: "{{ item }}"
+  with_items:
+    - "/etc/docker/certs.d/{{ docker_add_registry_certificates_registry_url }}{%- if docker_add_registry_certificates_registry_port is defined -%}:{{ docker_add_registry_certificates_registry_port }}{%- endif -%}/"
+ 
+- name: copy certificate
+  copy:
+    src: "{{ docker_add_registry_certificates_cert_path }}/"
+    dest: "/etc/docker/certs.d/{{ docker_add_registry_certificates_registry_url }}{%- if docker_add_registry_certificates_registry_port is defined -%}:{{ docker_add_registry_certificates_registry_port }}{%- endif -%}/"
+ 
+- name: update trust
+  command: "update-ca-trust"
