@@ -45,7 +45,8 @@ docker_load_push_images_registry_username=docker-registry
 docker_load_push_images_registry_password=P@ssw0rd
 
 # docker add registry certificates
-docker_add_registry_certificates=[""]
+# example: ["{ path: 'cert_file.pem', url: 'my.registry.domain.com', port: 5000 }"]
+docker_add_registry_certificates=[]
 
 # kubernetes
 kubernetes_interface=ens33
