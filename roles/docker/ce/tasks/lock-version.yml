@@ -7,6 +7,6 @@
     - yum-versionlock
 
 - name: lock version
-  command: "yum versionlock add docker"
+  command: "yum versionlock add docker-ce"
   args:
     warn: no
