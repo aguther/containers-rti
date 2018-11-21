@@ -1,10 +1,11 @@
 ---
 - name: "proxy : check if docker is installed"
-  command: rpm -q docker
+  command: which docker
   args:
     warn: no
   register: proxy_docker_check
   changed_when: no
+  failed_when: no
   ignore_errors: yes
 
 - name: "proxy : create directory"
