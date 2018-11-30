@@ -1,10 +1,10 @@
 [masters]
-centos-1.vm ansible_host=192.168.88.201 ipaddress=192.168.88.201
-centos-2.vm ansible_host=192.168.88.202 ipaddress=192.168.88.202
-centos-3.vm ansible_host=192.168.88.203 ipaddress=192.168.88.203
+centos-1.vm ansible_host=192.168.81.201 ipaddress=192.168.81.201
+centos-2.vm ansible_host=192.168.81.202 ipaddress=192.168.81.202
+centos-3.vm ansible_host=192.168.81.203 ipaddress=192.168.81.203
 
 [nodes]
-centos-4.vm ansible_host=192.168.88.204 ipaddress=192.168.88.204
+centos-4.vm ansible_host=192.168.81.204 ipaddress=192.168.81.204
 
 [centos:children]
 masters
@@ -36,11 +36,11 @@ docker_group_users=user
 docker_registry_port=5000
 docker_registry_auth_user=docker-registry
 docker_registry_auth_password=P@ssw0rd
-docker_registry_san_ip=["192.168.88.221"]
+docker_registry_san_ip=["192.168.81.221"]
 
 # docker registry - load images
 docker_load_push_images_path=docker-images
-docker_load_push_images_registry_url=192.168.88.221:5000
+docker_load_push_images_registry_url=192.168.81.221:5000
 docker_load_push_images_registry_username=docker-registry
 docker_load_push_images_registry_password=P@ssw0rd
 
@@ -50,8 +50,8 @@ docker_add_registry_certificates=[]
 
 # kubernetes
 kubernetes_interface=ens33
-kubernetes_load_balancer=192.168.88.200
-kubernetes_load_balancer_ip=192.168.88.200
+kubernetes_load_balancer=192.168.81.200
+kubernetes_load_balancer_ip=192.168.81.200
 kubernetes_load_balancer_port=6443
 kubernetes_copy_config_cluster_name=centos
 
@@ -60,9 +60,9 @@ helm_user=root
 helm_user_home=/root
 
 # metallb
-metallb_addresses=["192.168.88.220-192.168.88.254"]
+metallb_addresses=["192.168.81.220-192.168.81.254"]
 
 # kubernetes dashboard
 kubernetes_dashboard_service_type=LoadBalancer
 kubernetes_dashboard_service_port=80
-kubernetes_dashboard_service_ip=192.168.88.220
+kubernetes_dashboard_service_ip=192.168.81.220
