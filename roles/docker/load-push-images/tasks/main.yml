@@ -6,9 +6,7 @@
 
 - name: determine images and tags from file names
   set_fact:
-    docker_load_push_images_image_list: "{{ docker_load_push_images_image_list | default([]) +  [ item | basename | regex_replace('^(.*)--(.*)\\.tar\\.gz$', '\\1:\\2') ] | list }}"
-  with_fileglob:
-    - "{{ docker_load_push_images_path }}/*.tar.gz"
+    docker_load_push_images_image_list: "{% set images = lookup('fileglob', '{{ docker_load_push_images_path }}/*.tar.gz').split(',') %}[{% for image in images %}'{{ image | basename | regex_replace('^(.*)--(.*)\\.tar\\.gz$', '\\1:\\2') }}',{% endfor %}]"
 
 - include_role:
     name: docker/push-images
