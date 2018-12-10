@@ -1,6 +1,6 @@
 ---
-apiVersion: ceph.rook.io/v1beta1
-kind: Cluster
+apiVersion: ceph.rook.io/v1
+kind: CephCluster
 metadata:
   name: rook-ceph
   namespace: rook-ceph
@@ -8,6 +8,9 @@ spec:
   dataDirHostPath: /var/lib/rook
   dashboard:
     enabled: true
+  mon:
+    count: 3
+    allowMultiplePerNode: true
   storage:
     useAllNodes: true
     useAllDevices: false

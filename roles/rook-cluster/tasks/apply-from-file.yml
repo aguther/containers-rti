@@ -4,10 +4,10 @@
     src: "{{ create_from_file_src }}"
     dest: "/tmp/{{ create_from_file_dest }}"
 
-- name: kubectl create from file
+- name: kubectl apply from file
   command: >
     /usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf
-    create
+    apply
     -f /tmp/{{ create_from_file_dest }}
 
 - name: clean up

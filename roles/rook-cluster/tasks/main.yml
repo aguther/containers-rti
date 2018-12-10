@@ -1,39 +1,52 @@
 ---
+- name: "check deployed"
+  command: "/usr/bin/helm list --kubeconfig=/etc/kubernetes/admin.conf --short rook-ceph"
+  changed_when: no
+  register: rook_ceph_check_deployed
+  when: (inventory_hostname == groups['masters'][0])
+
 - name: deploy rook-ceph
   include_role:
     name: helm/install-chart
   vars:
-    helm_install_namespace: rook-ceph-system
+    helm_install_namespace: rook-ceph-operator
     helm_install_name: rook-ceph
     helm_install_chart: "https://charts.rook.io/{{ rook_cluster_chart_repo }}/rook-ceph-v{{ rook_cluster_chart_version }}.tgz"
     helm_install_wait: yes
+  when: (inventory_hostname == groups['masters'][0])
+        and (rook_ceph_check_deployed.stdout.find('rook-ceph') == -1)
 
 - name: create namespace
-  include_tasks: create-from-file.yml
+  include_tasks: apply-from-file.yml
   vars:
     create_from_file_src: namespace.yml.j2
     create_from_file_dest: namespace.yml
+  when: (inventory_hostname == groups['masters'][0])
 
 - name: create service account
-  include_tasks: create-from-file.yml
+  include_tasks: apply-from-file.yml
   vars:
     create_from_file_src: serviceaccount.yml.j2
     create_from_file_dest: serviceaccount.yml
+  when: (inventory_hostname == groups['masters'][0])
 
 - name: create cluster
-  include_tasks: create-from-file.yml
+  include_tasks: apply-from-file.yml
   vars:
     create_from_file_src: cluster.yml.j2
     create_from_file_dest: cluster.yml
+  when: (inventory_hostname == groups['masters'][0])
 
 - name: create pool
-  include_tasks: create-from-file.yml
+  include_tasks: apply-from-file.yml
   vars:
     create_from_file_src: pool.yml.j2
     create_from_file_dest: pool.yml
+  when: (inventory_hostname == groups['masters'][0])
 
 - name: create storageclass
-  include_tasks: create-from-file.yml
+  include_tasks: apply-from-file.yml
   vars:
     create_from_file_src: storageclass.yml.j2
     create_from_file_dest: storageclass.yml
+  when: (inventory_hostname == groups['masters'][0])
