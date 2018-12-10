@@ -1,0 +1,26 @@
+---
+- name: "check"
+  command: "/usr/bin/helm list --kubeconfig=/etc/kubernetes/admin.conf --short prometheus"
+  changed_when: no
+  register: prometheus_check_deployed
+  when: (inventory_hostname == groups['masters'][0])
+
+- name: deploy
+  include_role:
+    name: helm/install-chart
+  vars:
+    helm_install_namespace: monitoring
+    helm_install_name: prometheus
+    helm_install_chart: "stable/prometheus"
+    helm_install_wait: yes
+    helm_install_set:
+      - key: server.service.type
+        value: "LoadBalancer"
+      - key: server.service.loadBalancerIP
+        value: "192.168.81.223"
+      - key: server.persistentVolume.storageClass
+        value: "rook-ceph-block"
+      - key: alertmanager.persistentVolume.storageClass
+        value: "rook-ceph-block"
+  when: (inventory_hostname == groups['masters'][0])
+        and (prometheus_check_deployed.stdout.find('prometheus') == -1)

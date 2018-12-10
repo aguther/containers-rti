@@ -1,0 +1,8 @@
+---
+- hosts:
+    - masters[0]
+  roles:
+    - prometheus
+    - grafana
+  tags:
+    - monitoring

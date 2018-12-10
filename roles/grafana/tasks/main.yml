@@ -1,0 +1,28 @@
+---
+- name: "check"
+  command: "/usr/bin/helm list --kubeconfig=/etc/kubernetes/admin.conf --short grafana"
+  changed_when: no
+  register: grafana_check_deployed
+  when: (inventory_hostname == groups['masters'][0])
+
+- name: deploy
+  include_role:
+    name: helm/install-chart
+  vars:
+    helm_install_namespace: monitoring
+    helm_install_name: grafana
+    helm_install_chart: "stable/grafana"
+    helm_install_wait: yes
+    helm_install_set:
+      - key: service.type
+        value: "LoadBalancer"
+      - key: persistence.enabled
+        value: "true"
+      - key: persistence.storageClassName
+        value: "rook-ceph-block"
+      - key: persistence.accessModes
+        value: "{ReadWriteMany}"
+      - key: persistence.size
+        value: "10Gi"
+  when: (inventory_hostname == groups['masters'][0])
+        and (grafana_check_deployed.stdout.find('grafana') == -1)
