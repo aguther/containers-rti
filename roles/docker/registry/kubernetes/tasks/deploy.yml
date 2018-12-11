@@ -15,19 +15,21 @@
     helm_install_wait: yes
     helm_install_set:
       - key: persistence.enabled
-        value: True
+        value: "True"
       - key: persistence.size
-        value: 2Gi
+        value: "5Gi"
       - key: persistence.storageClass
-        value: rook-ceph-block
+        value: "rook-ceph-block"
+      - key: persistence.accessMode
+        value: "ReadWriteOnce"
       - key: replicaCount
-        value: 1
+        value: "1"
       - key: secrets.htpasswd
         value: "{{ docker_registry_user_password_configuration.content | b64decode }}"
       - key: service.port
         value: "{{ docker_registry_port }}"
       - key: service.type
-        value: LoadBalancer
+        value: "LoadBalancer"
       - key: tlsSecretName
-        value: docker-registry-tls
+        value: "docker-registry-tls"
   when: (docker_registry_check_deployed.stdout.find('docker-registry') == -1)
