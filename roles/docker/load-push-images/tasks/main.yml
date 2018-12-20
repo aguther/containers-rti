@@ -1,12 +1,20 @@
 ---
+- name: check if directory with docker images exists
+  stat:
+    path: "{{ docker_load_push_images_path }}"
+  register: docker_load_images_path_exists
+  delegate_to: localhost
+
 - include_role:
     name: docker/load-images
   vars:
     docker_load_images_path: "{{ docker_load_push_images_path }}"
+  when: docker_load_images_path_exists.stat.exists and docker_load_images_path_exists.stat.isdir
 
 - name: determine images and tags from file names
   set_fact:
     docker_load_push_images_image_list: "{% set images = lookup('fileglob', '{{ docker_load_push_images_path }}/*.tar.gz').split(',') %}[{% for image in images %}'{{ image | basename | regex_replace('^(.*)--(.*)\\.tar\\.gz$', '\\1:\\2') }}',{% endfor %}]"
+  when: docker_load_images_path_exists.stat.exists and docker_load_images_path_exists.stat.isdir
 
 - include_role:
     name: docker/push-images
@@ -15,3 +23,4 @@
     docker_push_images_registry_url: "{{ docker_load_push_images_registry_url }}"
     docker_push_images_registry_username: "{{ docker_load_push_images_registry_username }}"
     docker_push_images_registry_password: "{{ docker_load_push_images_registry_password }}"
+  when: docker_load_images_path_exists.stat.exists and docker_load_images_path_exists.stat.isdir
