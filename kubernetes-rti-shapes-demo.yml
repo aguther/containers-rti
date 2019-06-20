@@ -2,7 +2,7 @@
 - hosts:
     - masters[0]
   vars:
-    routingService_service_ip: 192.168.81.230
+    routingService_service_ip: 192.168.108.230
     imageCredentials_registry: "{{ docker_load_push_images_registry_url }}"
     helm_install_namespace: rti-shapes-demo
     helm_install_name: rti-shapes-demo
