@@ -101,7 +101,7 @@
     - masters[0]
   any_errors_fatal: true
   vars:
-    - helm_version: "2.13.0"
+    - helm_version: "2.14.1"
   roles:
     - helm
   tags:
