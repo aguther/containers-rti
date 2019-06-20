@@ -1,5 +1,5 @@
 ---
-kubernetes_dashboard_version: "1.10.0"
+kubernetes_dashboard_version: "1.10.1"
 kubernetes_dashboard_service_type: NodePort
 kubernetes_dashboard_service_port: 30000
 # kubernetes_dashboard_service_ip:
