@@ -17,7 +17,7 @@
       - key: server.service.type
         value: "LoadBalancer"
       - key: server.service.loadBalancerIP
-        value: "192.168.81.223"
+        value: "{{ prometheus_service_ip }}"
       - key: server.persistentVolume.storageClass
         value: "rook-ceph-block"
       - key: alertmanager.persistentVolume.storageClass

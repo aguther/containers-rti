@@ -66,3 +66,6 @@ metallb_addresses=["192.168.108.220-192.168.108.254"]
 kubernetes_dashboard_service_type=LoadBalancer
 kubernetes_dashboard_service_port=80
 kubernetes_dashboard_service_ip=192.168.108.220
+
+# prometheus
+prometheus_service_ip=192.168.108.223
