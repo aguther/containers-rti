@@ -9,26 +9,12 @@
   include_role:
     name: helm/install-chart
   vars:
-    helm_install_namespace: rook-ceph-operator
+    helm_install_namespace: rook-ceph
     helm_install_name: rook-ceph
     helm_install_chart: "https://charts.rook.io/{{ rook_cluster_chart_repo }}/rook-ceph-v{{ rook_cluster_chart_version }}.tgz"
     helm_install_wait: yes
   when: (inventory_hostname == groups['masters'][0])
         and (rook_ceph_check_deployed.stdout.find('rook-ceph') == -1)
-
-- name: create namespace
-  include_tasks: apply-from-file.yml
-  vars:
-    create_from_file_src: namespace.yml.j2
-    create_from_file_dest: namespace.yml
-  when: (inventory_hostname == groups['masters'][0])
-
-- name: create service account
-  include_tasks: apply-from-file.yml
-  vars:
-    create_from_file_src: serviceaccount.yml.j2
-    create_from_file_dest: serviceaccount.yml
-  when: (inventory_hostname == groups['masters'][0])
 
 - name: create cluster
   include_tasks: apply-from-file.yml
