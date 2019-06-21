@@ -33,6 +33,20 @@
 - include_tasks: lock-version.yml
   when: docker_version != 'latest' and docker_install_packages.changed
 
+- name: "create config directory"
+  file:
+    path: /etc/docker
+    state: directory
+    mode: 0755
+
+- name: "change cgroupdriver to systemd"
+  template:
+    src: daemon.json.j2
+    dest: /etc/docker/daemon.json
+    owner: root
+    group: root
+    mode: 0644
+
 - name: "add users to group 'docker'"
   user:
     name: "{{ item }}"
@@ -43,5 +57,5 @@
 - name: enable and start
   service:
     name: docker.service
-    state: started
+    state: reloaded
     enabled: yes
