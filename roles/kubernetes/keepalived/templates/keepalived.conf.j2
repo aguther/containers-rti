@@ -3,35 +3,29 @@ global_defs {
   router_id {{ inventory_hostname }}
 }
 
-vrrp_script check_apiserver {
-  script "/etc/keepalived/check_apiserver.sh"
-  interval 3
-  weight -2
-  fall 10
-  rise 2
+vrrp_script haproxy-check {
+  script "killall -0 haproxy"
+  interval 2
+  weight 20
 }
 
-vrrp_instance VI_1 {
-{% if inventory_hostname == groups['masters'][0] %}
-    state MASTER
-{% else %}
-    state BACKUP
-{% endif %}
-    interface {{ kubernetes_interface }}
-    virtual_router_id {{ kubernetes_keepalived_virtual_router_id }}
-{% if inventory_hostname == groups['masters'][0] %}
-    priority {{ kubernetes_keepalived_priority_master }}
-{% else %}
-    priority {{ kubernetes_keepalived_priority_backup }}
-{% endif %}
-    authentication {
-        auth_type PASS
-        auth_pass {{ kubernetes_keepalived_auth_pass }}
-    }
-    virtual_ipaddress {
-        {{ kubernetes_load_balancer_ip }}
-    }
-    track_script {
-        check_apiserver
-    }
+vrrp_instance haproxy-vip {
+  state BACKUP
+  priority {{ kubernetes_keepalived_priority }}
+  interface {{ kubernetes_interface }}
+  virtual_router_id {{ kubernetes_keepalived_virtual_router_id }}
+  advert_int {{ kubernetes_keepalived_advert_int }}
+
+  authentication {
+    auth_type PASS
+    auth_pass {{ kubernetes_keepalived_auth_pass }}
+  }
+
+  virtual_ipaddress {
+    {{ kubernetes_load_balancer_ip }}
+  }
+
+  track_script {
+    haproxy-check weight 20
+  }
 }

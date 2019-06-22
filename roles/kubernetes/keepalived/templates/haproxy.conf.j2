@@ -1,0 +1,28 @@
+global
+  user haproxy
+  group haproxy
+
+defaults
+  mode http
+  log global
+  retries 2
+  timeout connect 3000ms
+  timeout server 5000ms
+  timeout client 5000ms
+
+frontend kubernetes
+  bind {{ kubernetes_load_balancer_ip }}:{{ kubernetes_load_balancer_port }}
+  bind 127.0.0.1:{{ kubernetes_load_balancer_port }}
+  option tcplog
+  mode tcp
+  default_backend kubernetes
+
+backend kubernetes
+  mode tcp
+  option tcplog
+  option tcp-check
+  balance roundrobin
+  default-server inter 10s downinter 5s rise 2 fall 2 slowstart 60s maxconn 250 maxqueue 256 weight 100
+{% for server in groups['masters'] %}
+  server {{ hostvars[server]['inventory_hostname'] }} {{ hostvars[server]['ipaddress'] }}:{{ kubernetes_load_balancer_port }} check
+{% endfor %}

@@ -1,6 +1,9 @@
 ---
 # kubernetes_load_balancer_ip: 
+kubernetes_load_balancer_port: 6443
 kubernetes_keepalived_virtual_router_id: 1
-kubernetes_keepalived_priority_master: 100
-kubernetes_keepalived_priority_backup: 50
+kubernetes_keepalived_priority: 101
+# kubernetes_keepalived_priority_master: 100
+# kubernetes_keepalived_priority_backup: 50
 kubernetes_keepalived_auth_pass: super_secret_password
+kubernetes_keepalived_advert_int: 3

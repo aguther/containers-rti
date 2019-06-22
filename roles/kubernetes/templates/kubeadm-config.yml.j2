@@ -1,4 +1,4 @@
 apiVersion: kubeadm.k8s.io/v1beta2
 kind: ClusterConfiguration
 kubernetesVersion: {{ kubernetes_kubeadm_version }}
-controlPlaneEndpoint: "{{ kubernetes_load_balancer_ip }}"
+controlPlaneEndpoint: "{{ kubernetes_load_balancer_ip }}:{{ kubernetes_load_balancer_port }}"
