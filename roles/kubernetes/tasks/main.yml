@@ -12,8 +12,8 @@
     - kubernetes-init
 
 - include_tasks: join.yml
-  when: ('nodes' in group_names)
-        or (inventory_hostname == groups['masters'][0])
+  when: ('masters' in group_names)
+        or ('nodes' in group_names)
   tags:
     - kubernetes
     - kubernetes-join

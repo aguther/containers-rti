@@ -74,16 +74,6 @@
   roles:
     - kubernetes/prepare
     - kubernetes/keepalived
-    - kubernetes/etcd/prepare
-  tags:
-    - kubernetes
-
-- hosts:
-    - masters
-  any_errors_fatal: true
-  serial: 1
-  roles:
-    - kubernetes/etcd
   tags:
     - kubernetes
 

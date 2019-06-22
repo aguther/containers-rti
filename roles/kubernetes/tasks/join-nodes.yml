@@ -2,6 +2,6 @@
 - name: join nodes
   command: >
     /usr/bin/kubeadm join
-      --discovery-token-unsafe-skip-ca-verification
       --token={{ hostvars[groups['masters'][0]].kubeadm_token }}
-      {{ hostvars[groups['masters'][0]].ipaddress }}:6443
+      --discovery-token-ca-cert-hash={{ hostvars[groups['masters'][0]].kubeadm_certificate_hash }}
+      {{ kubernetes_load_balancer }}:6443

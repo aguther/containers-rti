@@ -6,6 +6,14 @@
 - include_tasks: create-token.yml
   when: (inventory_hostname == groups['masters'][0])
 
+- include_tasks: upload-certs.yml
+  when: (inventory_hostname == groups['masters'][0])
+
+- include_tasks: join-masters.yml
+  when: (inventory_hostname in groups['masters'])
+        and not(inventory_hostname in hostvars[groups['masters'][0]].kubernetes_nodes)
+        and not(inventory_hostname == groups['masters'][0])
+
 - include_tasks: join-nodes.yml
   when: (inventory_hostname in groups['nodes'])
         and not(inventory_hostname in hostvars[groups['masters'][0]].kubernetes_nodes)
