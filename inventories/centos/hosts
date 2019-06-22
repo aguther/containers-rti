@@ -1,20 +1,11 @@
-[masters]
+# -----------------------------------------------------------------------------
+#  machine definitions
+# -----------------------------------------------------------------------------
+[centos]
 centos-1.vm ansible_host=192.168.108.201 ipaddress=192.168.108.201
 centos-2.vm ansible_host=192.168.108.202 ipaddress=192.168.108.202
-
-[nodes]
 centos-3.vm ansible_host=192.168.108.203 ipaddress=192.168.108.203
 centos-4.vm ansible_host=192.168.108.204 ipaddress=192.168.108.204
-
-[datacenter-1]
-centos-1.vm
-centos-2.vm
-centos-3.vm
-centos-4.vm
-
-[centos:children]
-masters
-nodes
 
 [centos:vars]
 # ansible
@@ -35,6 +26,23 @@ ssh_bootstrap_password=root
 #os_proxy_https_proxy='http://X:3128'
 #os_proxy_no_proxy='*.vm,172.16.72.0/24,10.0.0.0/8'
 
+
+# -----------------------------------------------------------------------------
+#  kubernetes groups
+# -----------------------------------------------------------------------------
+[masters]
+centos-1.vm
+centos-2.vm
+
+[nodes]
+centos-3.vm
+centos-4.vm
+
+[kubernetes:children]
+masters
+nodes
+
+[kubernetes:vars]
 # docker
 docker_group_users=user
 
@@ -75,3 +83,13 @@ kubernetes_dashboard_service_ip=192.168.108.220
 
 # prometheus
 prometheus_service_ip=192.168.108.223
+
+
+# -----------------------------------------------------------------------------
+#  nomad / consul groups
+# -----------------------------------------------------------------------------
+[datacenter-1:children]
+centos-1.vm
+centos-2.vm
+centos-3.vm
+centos-4.vm
