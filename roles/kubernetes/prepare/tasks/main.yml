@@ -55,5 +55,3 @@
     name: kubelet.service
     state: started
     enabled: yes
-
-- include_tasks: setup-route.yml
