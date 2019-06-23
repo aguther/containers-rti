@@ -18,20 +18,3 @@
 
 - name: "kubeadm : init"
   command: /usr/bin/kubeadm init --config /etc/kubernetes/kubeadm.yml
-
-- name: "kubectl : allow users to read configuration"
-  file:
-    path: /etc/kubernetes/admin.conf
-    mode: 0644
-
-- name: "kubectl : setup environment"
-  copy:
-    src: kubernetes.sh
-    dest: /etc/profile.d/kubernetes.sh
-
-- name: "node : remove master taint"
-  command: >
-    /usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf
-      taint nodes
-      {{ inventory_hostname }}
-      node-role.kubernetes.io/master-

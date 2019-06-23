@@ -17,3 +17,10 @@
   tags:
     - kubernetes
     - kubernetes-join
+
+- include_tasks: configure-masters.yml
+  when: ('kubernetes-masters' in group_names)
+        and (hostvars[inventory_hostname].kubeadm_deployed == false)
+  tags:
+    - kubernetes
+    - kubernetes-config
