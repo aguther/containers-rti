@@ -1,0 +1,44 @@
+---
+- name: "haproxy : install"
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - haproxy
+    - psmisc
+
+- name: "haproxy : sysctl : allow non local bind"
+  sysctl:
+    sysctl_file: /etc/sysctl.d/99-kubernetes.conf
+    state: present
+    name: net.ipv4.ip_nonlocal_bind
+    value: 1
+    sysctl_set: yes
+    reload: yes
+  register: kubernetes_keepalived_haproxy_sysctl
+
+- name: "haproxy : configuration"
+  template:
+    src: haproxy.conf.j2
+    dest: /etc/haproxy/haproxy.cfg
+    owner: root
+    group: root
+    mode: 0644
+  register: kubernetes_keepalived_haproxy_configuration
+
+- name: "haproxy : service : restart"
+  service:
+    name: "{{ item }}"
+    state: restarted
+  with_items:
+    - haproxy.service
+  when: (kubernetes_keepalived_haproxy_sysctl.changed)
+        or (kubernetes_keepalived_haproxy_configuration.changed)
+
+- name: "haproxy : services : enable and start"
+  service:
+    name: "{{ item }}"
+    state: started
+    enabled: yes
+  with_items:
+    - haproxy.service

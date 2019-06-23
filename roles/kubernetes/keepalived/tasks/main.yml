@@ -1,63 +1,7 @@
 ---
-- name: "install"
-  yum:
-    name: "{{ item }}"
-    state: present
-  with_items:
-    - keepalived
-    - psmisc
-    - haproxy
-  when: "'kubernetes-loadBalancers' in group_names"
-
-- name: "sysctl : allow non local bind"
-  sysctl:
-    sysctl_file: /etc/sysctl.d/99-kubernetes.conf
-    state: present
-    name: net.ipv4.ip_nonlocal_bind
-    value: 1
-    sysctl_set: yes
-    reload: yes
-
-- name: "configuration : keepalived"
-  template:
-    src: keepalived.conf.j2
-    dest: /etc/keepalived/keepalived.conf
-    owner: root
-    group: root
-    mode: 0644
-  register: kubernetes_keepalived_configuration_service_keepalived
-  when: "'kubernetes-loadBalancers' in group_names"
-
-- name: "configuration : haproxy"
-  template:
-    src: haproxy.conf.j2
-    dest: /etc/haproxy/haproxy.cfg
-    owner: root
-    group: root
-    mode: 0644
-  register: kubernetes_keepalived_configuration_service_haproxy
-  when: "'kubernetes-loadBalancers' in group_names"
-
-- name: "service keepalived : restart"
-  service:
-    name: "keepalived.service"
-    state: restarted
+- include_tasks: keepalived.yml
   when: ("'kubernetes-loadBalancers' in group_names")
-        and (kubernetes_keepalived_configuration_service_keepalived.changed)
 
-- name: "service haproxy : restart"
-  service:
-    name: "haproxy.service"
-    state: restarted
+- include_tasks: haproxy.yml
   when: ("'kubernetes-loadBalancers' in group_names")
-        and (kubernetes_keepalived_configuration_service_haproxy.changed)
-
-- name: "services : enable and start"
-  service:
-    name: "{{ item }}"
-    state: started
-    enabled: yes
-  with_items:
-    - keepalived.service
-    - haproxy.service
-  when: "'kubernetes-loadBalancers' in group_names"
+        and (kubernetes_load_balancer_use_haproxy|bool == true)
