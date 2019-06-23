@@ -1,4 +1,4 @@
 ---
 - name: stop
-  command: "docker -H tcp://{{ groups['masters'][0] }}:2400 rm -f rti-perftest-pub-{{ item }}"
-  with_sequence: start=1 end={{ groups['masters'] | length }}
+  command: "docker -H tcp://{{ groups['kubernetes-masters'][0] }}:2400 rm -f rti-perftest-pub-{{ item }}"
+  with_sequence: start=1 end={{ groups['kubernetes-masters'] | length }}

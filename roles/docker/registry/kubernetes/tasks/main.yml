@@ -1,15 +1,15 @@
 ---
 - include_tasks: generate-host-certificate.yml
-  when: (inventory_hostname == groups['masters'][0])
+  when: (inventory_hostname == groups['kubernetes-masters'][0])
 
 - include_tasks: create-namespace.yml
-  when: (inventory_hostname == groups['masters'][0])
+  when: (inventory_hostname == groups['kubernetes-masters'][0])
 
 - include_tasks: create-tls-secret.yml
-  when: (inventory_hostname == groups['masters'][0])
+  when: (inventory_hostname == groups['kubernetes-masters'][0])
 
 - include_tasks: create-read-htpasswd.yml
-  when: (inventory_hostname == groups['masters'][0])
+  when: (inventory_hostname == groups['kubernetes-masters'][0])
 
 - include_tasks: deploy.yml
-  when: (inventory_hostname == groups['masters'][0])
+  when: (inventory_hostname == groups['kubernetes-masters'][0])

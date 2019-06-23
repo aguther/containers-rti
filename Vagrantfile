@@ -145,11 +145,11 @@ Vagrant.configure("2") do |config|
           ansible.host_vars = $ansible_host_vars
           # groups
           ansible.groups = {
-            "masters" => "%s1.vm" % $vm_hostname_prefix,
-            "nodes" => "%s[2:%d].vm" % [$vm_hostname_prefix, $vm_instances],
+            "kubernetes-masters" => "%s1.vm" % $vm_hostname_prefix,
+            "kubernetes-workers" => "%s[2:%d].vm" % [$vm_hostname_prefix, $vm_instances],
             "centos:children" => [
-              "masters",
-              "nodes",
+              "kubernetes-masters",
+              "kubernetes-workers",
             ],
             "centos:vars" => {
               "ansible_become" => "True",

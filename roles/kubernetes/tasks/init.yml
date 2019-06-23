@@ -1,4 +1,4 @@
 ---
 - include_tasks: init-master.yml
-  when: (inventory_hostname == groups['masters'][0])
+  when: (inventory_hostname == groups['kubernetes-masters'][0])
         and (hostvars[inventory_hostname].kubeadm_deployed == false)

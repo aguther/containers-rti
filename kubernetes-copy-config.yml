@@ -1,5 +1,5 @@
 ---
 - hosts:
-    - masters[0]
+    - kubernetes-masters[0]
   roles:
     - kubernetes/copy-config

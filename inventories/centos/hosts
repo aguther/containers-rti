@@ -44,26 +44,26 @@ ssh_bootstrap_password=root
 # -----------------------------------------------------------------------------
 #  kubernetes groups
 # -----------------------------------------------------------------------------
-[masters]
+[kubernetes-masters]
 centos-1.vm
 centos-2.vm
 
-[nodes]
+[kubernetes-workers]
 centos-3.vm
 centos-4.vm
 
-[loadBalancers]
+[kubernetes-loadBalancers]
 centos-5.vm
 centos-6.vm
 
 [kubernetes-nodes:children]
-masters
-nodes
+kubernetes-masters
+kubernetes-workers
 
 [kubernetes:children]
-masters
-nodes
-loadBalancers
+kubernetes-masters
+kubernetes-workers
+kubernetes-loadBalancers
 
 [kubernetes:vars]
 # docker

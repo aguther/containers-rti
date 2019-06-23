@@ -7,7 +7,7 @@
     - keepalived
     - psmisc
     - haproxy
-  when: "'loadBalancers' in group_names"
+  when: "'kubernetes-loadBalancers' in group_names"
 
 - name: "sysctl : allow non local bind"
   sysctl:
@@ -26,7 +26,7 @@
     group: root
     mode: 0644
   register: kubernetes_keepalived_configuration_service_keepalived
-  when: "'loadBalancers' in group_names"
+  when: "'kubernetes-loadBalancers' in group_names"
 
 - name: "configuration : haproxy"
   template:
@@ -36,20 +36,20 @@
     group: root
     mode: 0644
   register: kubernetes_keepalived_configuration_service_haproxy
-  when: "'loadBalancers' in group_names"
+  when: "'kubernetes-loadBalancers' in group_names"
 
 - name: "service keepalived : restart"
   service:
     name: "keepalived.service"
     state: restarted
-  when: ("'loadBalancers' in group_names")
+  when: ("'kubernetes-loadBalancers' in group_names")
         and (kubernetes_keepalived_configuration_service_keepalived.changed)
 
 - name: "service haproxy : restart"
   service:
     name: "haproxy.service"
     state: restarted
-  when: ("'loadBalancers' in group_names")
+  when: ("'kubernetes-loadBalancers' in group_names")
         and (kubernetes_keepalived_configuration_service_haproxy.changed)
 
 - name: "services : enable and start"
@@ -60,4 +60,4 @@
   with_items:
     - keepalived.service
     - haproxy.service
-  when: "'loadBalancers' in group_names"
+  when: "'kubernetes-loadBalancers' in group_names"

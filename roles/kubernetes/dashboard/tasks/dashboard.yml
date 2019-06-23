@@ -4,7 +4,7 @@
     /usr/bin/kubectl --kubeconfig=/etc/kubernetes/admin.conf
       apply
         --filename=https://raw.githubusercontent.com/kubernetes/dashboard/v{{ kubernetes_dashboard_version }}/src/deploy/alternative/kubernetes-dashboard.yaml
-  when: (inventory_hostname == groups['masters'][0])
+  when: (inventory_hostname == groups['kubernetes-masters'][0])
 
 - name: "dashboard : create RBAC"
   command: >
@@ -15,12 +15,12 @@
         --user=admin
         --user=kubelet
         --group=system:serviceaccounts
-  when: (inventory_hostname == groups['masters'][0])
+  when: (inventory_hostname == groups['kubernetes-masters'][0])
 
 - include_tasks: patch-service-nodePort.yml
-  when: (inventory_hostname == groups['masters'][0])
+  when: (inventory_hostname == groups['kubernetes-masters'][0])
         and (kubernetes_dashboard_service_type | upper == "NODEPORT")
 
 - include_tasks: patch-service-loadBalancer.yml
-  when: (inventory_hostname == groups['masters'][0])
+  when: (inventory_hostname == groups['kubernetes-masters'][0])
         and (kubernetes_dashboard_service_type | upper == "LOADBALANCER")

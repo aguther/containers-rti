@@ -6,4 +6,4 @@
       --docker-server={{ docker_registry_url }}{%- if docker_registry_port is defined -%}:{{ docker_registry_port }}{%- endif -%}
       --docker-username={{ docker_registry_auth_user }}
       --docker-password={{ docker_registry_auth_password }}
-  when: (inventory_hostname == groups['masters'][0])
+  when: (inventory_hostname == groups['kubernetes-masters'][0])

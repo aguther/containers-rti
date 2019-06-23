@@ -1,6 +1,6 @@
 ---
 - hosts:
-    - masters[0]
+    - kubernetes-masters[0]
   vars:
     routingService_service_ip: 192.168.108.230
     imageCredentials_registry: "{{ docker_load_push_images_registry_url }}"

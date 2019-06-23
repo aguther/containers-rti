@@ -2,7 +2,7 @@
 
 ## General Improvements
 
-* copy kubectl config to all nodes
+* copy kubectl config to all kubernetes-workers
 * copy kubectl config to local host if requested (add context)
 
 ## Multiple Execution Issues

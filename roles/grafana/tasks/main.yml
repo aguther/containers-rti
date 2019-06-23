@@ -3,7 +3,7 @@
   command: "/usr/bin/helm list --kubeconfig=/etc/kubernetes/admin.conf --short grafana"
   changed_when: no
   register: grafana_check_deployed
-  when: (inventory_hostname == groups['masters'][0])
+  when: (inventory_hostname == groups['kubernetes-masters'][0])
 
 - name: deploy
   include_role:
@@ -24,5 +24,5 @@
         value: "{ReadWriteMany}"
       - key: persistence.size
         value: "10Gi"
-  when: (inventory_hostname == groups['masters'][0])
+  when: (inventory_hostname == groups['kubernetes-masters'][0])
         and (grafana_check_deployed.stdout.find('grafana') == -1)

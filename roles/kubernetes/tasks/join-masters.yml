@@ -2,10 +2,10 @@
 - name: join masters
   command: >
     /usr/bin/kubeadm join
-      --token={{ hostvars[groups['masters'][0]].kubeadm_token }}
-      --discovery-token-ca-cert-hash={{ hostvars[groups['masters'][0]].kubeadm_certificate_hash }}
+      --token={{ hostvars[groups['kubernetes-masters'][0]].kubeadm_token }}
+      --discovery-token-ca-cert-hash={{ hostvars[groups['kubernetes-masters'][0]].kubeadm_certificate_hash }}
       --control-plane
-      --certificate-key={{ hostvars[groups['masters'][0]].kubeadm_certificate_key }}
+      --certificate-key={{ hostvars[groups['kubernetes-masters'][0]].kubeadm_certificate_key }}
       {{ kubernetes_load_balancer }}:6443
 
 - name: "kubectl : allow users to read configuration"
