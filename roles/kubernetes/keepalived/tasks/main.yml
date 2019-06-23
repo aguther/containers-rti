@@ -4,4 +4,4 @@
 
 - include_tasks: haproxy.yml
   when: ("'kubernetes-loadBalancers' in group_names")
-        and (kubernetes_load_balancer_use_haproxy|bool == true)
+        and (kubernetes_load_balancer_distinct_nodes|bool == true)

@@ -1,7 +1,7 @@
 ---
 # kubernetes_load_balancer_ip: 
 kubernetes_load_balancer_port: 6443
-kubernetes_load_balancer_use_haproxy: true
+kubernetes_load_balancer_distinct_nodes: true
 kubernetes_keepalived_virtual_router_id: 1
 kubernetes_keepalived_priority: 101
 kubernetes_keepalived_auth_pass: bXFMT4mv
