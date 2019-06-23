@@ -91,6 +91,8 @@ kubernetes_load_balancer=192.168.108.200
 kubernetes_load_balancer_ip=192.168.108.200
 kubernetes_load_balancer_port=6443
 kubernetes_load_balancer_use_haproxy=False
+
+# cluster configuration for access with kubectl
 kubernetes_copy_config_cluster_name=centos
 
 # helm
