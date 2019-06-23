@@ -6,14 +6,16 @@ metadata:
   namespace: rook-ceph
 spec:
   dataDirHostPath: /var/lib/rook
-  dashboard:
-    enabled: true
   mon:
     count: 3
     allowMultiplePerNode: true
+  dashboard:
+    enabled: true
   storage:
     useAllNodes: true
-    useAllDevices: false
+    useAllDevices: true
+    directories:
+    - path: /var/lib/rook
     config:
       databaseSizeMB: "1024"
       journalSizeMB: "1024"

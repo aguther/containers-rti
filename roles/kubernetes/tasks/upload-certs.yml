@@ -1,0 +1,10 @@
+---
+- name: generate token
+  command: "/usr/bin/kubeadm init phase upload-certs --upload-certs"
+  register: kubeadm_upload_certs_cmd
+
+- name: store certificate key
+  set_fact:
+    kubeadm_certificate_key: "{{ kubeadm_upload_certs_cmd.stdout | regex_search(regexp, '\\1') | first }}"
+  vars:
+    regexp: 'Using certificate key:\n(.*)'

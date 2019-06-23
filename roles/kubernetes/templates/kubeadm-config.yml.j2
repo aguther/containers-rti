@@ -1,22 +1,4 @@
-apiVersion: kubeadm.k8s.io/v1beta1
+apiVersion: kubeadm.k8s.io/v1beta2
 kind: ClusterConfiguration
 kubernetesVersion: {{ kubernetes_kubeadm_version }}
-apiServerCertSANs:
-- {{ kubernetes_load_balancer }}
-- {{ kubernetes_load_balancer_ip }}
-api:
-  advertiseAddress: "{{ kubernetes_load_balancer_ip }}"
-  controlPlaneEndpoint: "{{ kubernetes_load_balancer_ip }}"
-apiServerExtraArgs:
-  endpoint-reconciler-type: lease
-etcd:
-  external:
-    endpoints:
-{% for host in groups['masters'] %}
-    - https://{{ hostvars[host].ipaddress }}:2379
-{% endfor %}
-    caFile: /etc/kubernetes/pki/etcd/ca.crt
-    certFile: /etc/kubernetes/pki/apiserver-etcd-client.crt
-    keyFile: /etc/kubernetes/pki/apiserver-etcd-client.key
-networking:
-  serviceSubnet: {{ kubernetes_service_cidr }}
+controlPlaneEndpoint: "{{ kubernetes_load_balancer_ip }}:{{ kubernetes_load_balancer_port }}"

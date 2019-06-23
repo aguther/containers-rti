@@ -1,8 +1,16 @@
 ---
 - name: generate token
-  command: "/usr/bin/kubeadm token create"
+  command: "/usr/bin/kubeadm token create --print-join-command"
   register: kubeadm_token_cmd
 
 - name: store token
   set_fact:
-    kubeadm_token: "{{ kubeadm_token_cmd.stdout_lines[0] }}"
+    kubeadm_token: "{{ kubeadm_token_cmd.stdout | regex_search(regexp, '\\2') | first }}"
+  vars:
+    regexp: '([^\s]+\s+){4}([^\s]+)'
+
+- name: store certificate hash
+  set_fact:
+    kubeadm_certificate_hash: "{{ kubeadm_token_cmd.stdout | regex_search(regexp2, '\\2') | first }}"
+  vars:
+    regexp2: '([^\s]+\s+){6}([^\s]+)'

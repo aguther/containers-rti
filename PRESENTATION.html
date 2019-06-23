@@ -157,11 +157,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
           ansible.verbose = false
           # groups
           ansible.groups = {
-            "masters" =&gt; "%s1" % $vm_hostname_prefix,
-            "nodes" =&gt; "%s[2:%d]" % [$vm_hostname_prefix, $vm_instances],
+            "kubernetes-masters" =&gt; "%s1" % $vm_hostname_prefix,
+            "kubernetes-workers" =&gt; "%s[2:%d]" % [$vm_hostname_prefix, $vm_instances],
             "centos:children" =&gt; [
-              "masters",
-              "nodes",
+              "kubernetes-masters",
+              "kubernetes-workers",
             ],
             "centos:vars" =&gt; {
               "ansible_ssh_pass" =&gt; config.ssh.username,
@@ -237,7 +237,7 @@ kind: Deployment
 metadata:
   name: rti-perftest-pub
 spec:
-  replicas: {{ groups['masters'] | length }}
+  replicas: {{ groups['kubernetes-masters'] | length }}
   template:
     metadata:
       labels:
@@ -254,7 +254,7 @@ spec:
             - "-sleep"
             - "1"
             - "-numSubscribers"
-            - "{{ groups['nodes'] | length }}"
+            - "{{ groups['kubernetes-workers'] | length }}"
           ports:
             - containerPort: 7400
               protocol: "UDP"
@@ -274,7 +274,7 @@ kind: Deployment
 metadata:
   name: rti-perftest-sub
 spec:
-  replicas: {{ groups['nodes'] | length }}
+  replicas: {{ groups['kubernetes-workers'] | length }}
   template:
     metadata:
       labels:

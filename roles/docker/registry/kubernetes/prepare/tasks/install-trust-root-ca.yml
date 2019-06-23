@@ -5,17 +5,17 @@
     path: "{{ item }}"
   with_items:
     - "/etc/pki/ca-trust/source/anchors/"
-    - "/etc/docker/certs.d/{{ groups['masters'][0] }}:{{ docker_registry_port }}/"
+    - "/etc/docker/certs.d/{{ groups['kubernetes-masters'][0] }}:{{ docker_registry_port }}/"
 
 - name: "copy certificate"
   synchronize:
     src: "{{ docker_registry_storage_certs }}/{{ docker_registry_certificate_root_filename }}.crt"
     dest: "{{ item }}"
   with_items:
-    - "/etc/pki/ca-trust/source/anchors/{{ groups['masters'][0] }}-{{ docker_registry_certificate_root_filename }}.crt"
-    - "/etc/docker/certs.d/{{ groups['masters'][0] }}:{{ docker_registry_port }}/{{ docker_registry_certificate_root_filename }}.crt"
+    - "/etc/pki/ca-trust/source/anchors/{{ groups['kubernetes-masters'][0] }}-{{ docker_registry_certificate_root_filename }}.crt"
+    - "/etc/docker/certs.d/{{ groups['kubernetes-masters'][0] }}:{{ docker_registry_port }}/{{ docker_registry_certificate_root_filename }}.crt"
   register: docker_registry_copy_certificates
-  delegate_to: "{{ groups['masters'][0] }}"
+  delegate_to: "{{ groups['kubernetes-masters'][0] }}"
 
 - name: update trust
   command: "/usr/bin/update-ca-trust"

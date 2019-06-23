@@ -37,7 +37,7 @@
     - prepare
 
 - hosts:
-    - centos
+    - kubernetes-nodes
   any_errors_fatal: true
   roles:
     - docker/ce
@@ -45,7 +45,7 @@
     - docker
 
 - hosts:
-    - centos
+    - kubernetes-nodes
   any_errors_fatal: true
   roles:
     - os/proxy/docker
@@ -53,7 +53,7 @@
     - prepare
 
 - hosts:
-    - centos
+    - kubernetes-nodes
   any_errors_fatal: true
   roles:
     - docker/registry/kubernetes/prepare
@@ -61,7 +61,7 @@
     - docker-registry
 
 - hosts:
-    - centos
+    - kubernetes-nodes
   any_errors_fatal: true
   roles:
     - docker/add-registry-certificates
@@ -69,26 +69,23 @@
     - docker-registry-certificates
 
 - hosts:
-    - centos
+    - kubernetes-loadBalancers
+  any_errors_fatal: true
+  roles:
+    - kubernetes/keepalived
+  tags:
+    - kubernetes
+
+- hosts:
+    - kubernetes-nodes
   any_errors_fatal: true
   roles:
     - kubernetes/prepare
-    - kubernetes/keepalived
-    - kubernetes/etcd/prepare
   tags:
     - kubernetes
 
 - hosts:
-    - masters
-  any_errors_fatal: true
-  serial: 1
-  roles:
-    - kubernetes/etcd
-  tags:
-    - kubernetes
-
-- hosts:
-    - centos
+    - kubernetes-nodes
   any_errors_fatal: true
   roles:
     - kubernetes
@@ -98,17 +95,17 @@
     - kubernetes
 
 - hosts:
-    - masters[0]
+    - kubernetes-masters[0]
   any_errors_fatal: true
   vars:
-    - helm_version: "2.13.0"
+    - helm_version: "2.14.1"
   roles:
     - helm
   tags:
     - helm
 
 - hosts:
-    - masters[0]
+    - kubernetes-masters[0]
   any_errors_fatal: true
   roles:
     - metallb
@@ -116,7 +113,7 @@
     - metallb
 
 - hosts:
-    - masters[0]
+    - kubernetes-masters[0]
   any_errors_fatal: true
   roles:
     - kubernetes/dashboard

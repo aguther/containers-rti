@@ -5,39 +5,59 @@
     state: present
   with_items:
     - keepalived
-  when: "'masters' in group_names"
+    - psmisc
+    - haproxy
+  when: "'kubernetes-loadBalancers' in group_names"
 
-- name: "configuration : service"
+- name: "sysctl : allow non local bind"
+  sysctl:
+    sysctl_file: /etc/sysctl.d/99-kubernetes.conf
+    state: present
+    name: net.ipv4.ip_nonlocal_bind
+    value: 1
+    sysctl_set: yes
+    reload: yes
+
+- name: "configuration : keepalived"
   template:
     src: keepalived.conf.j2
     dest: /etc/keepalived/keepalived.conf
     owner: root
     group: root
     mode: 0644
-  register: kubernetes_keepalived_configuration_service
-  when: "'masters' in group_names"
+  register: kubernetes_keepalived_configuration_service_keepalived
+  when: "'kubernetes-loadBalancers' in group_names"
 
-- name: "configuration : health check script"
+- name: "configuration : haproxy"
   template:
-    src: check_apiserver.sh.j2
-    dest: /etc/keepalived/check_apiserver.sh
+    src: haproxy.conf.j2
+    dest: /etc/haproxy/haproxy.cfg
     owner: root
     group: root
-    mode: 0755
-  register: kubernetes_keepalived_configuration_health_check_script
-  when: "'masters' in group_names"
+    mode: 0644
+  register: kubernetes_keepalived_configuration_service_haproxy
+  when: "'kubernetes-loadBalancers' in group_names"
 
-- name: "service : enable and start"
-  service:
-    name: "keepalived.service"
-    state: started
-    enabled: yes
-  when: "'masters' in group_names"
-
-- name: "service : restart"
+- name: "service keepalived : restart"
   service:
     name: "keepalived.service"
     state: restarted
-  when: ("'masters' in group_names")
-        and ((kubernetes_keepalived_configuration_service.changed
-             or kubernetes_keepalived_configuration_health_check_script.changed))
+  when: ("'kubernetes-loadBalancers' in group_names")
+        and (kubernetes_keepalived_configuration_service_keepalived.changed)
+
+- name: "service haproxy : restart"
+  service:
+    name: "haproxy.service"
+    state: restarted
+  when: ("'kubernetes-loadBalancers' in group_names")
+        and (kubernetes_keepalived_configuration_service_haproxy.changed)
+
+- name: "services : enable and start"
+  service:
+    name: "{{ item }}"
+    state: started
+    enabled: yes
+  with_items:
+    - keepalived.service
+    - haproxy.service
+  when: "'kubernetes-loadBalancers' in group_names"

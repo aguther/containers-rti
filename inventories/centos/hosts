@@ -1,14 +1,25 @@
-[masters]
-centos-1.vm ansible_host=192.168.81.201 ipaddress=192.168.81.201
-centos-2.vm ansible_host=192.168.81.202 ipaddress=192.168.81.202
-centos-3.vm ansible_host=192.168.81.203 ipaddress=192.168.81.203
+# -----------------------------------------------------------------------------
+#  host definitions
+# -----------------------------------------------------------------------------
+[all]
+centos-1.vm ansible_host=192.168.108.201 ipaddress=192.168.108.201
+centos-2.vm ansible_host=192.168.108.202 ipaddress=192.168.108.202
+centos-3.vm ansible_host=192.168.108.203 ipaddress=192.168.108.203
+centos-4.vm ansible_host=192.168.108.204 ipaddress=192.168.108.204
+centos-5.vm ansible_host=192.168.108.205 ipaddress=192.168.108.205
+centos-6.vm ansible_host=192.168.108.206 ipaddress=192.168.108.206
 
-[nodes]
-centos-4.vm ansible_host=192.168.81.204 ipaddress=192.168.81.204
 
-[centos:children]
-masters
-nodes
+# -----------------------------------------------------------------------------
+#  centos
+# -----------------------------------------------------------------------------
+[centos]
+centos-1.vm
+centos-2.vm
+centos-3.vm
+centos-4.vm
+centos-5.vm
+centos-6.vm
 
 [centos:vars]
 # ansible
@@ -29,6 +40,32 @@ ssh_bootstrap_password=root
 #os_proxy_https_proxy='http://X:3128'
 #os_proxy_no_proxy='*.vm,172.16.72.0/24,10.0.0.0/8'
 
+
+# -----------------------------------------------------------------------------
+#  kubernetes groups
+# -----------------------------------------------------------------------------
+[kubernetes-masters]
+centos-1.vm
+centos-2.vm
+
+[kubernetes-workers]
+centos-3.vm
+centos-4.vm
+
+[kubernetes-loadBalancers]
+centos-5.vm
+centos-6.vm
+
+[kubernetes-nodes:children]
+kubernetes-masters
+kubernetes-workers
+
+[kubernetes:children]
+kubernetes-masters
+kubernetes-workers
+kubernetes-loadBalancers
+
+[kubernetes:vars]
 # docker
 docker_group_users=user
 
@@ -36,11 +73,11 @@ docker_group_users=user
 docker_registry_port=5000
 docker_registry_auth_user=docker-registry
 docker_registry_auth_password=P@ssw0rd
-docker_registry_san_ip=["192.168.81.221"]
+docker_registry_san_ip=["192.168.108.221"]
 
 # docker registry - load images
 docker_load_push_images_path=docker-images
-docker_load_push_images_registry_url=192.168.81.221:5000
+docker_load_push_images_registry_url=192.168.108.221:5000
 docker_load_push_images_registry_username=docker-registry
 docker_load_push_images_registry_password=P@ssw0rd
 
@@ -50,8 +87,8 @@ docker_add_registry_certificates=[]
 
 # kubernetes
 kubernetes_interface=ens33
-kubernetes_load_balancer=192.168.81.200
-kubernetes_load_balancer_ip=192.168.81.200
+kubernetes_load_balancer=192.168.108.200
+kubernetes_load_balancer_ip=192.168.108.200
 kubernetes_load_balancer_port=6443
 kubernetes_copy_config_cluster_name=centos
 
@@ -60,9 +97,22 @@ helm_user=root
 helm_user_home=/root
 
 # metallb
-metallb_addresses=["192.168.81.220-192.168.81.254"]
+metallb_addresses=["192.168.108.220-192.168.108.254"]
 
 # kubernetes dashboard
 kubernetes_dashboard_service_type=LoadBalancer
 kubernetes_dashboard_service_port=80
-kubernetes_dashboard_service_ip=192.168.81.220
+kubernetes_dashboard_service_ip=192.168.108.220
+
+# prometheus
+prometheus_service_ip=192.168.108.223
+
+
+# -----------------------------------------------------------------------------
+#  nomad / consul groups
+# -----------------------------------------------------------------------------
+[datacenter-1]
+centos-1.vm
+centos-2.vm
+centos-3.vm
+centos-4.vm

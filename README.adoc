@@ -4,7 +4,7 @@ Repository to test RTI Connext DDS with container technologies (docker, kubernet
 == Environment
 Vagrant can be used to deploy the necessary virtual machines.
 
-In the default configuration you will get 3 VMs where the first is in the masters group and the other two in the nodes group:
+In the default configuration you will get 3 VMs where the first is in the kubernetes-masters group and the other two in the kubernetes-workers group:
 
 [width="20%", cols="1,1a,1", options="header"]
 |===
@@ -12,17 +12,17 @@ In the default configuration you will get 3 VMs where the first is in the master
 
 | centos-1
 | * centos
-  * masters
+  * kubernetes-masters
 | 172.30.0.11/24
 
 | centos-2
 | * centos
-  * nodes
+  * kubernetes-workers
 | 172.30.0.12/24
 
 | centos-3
 | * centos
-  * nodes
+  * kubernetes-workers
 | 172.30.0.13/24
 |===
 

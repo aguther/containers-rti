@@ -3,7 +3,7 @@
   command: "/usr/bin/helm list --kubeconfig=/etc/kubernetes/admin.conf --short prometheus"
   changed_when: no
   register: prometheus_check_deployed
-  when: (inventory_hostname == groups['masters'][0])
+  when: (inventory_hostname == groups['kubernetes-masters'][0])
 
 - name: deploy
   include_role:
@@ -17,10 +17,10 @@
       - key: server.service.type
         value: "LoadBalancer"
       - key: server.service.loadBalancerIP
-        value: "192.168.81.223"
+        value: "{{ prometheus_service_ip }}"
       - key: server.persistentVolume.storageClass
         value: "rook-ceph-block"
       - key: alertmanager.persistentVolume.storageClass
         value: "rook-ceph-block"
-  when: (inventory_hostname == groups['masters'][0])
+  when: (inventory_hostname == groups['kubernetes-masters'][0])
         and (prometheus_check_deployed.stdout.find('prometheus') == -1)

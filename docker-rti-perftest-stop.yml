@@ -1,8 +1,8 @@
 ---
-- hosts: masters
+- hosts: kubernetes-masters
   roles:
     - rti-perftest/docker/stop/publisher
 
-- hosts: nodes
+- hosts: kubernetes-workers
   roles:
     - rti-perftest/docker/stop/subscriber

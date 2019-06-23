@@ -9,7 +9,7 @@
     /usr/bin/openssl req
       -x509
       -new
-      -nodes
+      -kubernetes-workers
       -key {{ docker_registry_storage_certs }}/{{ docker_registry_certificate_root_filename }}.key
       -days {{ docker_registry_certificate_validity }}
       -out {{ docker_registry_storage_certs }}/{{ docker_registry_certificate_root_filename }}.crt

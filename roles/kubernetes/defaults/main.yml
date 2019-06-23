@@ -3,6 +3,6 @@ kubernetes_release: "latest"
 
 kubernetes_interface: "{{ ansible_default_ipv4.interface }}"
 kubernetes_host_ipv4_address: "{{ hostvars[inventory_hostname].ipaddress }}"
-kubernetes_master_ipv4_address: "{{ hostvars[groups['masters'][0]].ipaddress }}"
+kubernetes_master_ipv4_address: "{{ hostvars[groups['kubernetes-masters'][0]].ipaddress }}"
 
 kubernetes_service_cidr: "10.96.0.0/12"

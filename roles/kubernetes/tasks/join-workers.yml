@@ -1,0 +1,7 @@
+---
+- name: join workers
+  command: >
+    /usr/bin/kubeadm join
+      --token={{ hostvars[groups['kubernetes-masters'][0]].kubeadm_token }}
+      --discovery-token-ca-cert-hash={{ hostvars[groups['kubernetes-masters'][0]].kubeadm_certificate_hash }}
+      {{ kubernetes_load_balancer }}:6443

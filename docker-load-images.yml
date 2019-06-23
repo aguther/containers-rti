@@ -1,6 +1,6 @@
 ---
 - hosts:
-    - masters[0]
+    - kubernetes-masters[0]
   any_errors_fatal: true
   roles:
     - docker/load-push-images

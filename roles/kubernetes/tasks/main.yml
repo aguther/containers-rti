@@ -6,14 +6,14 @@
     - kubernetes-init
 
 - include_tasks: init.yml
-  when: ('masters' in group_names)
+  when: ('kubernetes-masters' in group_names)
   tags:
     - kubernetes
     - kubernetes-init
 
 - include_tasks: join.yml
-  when: ('nodes' in group_names)
-        or (inventory_hostname == groups['masters'][0])
+  when: ('kubernetes-masters' in group_names)
+        or ('kubernetes-workers' in group_names)
   tags:
     - kubernetes
     - kubernetes-join
