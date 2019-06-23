@@ -147,6 +147,13 @@ Vagrant.configure("2") do |config|
           ansible.groups = {
             "kubernetes-masters" => "%s1.vm" % $vm_hostname_prefix,
             "kubernetes-workers" => "%s[2:%d].vm" % [$vm_hostname_prefix, $vm_instances],
+            "kubernetes-loadBalancers:children" => [
+              "kubernetes-masters",
+            ],
+            "kubernetes-nodes:children" => [
+              "kubernetes-masters",
+              "kubernetes-workers",
+            ],
             "centos:children" => [
               "kubernetes-masters",
               "kubernetes-workers",
@@ -177,6 +184,8 @@ Vagrant.configure("2") do |config|
               ],
               "kubernetes_load_balancer" => "172.30.0.10",
               "kubernetes_load_balancer_ip" => "172.30.0.10",
+              "kubernetes_load_balancer_port" => "6443",
+              "kubernetes_load_balancer_distinct_nodes" => "False",
               "kubernetes_dashboard_service_type" => "LoadBalancer",
               "kubernetes_dashboard_service_port" => "80",
               "kubernetes_dashboard_service_ip" => "172.30.0.100",
