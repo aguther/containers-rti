@@ -6,6 +6,8 @@ centos-1.vm ansible_host=192.168.108.201 ipaddress=192.168.108.201
 centos-2.vm ansible_host=192.168.108.202 ipaddress=192.168.108.202
 centos-3.vm ansible_host=192.168.108.203 ipaddress=192.168.108.203
 centos-4.vm ansible_host=192.168.108.204 ipaddress=192.168.108.204
+centos-5.vm ansible_host=192.168.108.205 ipaddress=192.168.108.205
+centos-6.vm ansible_host=192.168.108.206 ipaddress=192.168.108.206
 
 
 # -----------------------------------------------------------------------------
@@ -16,6 +18,8 @@ centos-1.vm
 centos-2.vm
 centos-3.vm
 centos-4.vm
+centos-5.vm
+centos-6.vm
 
 [centos:vars]
 # ansible
@@ -48,9 +52,18 @@ centos-2.vm
 centos-3.vm
 centos-4.vm
 
+[loadBalancers]
+centos-5.vm
+centos-6.vm
+
+[kubernetes-nodes:children]
+masters
+nodes
+
 [kubernetes:children]
 masters
 nodes
+loadBalancers
 
 [kubernetes:vars]
 # docker

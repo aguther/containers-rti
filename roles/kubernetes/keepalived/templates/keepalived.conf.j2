@@ -1,10 +1,9 @@
-! Configuration File for keepalived
 global_defs {
   router_id {{ inventory_hostname }}
 }
 
 vrrp_script haproxy-check {
-  script "killall -0 haproxy"
+  script "/usr/bin/killall -0 haproxy"
   interval 2
   weight 20
 }

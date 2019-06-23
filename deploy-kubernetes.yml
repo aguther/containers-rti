@@ -37,7 +37,7 @@
     - prepare
 
 - hosts:
-    - centos
+    - kubernetes-nodes
   any_errors_fatal: true
   roles:
     - docker/ce
@@ -45,7 +45,7 @@
     - docker
 
 - hosts:
-    - centos
+    - kubernetes-nodes
   any_errors_fatal: true
   roles:
     - os/proxy/docker
@@ -53,7 +53,7 @@
     - prepare
 
 - hosts:
-    - centos
+    - kubernetes-nodes
   any_errors_fatal: true
   roles:
     - docker/registry/kubernetes/prepare
@@ -61,7 +61,7 @@
     - docker-registry
 
 - hosts:
-    - centos
+    - kubernetes-nodes
   any_errors_fatal: true
   roles:
     - docker/add-registry-certificates
@@ -69,16 +69,23 @@
     - docker-registry-certificates
 
 - hosts:
-    - centos
+    - loadBalancers
   any_errors_fatal: true
   roles:
-    - kubernetes/prepare
     - kubernetes/keepalived
   tags:
     - kubernetes
 
 - hosts:
-    - centos
+    - kubernetes-nodes
+  any_errors_fatal: true
+  roles:
+    - kubernetes/prepare
+  tags:
+    - kubernetes
+
+- hosts:
+    - kubernetes-nodes
   any_errors_fatal: true
   roles:
     - kubernetes
