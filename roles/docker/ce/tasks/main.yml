@@ -46,6 +46,7 @@
     owner: root
     group: root
     mode: 0644
+  register: docker_cgroupdriver_configure
 
 - name: "add users to group 'docker'"
   user:
@@ -53,9 +54,17 @@
     groups: docker
     append: yes
   with_items: "{{ docker_group_users }}"
+  register: docker_user_group_configure
+
+- name: reload when configuration changed
+  service:
+    name: docker.service
+    state: reloaded
+  when: (docker_cgroupdriver_configure.changed)
+        or (docker_user_group_configure.changed)
 
 - name: enable and start
   service:
     name: docker.service
-    state: reloaded
+    state: started
     enabled: yes
