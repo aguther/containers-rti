@@ -7,9 +7,9 @@ defaults
   mode http
   log global
   retries 2
-  timeout connect 3000ms
-  timeout server 5000ms
-  timeout client 5000ms
+  timeout connect   5s
+  timeout server  120s
+  timeout client  120s
 
 frontend kubernetes
   bind {{ kubernetes_load_balancer_ip }}:{{ kubernetes_load_balancer_port }}
