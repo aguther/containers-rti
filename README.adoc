@@ -1,3 +1,12 @@
+= Repository was archived
+
+This repository was archived and the content has been split to the following repositories:
+
+* https://github.com/aguther/deployment-kubernetes
+* https://github.com/aguther/deployment-nomad
+* https://github.com/aguther/deployment-docker
+* https://github.com/aguther/deployment-containers-rti
+
 = containers-rti
 Repository to test RTI Connext DDS with container technologies (docker, kubernetes).
 
